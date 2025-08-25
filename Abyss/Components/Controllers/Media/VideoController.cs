@@ -90,5 +90,16 @@ public class VideoController(ILogger<VideoController> logger, ResourceService rs
         return PhysicalFile(d, "video/mp4", enableRangeProcessing: true);
     }
     
+    [HttpGet("{klass}/{id}/nv")]
+    public async Task<IActionResult> Nv(string klass, string id, string token)
+    {
+        var d = Helpers.SafePathCombine(VideoFolder, [klass, id, "video.a.mp4"]);
+        if (d == null) return StatusCode(403, new { message = "403 Denied" });
+        
+        var r = await rs.Get(d, token, Ip);
+        if (!r)  return StatusCode(403, new { message = "403 Denied" });
+        return PhysicalFile(d, "video/mp4", enableRangeProcessing: true);
+    }
+    
     private string Ip => HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
 }

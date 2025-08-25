@@ -10,18 +10,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/AbyssController.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/ConfigureService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Static/Helpers.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Model/ChallengeResponse.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Model/ResourceAttribute.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Model/User.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Model/UserCreating.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/appsettings.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,6 +43,7 @@
     <setting file="file://$PROJECT_DIR$/Abyss/Model/UserCreating.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/AbyssCli/Program.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
@@ -65,6 +58,8 @@
     ".NET Project.AbyssCli.executor": "Run",
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Publish to folder.Publish Abyss to folder x86.executor": "Run",
+    "Publish to folder.Publish Abyss to folder.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -81,6 +76,22 @@
   }
 }]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.Abyss: http">
+    <configuration name="Publish Abyss to folder x86" type="DotNetFolderPublish" factoryName="Publish to folder">
+      <riderPublish configuration="Release" platform="Any CPU" produce_single_file="true" self_contained="true" target_folder="$PROJECT_DIR$/Abyss/bin/Release/net9.0/linux-x64/publish" target_framework="net9.0" uuid_high="3690631506471504162" uuid_low="-4858628519588143325">
+        <runtimes>
+          <item value="linux-x64" />
+        </runtimes>
+      </riderPublish>
+      <method v="2" />
+    </configuration>
+    <configuration name="Publish Abyss to folder" type="DotNetFolderPublish" factoryName="Publish to folder">
+      <riderPublish configuration="Release" platform="Any CPU" self_contained="true" target_folder="$PROJECT_DIR$/Abyss/bin/Release/net9.0/publish" target_framework="net9.0" uuid_high="3690631506471504162" uuid_low="-4858628519588143325">
+        <runtimes>
+          <item value="linux-arm64" />
+        </runtimes>
+      </riderPublish>
+      <method v="2" />
+    </configuration>
     <configuration name="AbyssCli" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -146,13 +157,16 @@
       <updated>1755877836092</updated>
       <workItem from="1755877837171" duration="446000" />
       <workItem from="1755878548611" duration="22675000" />
-      <workItem from="1755924449835" duration="33591000" />
+      <workItem from="1755924449835" duration="39604000" />
+      <workItem from="1756025651909" duration="43000" />
+      <workItem from="1756121403390" duration="4269000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
