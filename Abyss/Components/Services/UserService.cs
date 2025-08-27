@@ -7,6 +7,7 @@ using Abyss.Model;
 using Microsoft.Extensions.Caching.Memory;
 using NSec.Cryptography;
 using SQLite;
+using Task = System.Threading.Tasks.Task;
 
 namespace Abyss.Components.Services;
 
@@ -26,6 +27,8 @@ public class UserService
         _database = new SQLiteAsyncConnection(config.UserDatabase, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
         _database.CreateTableAsync<User>().Wait();
         var rootUser = _database.Table<User>().Where(x => x.Name == "root").FirstOrDefaultAsync().Result;
+        
+        _cache.Set("acite", $"acite@127.0.0.1", DateTimeOffset.Now.AddDays(1));
         
         if (rootUser == null)
         {

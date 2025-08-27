@@ -67,7 +67,6 @@ public static class StringArrayExtensions
 {
     public static string[] SortLikeWindows(this string[] array)
     {
-        if (array == null) return null;
         if (array.Length == 0) return array;
         
         Array.Sort(array, new WindowsFileNameComparer());
@@ -76,7 +75,6 @@ public static class StringArrayExtensions
 
     public static string[] SortLikeWindowsDescending(this string[] array)
     {
-        if (array == null) return null;
         if (array.Length == 0) return array;
         
         Array.Sort(array, new WindowsFileNameComparerDescending());
@@ -85,14 +83,14 @@ public static class StringArrayExtensions
 
     public static void SortLikeWindowsInPlace(this string[] array)
     {
-        if (array == null || array.Length == 0) return;
+        if (array.Length == 0) return;
         
         Array.Sort(array, new WindowsFileNameComparer());
     }
 
     public static void SortLikeWindowsDescendingInPlace(this string[] array)
     {
-        if (array == null || array.Length == 0) return;
+        if (array.Length == 0) return;
         
         Array.Sort(array, new WindowsFileNameComparerDescending());
     }
@@ -100,8 +98,8 @@ public static class StringArrayExtensions
 
 public class WindowsFileNameComparer : IComparer<string>
 {
-    private static readonly Regex _regex = new Regex(@"(\d+|\D+)", RegexOptions.Compiled);
-    private static readonly CompareInfo _compareInfo = CultureInfo.InvariantCulture.CompareInfo;
+    private static readonly Regex Regex = new Regex(@"(\d+|\D+)", RegexOptions.Compiled);
+    private static readonly CompareInfo CompareInfo = CultureInfo.InvariantCulture.CompareInfo;
     
     public int Compare(string? x, string? y)
     {
@@ -110,8 +108,8 @@ public class WindowsFileNameComparer : IComparer<string>
         if (y == null) return 1;
         if (ReferenceEquals(x, y)) return 0;
         
-        var partsX = _regex.Matches(x);
-        var partsY = _regex.Matches(y);
+        var partsX = Regex.Matches(x);
+        var partsY = Regex.Matches(y);
         
         int minLength = Math.Min(partsX.Count, partsY.Count);
         
@@ -130,7 +128,7 @@ public class WindowsFileNameComparer : IComparer<string>
                 int comparison;
                 if (ContainsChinese(partX) || ContainsChinese(partY))
                 {
-                    comparison = _compareInfo.Compare(partX, partY, CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace);
+                    comparison = CompareInfo.Compare(partX, partY, CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace);
                 }
                 else
                 {
@@ -161,20 +159,20 @@ public class WindowsFileNameComparer : IComparer<string>
 
 public class WindowsFileNameComparerDescending : IComparer<string>
 {
-    private static readonly WindowsFileNameComparer _ascendingComparer = new WindowsFileNameComparer();
+    private static readonly WindowsFileNameComparer AscendingComparer = new WindowsFileNameComparer();
     
-    public int Compare(string x, string y)
+    public int Compare(string? x, string? y)
     {
-        return _ascendingComparer.Compare(y, x);
+        return AscendingComparer.Compare(y, x);
     }
 }
 
 public static class StringNaturalCompare
 {
-    private static readonly WindowsFileNameComparer _comparer = new WindowsFileNameComparer();
+    private static readonly WindowsFileNameComparer Comparer = new WindowsFileNameComparer();
     
     public static int Compare(string x, string y)
     {
-        return _comparer.Compare(x, y);
+        return Comparer.Compare(x, y);
     }
 }
