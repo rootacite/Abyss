@@ -24,7 +24,7 @@ public class VideoController(ILogger<VideoController> logger, ResourceService rs
     [HttpGet]
     public async Task<IActionResult> GetClass(string token)
     {
-        var r = await rs.Query(VideoFolder, token, Ip);
+        var r = (await rs.Query(VideoFolder, token, Ip))?.SortLikeWindows();
         
         if(r == null) 
             return StatusCode(401, new { message = "Unauthorized" });
@@ -38,6 +38,7 @@ public class VideoController(ILogger<VideoController> logger, ResourceService rs
         var d = Helpers.SafePathCombine(VideoFolder, klass);
         if (d == null) return StatusCode(403, new { message = "403 Denied" });
         var r = await rs.Query(d, token, Ip);
+        
         if (r == null) return StatusCode(401, new { message = "Unauthorized" });
         
         return Ok(r);
@@ -63,6 +64,8 @@ public class VideoController(ILogger<VideoController> logger, ResourceService rs
         
         var r = await rs.Get(d, token, Ip);
         if (!r)  return StatusCode(403, new { message = "403 Denied" });
+        
+        _logger.LogInformation($"Cover found for {id}");
         
         return PhysicalFile(d, "image/jpeg", enableRangeProcessing: true);
     }

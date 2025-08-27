@@ -117,7 +117,7 @@ public class UserService
                 Destroy(token);
                 return null;
             }
-            _logger.LogInformation($"Validated {userAndIp}");
+            // _logger.LogInformation($"Validated {userAndIp}");
             return userAndIp?.Split('@')[0];
         }
         _logger.LogWarning($"Validation failed {token}");
