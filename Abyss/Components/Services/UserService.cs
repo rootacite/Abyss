@@ -28,7 +28,9 @@ public class UserService
         _database.CreateTableAsync<User>().Wait();
         var rootUser = _database.Table<User>().Where(x => x.Name == "root").FirstOrDefaultAsync().Result;
         
-        _cache.Set("acite", $"acite@127.0.0.1", DateTimeOffset.Now.AddDays(1));
+        if (_config.DebugMode == "Debug")
+            _cache.Set("root", $"root@127.0.0.1", DateTimeOffset.Now.AddHours(1));
+            // Test token, can only be used locally. Will be destroyed in one hour.
         
         if (rootUser == null)
         {

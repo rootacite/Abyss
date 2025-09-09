@@ -10,24 +10,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Task/TaskController.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/TaskService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Tools/TemporaryDB.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Model/Chip.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Model/Comment.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Model/Task.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Model/TaskCreation.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Model/Video.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Abyss/Toolkits/image-creator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Abyss/Toolkits/image-sum.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Abyss/Toolkits/update-tags.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Abyss/Toolkits/update-video.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss.sln.DotSettings.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/ImageController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/ImageController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/ConfigureService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/ConfigureService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Static/Helpers.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Static/Helpers.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Tools/NaturalStringComparer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Tools/NaturalStringComparer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Model/Bookmark.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Bookmark.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Model/Comic.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Comic.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Properties/launchSettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/appsettings.Development.json" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,6 +40,7 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/011a191356a243438f987de3ec3d6c6230800/04/8419ff35/ServiceProvider.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/457530be4752476295767457c3639889d1a000/4c/4b962087/Monitor.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/457530be4752476295767457c3639889d1a000/d0/3b166e9e/String.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5df2accb46d040ccbbbe8331bf4d24b61daa00/df/93debd37/ControllerBase.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7598e47d5cdf4107ba88f8220720fdc89000/a6/79d67871/xxHash128.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f09ccaeb94c34c2299acd3efee0facee1a400/81/137b58b4/Key.cs" root0="FORCE_HIGHLIGHTING" />
@@ -54,9 +52,10 @@
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/TaskService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Static/Helpers.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Abyss/Components/Tools/TemporaryDB.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Abyss/Model/Bookmark.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Model/ChallengeResponse.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Model/Chip.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Abyss/Model/Comic.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Model/Comment.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Model/ResourceAttribute.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Model/Task.cs" root0="FORCE_HIGHLIGHTING" />
@@ -65,6 +64,7 @@
     <setting file="file://$PROJECT_DIR$/Abyss/Model/UserCreating.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Model/Video.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/AbyssCli/Program.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file:///storage/Images/31/summary.json" root0="FORCE_HIGHLIGHTING" />
     <setting file="file:///usr/lib/dotnet/sdk/9.0.109/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.Sdk.targets" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
@@ -93,17 +93,17 @@
     "RunOnceActivity.git.unshallow": "true",
     "XThreadsFramesViewSplitterKey": "0.30266345",
     "git-widget-placeholder": "dev-task",
-    "last_opened_file_path": "/home/acite/embd/WebProjects/Abyss/.gitignore",
+    "last_opened_file_path": "/storage/Images/31/summary.json",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected=".NET Launch Settings Profile.Abyss: https">
+  <component name="RunManager" selected="Publish to folder.Publish Abyss to folder">
     <configuration name="Publish Abyss to folder x86" type="DotNetFolderPublish" factoryName="Publish to folder">
       <riderPublish configuration="Release" platform="Any CPU" produce_single_file="true" ready_to_run="true" self_contained="true" target_folder="/opt/security/https/server" target_framework="net9.0" uuid_high="3690631506471504162" uuid_low="-4858628519588143325">
         <runtimes>
@@ -198,7 +198,19 @@
       <workItem from="1756145197559" duration="780000" />
       <workItem from="1756205686118" duration="5398000" />
       <workItem from="1756277940361" duration="1097000" />
-      <workItem from="1756293105406" duration="17059000" />
+      <workItem from="1756293105406" duration="18336000" />
+      <workItem from="1756364194123" duration="748000" />
+      <workItem from="1756553959939" duration="2071000" />
+      <workItem from="1756611257955" duration="11070000" />
+      <workItem from="1756693065091" duration="645000" />
+      <workItem from="1756879449291" duration="630000" />
+      <workItem from="1756905732385" duration="955000" />
+      <workItem from="1756953389550" duration="29000" />
+      <workItem from="1756995048032" duration="3919000" />
+      <workItem from="1757064153985" duration="1107000" />
+      <workItem from="1757076719875" duration="601000" />
+      <workItem from="1757219779961" duration="112000" />
+      <workItem from="1757386288260" duration="3634000" />
     </task>
     <servers />
   </component>
@@ -218,7 +230,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="main" />
+                        <option value="dev-task" />
                       </list>
                     </value>
                   </entry>
@@ -248,19 +260,6 @@
           <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
           <option name="timeStamp" value="3" />
         </breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Abyss/Components/Services/TaskService.cs</url>
-          <line>60</line>
-          <properties documentPath="$PROJECT_DIR$/Abyss/Components/Services/TaskService.cs" containingFunctionPresentation="Method 'CreateVideoTask'">
-            <startOffsets>
-              <option value="2099" />
-            </startOffsets>
-            <endOffsets>
-              <option value="2163" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="13" />
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>

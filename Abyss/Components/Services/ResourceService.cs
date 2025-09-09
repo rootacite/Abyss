@@ -27,7 +27,7 @@ public class ResourceService
     private readonly SQLiteAsyncConnection _database;
     
     private static readonly Regex PermissionRegex = 
-        new Regex(@"^([r-][w-]),([r-][w-]),([r-][w-])$", RegexOptions.Compiled);
+        new(@"^([r-][w-]),([r-][w-]),([r-][w-])$", RegexOptions.Compiled);
 
     public ResourceService(ILogger<ResourceService> logger, ConfigureService config, IMemoryCache cache,
         UserService user)
@@ -47,7 +47,7 @@ public class ResourceService
     }
 
     // Create UID only for resources, without considering advanced hash security such as adding salt
-    private string Uid(string path)
+    private static string Uid(string path)
     {
         var b = Encoding.UTF8.GetBytes(path);
         var r = XxHash128.Hash(b, 0x11451419);
@@ -169,8 +169,16 @@ public class ResourceService
         return await Valid(path, token, OperationType.Read, ip);
     }
 
+    public async Task<bool> Update(string path, string token, string ip)
+    {
+        return await Valid(path, token, OperationType.Write, ip);
+    }
+
     public async Task<bool> Initialize(string path, string token, string username, string ip)
     {
+        // TODO: Use a more elegant Debug mode
+        if (_config.DebugMode == "Debug")
+            goto debug;
         // 1. Authorization: Verify the operation is performed by 'root'
         var requester = _user.Validate(token, ip);
         if (requester != "root")
@@ -178,7 +186,7 @@ public class ResourceService
             _logger.LogWarning($"Permission denied: Non-root user '{requester ?? "unknown"}' attempted to initialize resources.");
             return false;
         }
-
+        debug:
         // 2. Validation: Ensure the target path and owner are valid
         if (!Directory.Exists(path))
         {

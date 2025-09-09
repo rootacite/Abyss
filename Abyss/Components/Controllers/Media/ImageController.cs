@@ -1,6 +1,9 @@
 using Abyss.Components.Services;
 using Abyss.Components.Static;
+using Abyss.Components.Tools;
+using Abyss.Model;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Abyss.Components.Controllers.Media;
@@ -28,7 +31,7 @@ public class ImageController(ILogger<ImageController> logger, ResourceService rs
         if(r == null) 
             return StatusCode(401, new { message = "Unauthorized" });
         
-        return Ok(r);
+        return Ok(r.NaturalSort(x => x));
     }
 
     [HttpGet("{id}")]
@@ -41,6 +44,27 @@ public class ImageController(ILogger<ImageController> logger, ResourceService rs
         if (!r)  return StatusCode(403, new { message = "403 Denied" });
         
         return Ok(await System.IO.File.ReadAllTextAsync(d));
+    }
+
+    [HttpPost("{id}/bookmark")]
+    public async Task<IActionResult> Bookmark(string id, string token, [FromBody] Bookmark bookmark)
+    {
+        var d = Helpers.SafePathCombine(ImageFolder, [id, "summary.json"]);
+        if (d == null) return StatusCode(403, new { message = "403 Denied" });
+
+        var r = await rs.Update(d, token, Ip);
+        if (!r)  return StatusCode(403, new { message = "403 Denied" });
+
+        Comic c = JsonConvert.DeserializeObject<Comic>(await System.IO.File.ReadAllTextAsync(d))!;
+        
+        var bookmarkPage = Helpers.SafePathCombine(ImageFolder, [id, bookmark.Page]);
+        if(!System.IO.File.Exists(bookmarkPage))
+            return BadRequest();
+        
+        c.Bookmarks.Add(bookmark);
+        var o = JsonConvert.SerializeObject(c);
+        await System.IO.File.WriteAllTextAsync(d, o);
+        return Ok();
     }
     
     [HttpGet("{id}/{file}")]
