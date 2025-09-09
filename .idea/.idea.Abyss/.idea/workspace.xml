@@ -10,8 +10,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Toolkits/update-video.py" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Toolkits/update-video.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Abyss.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Abyss.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Static/Helpers.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Static/Helpers.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,10 +37,15 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7598e47d5cdf4107ba88f8220720fdc89000/a6/79d67871/xxHash128.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f09ccaeb94c34c2299acd3efee0facee1a400/81/137b58b4/Key.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/AbyssController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Task/TaskController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///home/acite/embd/WebProjects/Abyss/Abyss/Components/Services/ConfigureService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/ConfigureService.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///home/acite/embd/WebProjects/Abyss/Abyss/Components/Services/ConfigureService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///home/acite/embd/WebProjects/Abyss/Abyss/Components/Services/ResourceService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///home/acite/embd/WebProjects/Abyss/Abyss/Components/Services/ResourceService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/TaskService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Static/Helpers.cs" root0="FORCE_HIGHLIGHTING" />
@@ -51,7 +61,6 @@
     <setting file="file://$PROJECT_DIR$/Abyss/Model/UserCreating.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Model/Video.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/AbyssCli/Program.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file:///storage/Images/31/summary.json" root0="FORCE_HIGHLIGHTING" />
     <setting file="file:///usr/lib/dotnet/sdk/9.0.109/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.Sdk.targets" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
@@ -79,7 +88,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "XThreadsFramesViewSplitterKey": "0.30266345",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "dev-live",
     "last_opened_file_path": "/storage/Images/31/summary.json",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",

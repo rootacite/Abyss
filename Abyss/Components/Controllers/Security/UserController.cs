@@ -96,6 +96,29 @@ public class UserController(UserService user, ILogger<UserController> logger) : 
         return Ok("Success");
     }
     
+    [HttpGet("{user}/open")]
+    public async Task<IActionResult> Open(string user, [FromQuery] string token, [FromQuery] string? bindIp = null)
+    {
+        var caller = _user.Validate(token, Ip);
+        if (caller == null || caller != "root")
+        {
+            return StatusCode(403, new { message = "Access forbidden" });
+        }
+
+        var target = await _user.QueryUser(user);
+        if (target == null)
+        {
+            return StatusCode(404, new { message = "User not found" });
+        }
+
+        var ipToBind = string.IsNullOrWhiteSpace(bindIp) ? Ip : bindIp;
+
+        var t = _user.CreateToken(user, ipToBind, TimeSpan.FromHours(1));
+
+        _logger.LogInformation("Root created 1h token for {User}, bound to {BindIp}, request from {ReqIp}", user, ipToBind, Ip);
+        return Ok(new { token = t, user, boundIp = ipToBind });
+    }
+    
     public static bool IsAlphanumeric(string input)
     {
         if (string.IsNullOrEmpty(input))

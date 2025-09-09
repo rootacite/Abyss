@@ -1,4 +1,3 @@
-
 // ResourceService.cs
 
 using System.Text;
@@ -13,8 +12,8 @@ namespace Abyss.Components.Services;
 
 public enum OperationType
 {
-    Read,   // Query, Read
-    Write,  // Write, Delete
+    Read, // Query, Read
+    Write, // Write, Delete
     Security // Chown, Chmod
 }
 
@@ -25,8 +24,8 @@ public class ResourceService
     private readonly IMemoryCache _cache;
     private readonly UserService _user;
     private readonly SQLiteAsyncConnection _database;
-    
-    private static readonly Regex PermissionRegex = 
+
+    private static readonly Regex PermissionRegex =
         new(@"^([r-][w-]),([r-][w-]),([r-][w-])$", RegexOptions.Compiled);
 
     public ResourceService(ILogger<ResourceService> logger, ConfigureService config, IMemoryCache cache,
@@ -41,9 +40,16 @@ public class ResourceService
         _database.CreateTableAsync<ResourceAttribute>().Wait();
 
         var tasksPath = Helpers.SafePathCombine(_config.MediaRoot, "Tasks");
-        if(tasksPath != null)
+        if (tasksPath != null)
+        {
             InsertRaRow(tasksPath, "root", "rw,r-,r-", true).Wait();
+        }
         
+        var livePath = Helpers.SafePathCombine(_config.MediaRoot, "Live");
+        if (livePath != null)
+        {
+            InsertRaRow(livePath, "root", "rw,r-,r-", true).Wait();
+        }
     }
 
     // Create UID only for resources, without considering advanced hash security such as adding salt
@@ -59,16 +65,16 @@ public class ResourceService
         // Path is abs path here, due to Helpers.SafePathCombine
         if (!path.StartsWith(Path.GetFullPath(_config.MediaRoot), StringComparison.OrdinalIgnoreCase))
             return false;
-        
+
         path = Path.GetRelativePath(_config.MediaRoot, path);
-        
+
         string? username = _user.Validate(token, ip);
         if (username == null)
         {
             // No permission granted for invalid tokens
             _logger.LogError($"Invalid token: {token}");
             return false;
-        } 
+        }
 
         User? user = await _user.QueryUser(username);
         if (user == null || user.Name != username)
@@ -76,7 +82,7 @@ public class ResourceService
             _logger.LogError($"Verification failed: {token}");
             return false; // Two-factor authentication
         }
-        
+
         var parts = path.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
             .Where(p => !string.IsNullOrEmpty(p))
             .ToArray();
@@ -107,7 +113,7 @@ public class ResourceService
             _logger.LogError($"Permission check failed: User: {username}, Resource: {path}, Type: {type.ToString()} ");
             return false;
         }
-        
+
         var l = await CheckPermission(user, ra, type);
         if (!l)
         {
@@ -120,8 +126,8 @@ public class ResourceService
     private async Task<bool> CheckPermission(User? user, ResourceAttribute? ra, OperationType type)
     {
         if (user == null || ra == null) return false;
-        
-        if(!PermissionRegex.IsMatch(ra.Permission)) return false;
+
+        if (!PermissionRegex.IsMatch(ra.Permission)) return false;
 
         var perms = ra.Permission.Split(',');
         if (perms.Length != 3) return false;
@@ -154,7 +160,7 @@ public class ResourceService
 
     public async Task<string[]?> Query(string path, string token, string ip)
     {
-        if(!await Valid(path, token, OperationType.Read, ip))
+        if (!await Valid(path, token, OperationType.Read, ip))
             return null;
 
         if (Helpers.GetPathType(path) != PathType.Directory)
@@ -183,9 +189,11 @@ public class ResourceService
         var requester = _user.Validate(token, ip);
         if (requester != "root")
         {
-            _logger.LogWarning($"Permission denied: Non-root user '{requester ?? "unknown"}' attempted to initialize resources.");
+            _logger.LogWarning(
+                $"Permission denied: Non-root user '{requester ?? "unknown"}' attempted to initialize resources.");
             return false;
         }
+
         debug:
         // 2. Validation: Ensure the target path and owner are valid
         if (!Directory.Exists(path))
@@ -212,8 +220,9 @@ public class ResourceService
             {
                 var currentPath = Path.GetRelativePath(_config.MediaRoot, p);
                 var uid = Uid(currentPath);
-                var existing = await _database.Table<ResourceAttribute>().Where(r => r.Uid == uid).FirstOrDefaultAsync();
-                
+                var existing = await _database.Table<ResourceAttribute>().Where(r => r.Uid == uid)
+                    .FirstOrDefaultAsync();
+
                 // If it's not in the database, add it to our list for batch insertion
                 if (existing == null)
                 {
@@ -231,11 +240,13 @@ public class ResourceService
             if (newResources.Any())
             {
                 await _database.InsertAllAsync(newResources);
-                _logger.LogInformation($"Successfully initialized {newResources.Count} new resources under '{path}' for user '{username}'.");
+                _logger.LogInformation(
+                    $"Successfully initialized {newResources.Count} new resources under '{path}' for user '{username}'.");
             }
             else
             {
-                _logger.LogInformation($"No new resources to initialize under '{path}'. All items already exist in the database.");
+                _logger.LogInformation(
+                    $"No new resources to initialize under '{path}'. All items already exist in the database.");
             }
 
             return true;
@@ -256,12 +267,132 @@ public class ResourceService
     {
         throw new NotImplementedException();
     }
+    
+    public async Task<bool> Exclude(string path, string token, string ip)
+    {
+        var requester = _user.Validate(token, ip);
+        if (requester != "root")
+        {
+            _logger.LogWarning($"Permission denied: Non-root user '{requester ?? "unknown"}' attempted to exclude resource '{path}'.");
+            return false;
+        }
+
+        try
+        {
+            var relPath = Path.GetRelativePath(_config.MediaRoot, path);
+            var uid = Uid(relPath);
+
+            var resource = await _database.Table<ResourceAttribute>().Where(r => r.Uid == uid).FirstOrDefaultAsync();
+            if (resource == null)
+            {
+                _logger.LogError($"Exclude failed: Resource '{relPath}' not found in database.");
+                return false;
+            }
+
+            var deleted = await _database.DeleteAsync(resource);
+            if (deleted > 0)
+            {
+                _logger.LogInformation($"Successfully excluded resource '{relPath}' from management.");
+                return true;
+            }
+            else
+            {
+                _logger.LogError($"Failed to exclude resource '{relPath}' from database.");
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error excluding resource '{path}'.");
+            return false;
+        }
+    }
+
+    public async Task<bool> Include(string path, string token, string ip, string owner, string permission)
+    {
+        var requester = _user.Validate(token, ip);
+        if (requester != "root")
+        {
+            _logger.LogWarning(
+                $"Permission denied: Non-root user '{requester ?? "unknown"}' attempted to include resource '{path}'.");
+            return false;
+        }
+
+        if (!PermissionRegex.IsMatch(permission))
+        {
+            _logger.LogError($"Invalid permission format: {permission}");
+            return false;
+        }
+
+        var ownerUser = await _user.QueryUser(owner);
+        if (ownerUser == null)
+        {
+            _logger.LogError($"Include failed: Owner user '{owner}' does not exist.");
+            return false;
+        }
+
+        try
+        {
+            var relPath = Path.GetRelativePath(_config.MediaRoot, path);
+            var uid = Uid(relPath);
+
+            var existing = await _database.Table<ResourceAttribute>().Where(r => r.Uid == uid).FirstOrDefaultAsync();
+            if (existing != null)
+            {
+                _logger.LogError($"Include failed: Resource '{relPath}' already exists in database.");
+                return false;
+            }
+
+            var newResource = new ResourceAttribute
+            {
+                Uid = uid,
+                Name = relPath,
+                Owner = owner,
+                Permission = permission
+            };
+
+            var inserted = await _database.InsertAsync(newResource);
+            if (inserted > 0)
+            {
+                _logger.LogInformation(
+                    $"Successfully included '{relPath}' into resource management (Owner={owner}, Permission={permission}).");
+                return true;
+            }
+            else
+            {
+                _logger.LogError($"Failed to include resource '{relPath}' into database.");
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error including resource '{path}'.");
+            return false;
+        }
+    }
+
+    public async Task<bool> Exists(string path)
+    {
+        try
+        {
+            var relPath = Path.GetRelativePath(_config.MediaRoot, path);
+            var uid = Uid(relPath);
+
+            var resource = await _database.Table<ResourceAttribute>().Where(r => r.Uid == uid).FirstOrDefaultAsync();
+            return resource != null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error checking existence of resource '{path}'.");
+            return false;
+        }
+    }
 
     public async Task<bool> Chmod(string path, string token, string permission, string ip)
     {
-        if(!await Valid(path, token, OperationType.Security, ip))
+        if (!await Valid(path, token, OperationType.Security, ip))
             return false;
-    
+
         // Validate the permission format using the existing regex
         if (!PermissionRegex.IsMatch(permission))
         {
@@ -274,7 +405,7 @@ public class ResourceService
             path = Path.GetRelativePath(_config.MediaRoot, path);
             var uid = Uid(path);
             var resource = await _database.Table<ResourceAttribute>().Where(r => r.Uid == uid).FirstOrDefaultAsync();
-        
+
             if (resource == null)
             {
                 _logger.LogError($"Resource not found: {path}");
@@ -283,7 +414,7 @@ public class ResourceService
 
             resource.Permission = permission;
             var rowsAffected = await _database.UpdateAsync(resource);
-        
+
             if (rowsAffected > 0)
             {
                 _logger.LogInformation($"Successfully changed permissions for '{path}' to '{permission}'");
@@ -305,9 +436,9 @@ public class ResourceService
 
     public async Task<bool> Chown(string path, string token, string owner, string ip)
     {
-        if(!await Valid(path, token, OperationType.Security, ip))
+        if (!await Valid(path, token, OperationType.Security, ip))
             return false;
-    
+
         // Validate that the new owner exists
         var newOwner = await _user.QueryUser(owner);
         if (newOwner == null)
@@ -321,7 +452,7 @@ public class ResourceService
             path = Path.GetRelativePath(_config.MediaRoot, path);
             var uid = Uid(path);
             var resource = await _database.Table<ResourceAttribute>().Where(r => r.Uid == uid).FirstOrDefaultAsync();
-        
+
             if (resource == null)
             {
                 _logger.LogError($"Resource not found: {path}");
@@ -330,7 +461,7 @@ public class ResourceService
 
             resource.Owner = owner;
             var rowsAffected = await _database.UpdateAsync(resource);
-        
+
             if (rowsAffected > 0)
             {
                 _logger.LogInformation($"Successfully changed ownership of '{path}' to '{owner}'");
@@ -356,9 +487,9 @@ public class ResourceService
             _logger.LogError($"Invalid permission format: {permission}");
             return false;
         }
-        
+
         var path = Path.GetRelativePath(_config.MediaRoot, fullPath);
-        
+
         if (update)
             return await _database.InsertOrReplaceAsync(new ResourceAttribute()
             {

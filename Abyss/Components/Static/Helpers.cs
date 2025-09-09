@@ -1,11 +1,35 @@
 
 using System.Globalization;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace Abyss.Components.Static;
 
 public static class Helpers
 {
+    private static readonly FileExtensionContentTypeProvider _provider = InitProvider();
+
+    private static FileExtensionContentTypeProvider InitProvider()
+    {
+        var provider = new FileExtensionContentTypeProvider();
+
+        provider.Mappings[".m3u8"] = "application/vnd.apple.mpegurl";
+        provider.Mappings[".ts"]   = "video/mp2t";
+        provider.Mappings[".mpd"]  = "application/dash+xml";
+
+        return provider;
+    }
+
+    public static string GetContentType(string path)
+    {
+        if (_provider.TryGetContentType(path, out var contentType))
+        {
+            return contentType;
+        }
+
+        return "application/octet-stream";
+    }
+    
     public static string? SafePathCombine(string basePath, params string[] pathParts)
     {
         if (string.IsNullOrWhiteSpace(basePath))
