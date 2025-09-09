@@ -7,6 +7,7 @@ using Abyss.Model;
 using Microsoft.Extensions.Caching.Memory;
 using NSec.Cryptography;
 using SQLite;
+using Task = System.Threading.Tasks.Task;
 
 namespace Abyss.Components.Services;
 
@@ -26,6 +27,10 @@ public class UserService
         _database = new SQLiteAsyncConnection(config.UserDatabase, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
         _database.CreateTableAsync<User>().Wait();
         var rootUser = _database.Table<User>().Where(x => x.Name == "root").FirstOrDefaultAsync().Result;
+        
+        if (_config.DebugMode == "Debug")
+            _cache.Set("root", $"root@127.0.0.1", DateTimeOffset.Now.AddHours(1));
+            // Test token, can only be used locally. Will be destroyed in one hour.
         
         if (rootUser == null)
         {

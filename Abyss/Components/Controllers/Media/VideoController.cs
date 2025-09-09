@@ -1,7 +1,10 @@
 using System.Diagnostics;
 using Abyss.Components.Services;
 using Abyss.Components.Static;
+using Abyss.Components.Tools;
+using Abyss.Model;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Abyss.Components.Controllers.Media;
 
@@ -38,10 +41,24 @@ public class VideoController(ILogger<VideoController> logger, ResourceService rs
         var d = Helpers.SafePathCombine(VideoFolder, klass);
         if (d == null) return StatusCode(403, new { message = "403 Denied" });
         var r = await rs.Query(d, token, Ip);
-        
         if (r == null) return StatusCode(401, new { message = "Unauthorized" });
+
+        var rv = r.Select(x =>
+        {
+            return Helpers.SafePathCombine(VideoFolder, [klass, x, "summary.json"]);
+        }).ToArray();
+
+        for (int i = 0; i < rv.Length; i++)
+        {
+            if(rv[i] == null) continue;
+            rv[i] = await System.IO.File.ReadAllTextAsync(rv[i] ?? "");
+        }
+
+        var sv = rv.Where(x => x!=null).Select(x => x ?? "")
+            .Select(x => JsonConvert.DeserializeObject<Video>(x)).ToArray();
+
         
-        return Ok(r);
+        return Ok(sv.Zip(r, (x, y) => (x, y)).NaturalSort(x => x.x.name).Select(x => x.y).ToArray());
     }
     
     [HttpGet("{klass}/{id}")]
@@ -86,17 +103,6 @@ public class VideoController(ILogger<VideoController> logger, ResourceService rs
     public async Task<IActionResult> Av(string klass, string id, string token)
     {
         var d = Helpers.SafePathCombine(VideoFolder, [klass, id, "video.mp4"]);
-        if (d == null) return StatusCode(403, new { message = "403 Denied" });
-        
-        var r = await rs.Get(d, token, Ip);
-        if (!r)  return StatusCode(403, new { message = "403 Denied" });
-        return PhysicalFile(d, "video/mp4", enableRangeProcessing: true);
-    }
-    
-    [HttpGet("{klass}/{id}/nv")]
-    public async Task<IActionResult> Nv(string klass, string id, string token)
-    {
-        var d = Helpers.SafePathCombine(VideoFolder, [klass, id, "video.a.mp4"]);
         if (d == null) return StatusCode(403, new { message = "403 Denied" });
         
         var r = await rs.Get(d, token, Ip);

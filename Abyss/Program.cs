@@ -1,4 +1,5 @@
 using System.Threading.RateLimiting;
+using Abyss.Components.Controllers.Task;
 using Abyss.Components.Services;
 using Microsoft.AspNetCore.RateLimiting;
 
@@ -17,6 +18,8 @@ public class Program
         builder.Services.AddSingleton<ConfigureService>();
         builder.Services.AddSingleton<UserService>();
         builder.Services.AddSingleton<ResourceService>();
+        builder.Services.AddSingleton<TaskController>();
+        builder.Services.AddSingleton<TaskService>();
         
         builder.Services.AddRateLimiter(options =>
         {

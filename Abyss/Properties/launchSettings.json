@@ -17,7 +17,9 @@
       "launchBrowser": false,
       "applicationUrl": "https://localhost:7013;http://localhost:5198",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "MEDIA_ROOT" : "/storage",
+        "DEBUG_MODE" : "Debug"
       }
     }
   }
