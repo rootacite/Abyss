@@ -179,4 +179,12 @@ public class UserService
         var algorithm = SignatureAlgorithm.Ed25519;
         return algorithm.Verify(publicKey, data, signature);
     }
+    
+    public string CreateToken(string user, string ip, TimeSpan lifetime)
+    {
+        var token = GenerateRandomAsciiString(64);
+        _cache.Set(token, $"{user}@{ip}", DateTimeOffset.Now.Add(lifetime));
+        _logger.LogInformation($"Created token for {user}@{ip}, valid {lifetime.TotalMinutes} minutes");
+        return token;
+    }
 }
