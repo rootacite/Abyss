@@ -1,0 +1,57 @@
+using System.Net;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Abyss.Components.Static;
+
+public abstract class BaseController : Controller
+{
+    private string? _ip;
+
+    protected string Ip
+    {
+        get
+        {
+            if (_ip != null)
+                return _ip;
+
+            _ip = GetClientIpAddress();
+                
+            if (string.IsNullOrEmpty(_ip))
+                throw new InvalidOperationException("invalid IP");
+
+            return _ip;
+        }
+    }
+
+    private string? GetClientIpAddress()
+    {
+        var remoteIp = HttpContext.Connection.RemoteIpAddress;
+            
+        if (remoteIp != null && (IPAddress.IsLoopback(remoteIp) || remoteIp.ToString() == "::1"))
+        {
+            return remoteIp.ToString();
+        }
+
+        string? ip = remoteIp?.ToString();
+
+        if (HttpContext.Request.Headers.TryGetValue("X-Forwarded-For", out var forwardedFor))
+        {
+            var forwardedIps = forwardedFor.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .Where(x => !string.IsNullOrEmpty(x))
+                .ToArray();
+
+            if (forwardedIps.Length > 0)
+            {
+                ip = forwardedIps[0];
+            }
+        }
+
+        if (string.IsNullOrEmpty(ip) && HttpContext.Request.Headers.TryGetValue("X-Real-IP", out var realIp))
+        {
+            ip = realIp.ToString();
+        }
+
+        return ip;
+    }
+}

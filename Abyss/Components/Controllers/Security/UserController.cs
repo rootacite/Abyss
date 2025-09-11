@@ -3,6 +3,7 @@
 
 using System.Text.RegularExpressions;
 using Abyss.Components.Services;
+using Abyss.Components.Static;
 using Abyss.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -12,7 +13,7 @@ namespace Abyss.Components.Controllers.Security;
 [ApiController]
 [Route("api/[controller]")]
 [EnableRateLimiting("Fixed")]
-public class UserController(UserService user, ILogger<UserController> logger) : Controller
+public class UserController(UserService user, ILogger<UserController> logger) : BaseController
 {
     private readonly ILogger<UserController> _logger = logger;
     private readonly UserService _user = user;
@@ -125,6 +126,4 @@ public class UserController(UserService user, ILogger<UserController> logger) : 
             return false;
         return Regex.IsMatch(input, @"^[a-zA-Z0-9]+$");
     }
-
-    private string Ip => HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
 }

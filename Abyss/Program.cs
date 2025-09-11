@@ -25,7 +25,6 @@ public class Program
         {
             options.AddFixedWindowLimiter("Fixed", policyOptions =>
             {
-                // 时间窗口长度
                 policyOptions.Window = TimeSpan.FromSeconds(30);
                 policyOptions.PermitLimit = 10;
                 policyOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
@@ -48,8 +47,7 @@ public class Program
             app.MapOpenApi();
         }
 
-        app.UseHttpsRedirection();
-
+        // app.UseHttpsRedirection();
         app.UseAuthorization();
         app.MapStaticAssets();
         app.MapControllers();

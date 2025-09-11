@@ -10,7 +10,7 @@ namespace Abyss.Components.Controllers.Media;
 
 [ApiController]
 [Route("api/[controller]")]
-public class VideoController(ILogger<VideoController> logger, ResourceService rs, ConfigureService config) : Controller
+public class VideoController(ILogger<VideoController> logger, ResourceService rs, ConfigureService config) : BaseController
 {
     private ILogger<VideoController> _logger = logger;
 
@@ -109,6 +109,4 @@ public class VideoController(ILogger<VideoController> logger, ResourceService rs
         if (!r)  return StatusCode(403, new { message = "403 Denied" });
         return PhysicalFile(d, "video/mp4", enableRangeProcessing: true);
     }
-    
-    private string Ip => HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
 }

@@ -11,7 +11,7 @@ using System.IO;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ImageController(ILogger<ImageController> logger, ResourceService rs, ConfigureService config) : Controller
+public class ImageController(ILogger<ImageController> logger, ResourceService rs, ConfigureService config) : BaseController
 {
     public readonly string ImageFolder = Path.Combine(config.MediaRoot, "Images");
     
@@ -78,6 +78,4 @@ public class ImageController(ILogger<ImageController> logger, ResourceService rs
         
         return PhysicalFile(d, "image/jpeg", enableRangeProcessing: true);
     }
-
-    private string Ip => HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
 }
