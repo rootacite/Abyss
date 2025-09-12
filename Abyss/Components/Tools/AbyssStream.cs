@@ -236,7 +236,7 @@ namespace Abyss.Components.Tools
             await ReadExactFromBaseAsync(header, 0, 4, cancellationToken).ConfigureAwait(false);
 
             var payloadLen = (int)BinaryPrimitives.ReadUInt32BigEndian(header);
-            if (payloadLen > 64 * 1024) throw new InvalidDataException("payload too big");
+            if (payloadLen > MaxPlaintextFrame) throw new InvalidDataException("payload too big");
             if (payloadLen < AeadTagLen) throw new InvalidDataException("payload too small");
 
             var payload = new byte[payloadLen];

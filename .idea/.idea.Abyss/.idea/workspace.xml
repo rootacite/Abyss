@@ -10,16 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/AbyssService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Tools/AbyssStream.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Tools/HttpHelper.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Tools/HttpReader.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss.sln.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/ConfigureService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/ConfigureService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Properties/launchSettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,7 +85,7 @@
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.30266345&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev-abyss&quot;,
     &quot;last_opened_file_path&quot;: &quot;/storage/Images/31/summary.json&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -104,7 +96,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected=".NET Launch Settings Profile.Abyss: http">
+  <component name="RunManager" selected="Publish to folder.Publish Abyss to folder">
     <configuration name="Publish Abyss to folder x86" type="DotNetFolderPublish" factoryName="Publish to folder">
       <riderPublish configuration="Release" platform="Any CPU" produce_single_file="true" ready_to_run="true" self_contained="true" target_folder="/opt/security/https/server" target_framework="net9.0" uuid_high="3690631506471504162" uuid_low="-4858628519588143325">
         <runtimes>
@@ -206,7 +198,9 @@
       <workItem from="1757653914660" duration="1923000" />
       <workItem from="1757680205207" duration="3000" />
       <workItem from="1757684000965" duration="2511000" />
-      <workItem from="1757687641035" duration="908000" />
+      <workItem from="1757687641035" duration="2969000" />
+      <workItem from="1757693751836" duration="667000" />
+      <workItem from="1757694833696" duration="11000" />
     </task>
     <servers />
   </component>
