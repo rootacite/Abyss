@@ -5,21 +5,11 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,
-      "applicationUrl": "http://192.168.1.244:5198",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "MEDIA_ROOT" : "/storage"
-      }
-    },
-    "https": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": false,
-      "applicationUrl": "https://localhost:7013;http://localhost:5198",
+      "applicationUrl": "http://localhost:3000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "MEDIA_ROOT" : "/storage",
-        "DEBUG_MODE" : "Debug"
+        "ALLOWED_PORTS" : "3000"
       }
     }
   }

@@ -10,13 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Static/ControllerExtensions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/ImageController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/ImageController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,7 +26,9 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/011a191356a243438f987de3ec3d6c6230800/04/8419ff35/ServiceProvider.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/457530be4752476295767457c3639889d1a000/25/817def70/ConfiguredValueTaskAwaitable`1.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/457530be4752476295767457c3639889d1a000/4c/4b962087/Monitor.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/457530be4752476295767457c3639889d1a000/af/aac0eaa5/ExceptionDispatchInfo.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/457530be4752476295767457c3639889d1a000/d0/3b166e9e/String.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5df2accb46d040ccbbbe8331bf4d24b61daa00/df/93debd37/ControllerBase.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7598e47d5cdf4107ba88f8220720fdc89000/a6/79d67871/xxHash128.cs" root0="FORCE_HIGHLIGHTING" />
@@ -40,12 +37,15 @@
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Task/TaskController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/AbyssService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/ConfigureService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/TaskService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Static/Helpers.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Abyss/Components/Static/HttpContextExtensions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Abyss/Components/Tools/AbyssStream.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Abyss/Components/Tools/HttpHelper.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Abyss/Components/Tools/HttpReader.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Model/Bookmark.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Model/ChallengeResponse.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Model/Chip.cs" root0="FORCE_HIGHLIGHTING" />
@@ -74,7 +74,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.Abyss: http.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Launch Settings Profile.Abyss: http.executor&quot;: &quot;Debug&quot;,
     &quot;.NET Launch Settings Profile.Abyss: https.executor&quot;: &quot;Debug&quot;,
     &quot;.NET Project.AbyssCli.executor&quot;: &quot;Run&quot;,
     &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
@@ -85,7 +85,7 @@
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.30266345&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev-abyss&quot;,
     &quot;last_opened_file_path&quot;: &quot;/storage/Images/31/summary.json&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -152,25 +152,8 @@
         <option name="Build" />
       </method>
     </configuration>
-    <configuration name="Abyss: https" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
-      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/Abyss/Abyss.csproj" />
-      <option name="LAUNCH_PROFILE_TFM" value="net9.0" />
-      <option name="LAUNCH_PROFILE_NAME" value="https" />
-      <option name="USE_EXTERNAL_CONSOLE" value="0" />
-      <option name="USE_MONO" value="0" />
-      <option name="RUNTIME_ARGUMENTS" value="" />
-      <option name="GENERATE_APPLICATIONHOST_CONFIG" value="1" />
-      <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
-      <option name="SEND_DEBUG_REQUEST" value="1" />
-      <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
-      <option name="AUTO_ATTACH_CHILDREN" value="0" />
-      <method v="2">
-        <option name="Build" />
-      </method>
-    </configuration>
     <list>
       <item itemvalue=".NET Launch Settings Profile.Abyss: http" />
-      <item itemvalue=".NET Launch Settings Profile.Abyss: https" />
       <item itemvalue=".NET Project.AbyssCli" />
       <item itemvalue="Publish to folder.Publish Abyss to folder" />
       <item itemvalue="Publish to folder.Publish Abyss to folder x86" />
@@ -208,7 +191,16 @@
       <workItem from="1757429030386" duration="20000" />
       <workItem from="1757508119360" duration="1704000" />
       <workItem from="1757519520290" duration="14000" />
-      <workItem from="1757567561745" duration="2019000" />
+      <workItem from="1757567561745" duration="2452000" />
+      <workItem from="1757597908282" duration="9750000" />
+      <workItem from="1757648650473" duration="9000" />
+      <workItem from="1757649246468" duration="4023000" />
+      <workItem from="1757653914660" duration="1923000" />
+      <workItem from="1757680205207" duration="3000" />
+      <workItem from="1757684000965" duration="2511000" />
+      <workItem from="1757687641035" duration="2969000" />
+      <workItem from="1757693751836" duration="667000" />
+      <workItem from="1757694833696" duration="11000" />
     </task>
     <servers />
   </component>
@@ -228,7 +220,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="dev-task" />
+                        <option value="main" />
                       </list>
                     </value>
                   </entry>

@@ -13,13 +13,13 @@ public class Program
 
         builder.Services.AddAuthorization();
         builder.Services.AddMemoryCache();
-        builder.Services.AddOpenApi();
         builder.Services.AddControllers();
         builder.Services.AddSingleton<ConfigureService>();
         builder.Services.AddSingleton<UserService>();
         builder.Services.AddSingleton<ResourceService>();
         builder.Services.AddSingleton<TaskController>();
         builder.Services.AddSingleton<TaskService>();
+        builder.Services.AddHostedService<AbyssService>();
         
         builder.Services.AddRateLimiter(options =>
         {
@@ -42,14 +42,8 @@ public class Program
 
         var app = builder.Build();
 
-        if (app.Environment.IsDevelopment())
-        {
-            app.MapOpenApi();
-        }
-
         // app.UseHttpsRedirection();
         app.UseAuthorization();
-        app.MapStaticAssets();
         app.MapControllers();
         
         app.UseRateLimiter();
