@@ -11,7 +11,9 @@ public class Comic
     [JsonProperty("bookmarks")]
     public List<Bookmark> Bookmarks { get; set; } = new();
     [JsonProperty("author")]
-    public string Author { get; set; } = "";
+    public string Author { get; set; } = ""; 
+    [JsonProperty("tags")]
+    public List<string> Tags { get; set; } = new();
     [JsonProperty("list")]
     public List<string> List { get; set; } = new();
 }
