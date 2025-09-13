@@ -9,15 +9,17 @@ using System.Data;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
-
+using System.Text;
+using Abyss.Components.Services;
+using Microsoft.AspNetCore.Authentication;
 using NSec.Cryptography;
 
 using ChaCha20Poly1305 = System.Security.Cryptography.ChaCha20Poly1305;
 
 namespace Abyss.Components.Tools
 {
-    // TODO: Since C25519 has already been used for user authentication,
-    // TODO: why not use that public key to verify user identity when establishing a secure channel here?
+    // TODO: (complete) Since C25519 has already been used for user authentication,
+    // TODO: (complete) why not use that public key to verify user identity when establishing a secure channel here?
     public sealed class AbyssStream : NetworkStream, IDisposable
     {
         private const int PublicKeyLength = 32;
@@ -63,7 +65,7 @@ namespace Abyss.Components.Tools
         /// Handshake: X25519 public exchange (raw) -> shared secret -> HKDF -> AEAD key + saltA + saltB
         /// send/recv salts are assigned deterministically by lexicographic comparison of raw public keys.
         /// </summary>
-        public static async Task<AbyssStream> CreateAsync(TcpClient client, byte[]? privateKeyRaw = null, CancellationToken cancellationToken = default)
+        public static async Task<AbyssStream> CreateAsync(TcpClient client, UserService us, byte[]? privateKeyRaw = null, CancellationToken cancellationToken = default)
         {
             if (client == null) throw new ArgumentNullException(nameof(client));
             var socket = client.Client ?? throw new ArgumentException("TcpClient has no underlying socket");
@@ -103,6 +105,27 @@ namespace Abyss.Components.Tools
             }
 
             await ReadExactFromSocketAsync(socket, remotePublic, 0, PublicKeyLength, cancellationToken).ConfigureAwait(false);
+
+            var ch = Encoding.UTF8.GetBytes(UserService.GenerateRandomAsciiString(32));
+            sent = 0;
+            while (sent < ch.Length)
+            {
+                var toSend = new ReadOnlyMemory<byte>(ch, sent, ch.Length - sent);
+                sent += await socket.SendAsync(toSend, SocketFlags.None, cancellationToken).ConfigureAwait(false);
+            }
+            
+            var rch = new byte[64];
+            await ReadExactFromSocketAsync(socket, rch, 0, 64, cancellationToken).ConfigureAwait(false);
+            bool rau = await us.VerifyAny(ch, rch);
+            if (!rau) throw new AuthenticationFailureException("");
+            
+            var ack = Encoding.UTF8.GetBytes(UserService.GenerateRandomAsciiString(16));
+            sent = 0;
+            while (sent < ack.Length)
+            {
+                var toSend = new ReadOnlyMemory<byte>(ack, sent, ack.Length - sent);
+                sent += await socket.SendAsync(toSend, SocketFlags.None, cancellationToken).ConfigureAwait(false);
+            }
 
             // 3) Compute shared secret (X25519)
             PublicKey remotePub;
@@ -520,7 +543,7 @@ namespace Abyss.Components.Tools
 
     public static class TcpClientAbyssExtensions
     {
-        public static Task<AbyssStream> GetAbyssStreamAsync(this TcpClient client, byte[]? privateKeyRaw = null, CancellationToken ct = default)
-            => AbyssStream.CreateAsync(client, privateKeyRaw, ct);
+        public static Task<AbyssStream> GetAbyssStreamAsync(this TcpClient client, UserService us, byte[]? privateKeyRaw = null, CancellationToken ct = default)
+            => AbyssStream.CreateAsync(client, us, privateKeyRaw, ct);
     }
 }

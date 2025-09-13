@@ -174,10 +174,37 @@ public class UserService
         }
     }
     
-    static bool VerifySignature(PublicKey publicKey, byte[] data, byte[] signature)
+    public static bool VerifySignature(PublicKey publicKey, byte[] data, byte[] signature)
     {
         var algorithm = SignatureAlgorithm.Ed25519;
         return algorithm.Verify(publicKey, data, signature);
+    }
+
+    public async Task<bool> VerifyAny(byte[] data, byte[] signature)
+    {
+        var users = await _database.Table<User>().ToListAsync();
+        foreach (var u in users)
+        {
+            try
+            {
+                var pubKeyBytes = Convert.FromBase64String(u.PublicKey);
+                var pubKey = PublicKey.Import(
+                    SignatureAlgorithm.Ed25519,
+                    pubKeyBytes,
+                    KeyBlobFormat.RawPublicKey);
+
+                if (VerifySignature(pubKey, data, signature))
+                {
+                    _logger.LogInformation($"Signature verified using user {u.Name}");
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, $"Failed to import public key for {u.Name}");
+            }
+        }
+        return false;
     }
     
     public string CreateToken(string user, string ip, TimeSpan lifetime)

@@ -11,6 +11,9 @@
   <component name="ChangeListManager">
     <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/AbyssService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/AbyssService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Tools/AbyssStream.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Tools/AbyssStream.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -204,6 +207,8 @@
       <workItem from="1757702942841" duration="32000" />
       <workItem from="1757735249561" duration="5523000" />
       <workItem from="1757742881713" duration="2285000" />
+      <workItem from="1757745929389" duration="93000" />
+      <workItem from="1757751423586" duration="2362000" />
     </task>
     <servers />
   </component>

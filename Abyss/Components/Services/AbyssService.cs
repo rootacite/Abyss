@@ -5,7 +5,7 @@ using Abyss.Components.Tools;
 
 namespace Abyss.Components.Services;
 
-public class AbyssService(ILogger<AbyssService> logger, ConfigureService config) : IHostedService, IDisposable
+public class AbyssService(ILogger<AbyssService> logger, ConfigureService config, UserService user) : IHostedService, IDisposable
 {
     private Task? _executingTask;
     private CancellationTokenSource? _cts;
@@ -52,10 +52,9 @@ public class AbyssService(ILogger<AbyssService> logger, ConfigureService config)
 
     private async Task ClientHandlerAsync(TcpClient client, CancellationToken cancellationToken)
     {
-        var stream = await client.GetAbyssStreamAsync(ct: cancellationToken);
-
         try
         {
+            await using var stream = await client.GetAbyssStreamAsync(ct: cancellationToken, us: user);
             var request = HttpHelper.Parse(await HttpReader.ReadHttpMessageAsync(stream, cancellationToken));
             var port = 80;
             var sp = request.RequestUri?.ToString().Split(':') ?? [];
@@ -137,7 +136,6 @@ public class AbyssService(ILogger<AbyssService> logger, ConfigureService config)
         }
         finally
         {
-            stream.Close();
             client.Close();
             client.Dispose();
         }
