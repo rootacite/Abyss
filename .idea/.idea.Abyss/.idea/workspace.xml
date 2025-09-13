@@ -11,7 +11,10 @@
   <component name="ChangeListManager">
     <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/ImageController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/ImageController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/AbyssService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/AbyssService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Tools/AbyssStream.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Tools/AbyssStream.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,7 +88,7 @@
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.30266345&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dev-abyss&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;last_opened_file_path&quot;: &quot;/storage/Images/31/summary.json&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -201,6 +204,9 @@
       <workItem from="1757687641035" duration="2969000" />
       <workItem from="1757693751836" duration="667000" />
       <workItem from="1757694833696" duration="11000" />
+      <workItem from="1757695721386" duration="749000" />
+      <workItem from="1757702942841" duration="32000" />
+      <workItem from="1757735249561" duration="4543000" />
     </task>
     <servers />
   </component>

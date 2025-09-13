@@ -41,6 +41,7 @@ public class AbyssService(ILogger<AbyssService> logger, ConfigureService config)
                 int bytesRead = await upstream.ReadAsync(buffer, 0, buffer.Length, token);
                 if (bytesRead == 0) 
                     break;
+                
                 await client.WriteAsync(buffer, 0, bytesRead, token);
             }
         });

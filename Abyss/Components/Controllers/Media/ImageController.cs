@@ -9,6 +9,8 @@ using Newtonsoft.Json.Linq;
 namespace Abyss.Components.Controllers.Media;
 using System.IO;
 
+using Task = System.Threading.Tasks.Task;
+
 [ApiController]
 [Route("api/[controller]")]
 public class ImageController(ILogger<ImageController> logger, ResourceService rs, ConfigureService config) : BaseController
@@ -44,6 +46,27 @@ public class ImageController(ILogger<ImageController> logger, ResourceService rs
         if (!r)  return StatusCode(403, new { message = "403 Denied" });
         
         return Ok(await System.IO.File.ReadAllTextAsync(d));
+    }
+
+    [HttpPost("bulkquery")]
+    public async Task<IActionResult> QueryBulk([FromQuery] string token, [FromBody] string[] id)
+    {
+        List<string> result = new List<string>();
+
+        var db = id.Select(x => Helpers.SafePathCombine(ImageFolder, [x, "summary.json"])).ToArray();
+        if(db.Any(x => x == null))
+            return StatusCode(403, new { message = "403 Denied" });
+        
+        var rb = db.Select(x => rs.Get(x!, token, Ip)).ToArray();
+        bool[] results = await Task.WhenAll(rb);
+        
+        if(results.Any(x => !x))
+            return StatusCode(403, new { message = "403 Denied" });
+        
+        var rc = db.Select(x => System.IO.File.ReadAllTextAsync(x!)).ToArray();
+        string[] rcs = await Task.WhenAll(rc);
+        
+        return Ok(rcs);
     }
 
     [HttpPost("{id}/bookmark")]

@@ -8,6 +8,8 @@ using Newtonsoft.Json;
 
 namespace Abyss.Components.Controllers.Media;
 
+using Task = System.Threading.Tasks.Task;
+
 [ApiController]
 [Route("api/[controller]")]
 public class VideoController(ILogger<VideoController> logger, ResourceService rs, ConfigureService config) : BaseController
@@ -73,6 +75,27 @@ public class VideoController(ILogger<VideoController> logger, ResourceService rs
         return Ok(await System.IO.File.ReadAllTextAsync(d));
     }
 
+    [HttpPost("{klass}/bulkquery")]
+    public async Task<IActionResult> QueryBulk([FromQuery] string token, [FromBody] string[] id, [FromRoute] string klass)
+    {
+        List<string> result = new List<string>();
+        
+        var db = id.Select(x => Helpers.SafePathCombine(VideoFolder, [klass, x, "summary.json"])).ToArray();
+        if(db.Any(x => x == null))
+            return BadRequest();
+        
+        var rb = db.Select(x => rs.Get(x!, token, Ip)).ToArray();
+        bool[] results = await Task.WhenAll(rb);
+        
+        if(results.Any(x => !x))
+            return StatusCode(403, new { message = "403 Denied" });
+        
+        var rc = db.Select(x => System.IO.File.ReadAllTextAsync(x!)).ToArray();
+        string[] rcs = await Task.WhenAll(rc);
+        
+        return Ok(rcs);
+    }
+
     [HttpGet("{klass}/{id}/cover")]
     public async Task<IActionResult> Cover(string klass, string id, string token)
     {
@@ -81,8 +104,6 @@ public class VideoController(ILogger<VideoController> logger, ResourceService rs
         
         var r = await rs.Get(d, token, Ip);
         if (!r)  return StatusCode(403, new { message = "403 Denied" });
-        
-        _logger.LogInformation($"Cover found for {id}");
         
         return PhysicalFile(d, "image/jpeg", enableRangeProcessing: true);
     }

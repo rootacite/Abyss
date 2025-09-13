@@ -5,7 +5,7 @@
 using System.Buffers;
 using System.Buffers.Binary;
 using System.Collections.Concurrent;
-
+using System.Data;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
@@ -16,6 +16,8 @@ using ChaCha20Poly1305 = System.Security.Cryptography.ChaCha20Poly1305;
 
 namespace Abyss.Components.Tools
 {
+    // TODO: Since C25519 has already been used for user authentication,
+    // TODO: why not use that public key to verify user identity when establishing a secure channel here?
     public sealed class AbyssStream : NetworkStream, IDisposable
     {
         private const int PublicKeyLength = 32;
