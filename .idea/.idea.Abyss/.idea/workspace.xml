@@ -13,8 +13,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/ImageController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/ImageController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/AbyssService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/AbyssService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Tools/AbyssStream.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Tools/AbyssStream.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Properties/launchSettings.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +99,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="Publish to folder.Publish Abyss to folder">
+  <component name="RunManager" selected=".NET Launch Settings Profile.Abyss: http">
     <configuration name="Publish Abyss to folder x86" type="DotNetFolderPublish" factoryName="Publish to folder">
       <riderPublish configuration="Release" platform="Any CPU" produce_single_file="true" ready_to_run="true" self_contained="true" target_folder="/opt/security/https/server" target_framework="net9.0" uuid_high="3690631506471504162" uuid_low="-4858628519588143325">
         <runtimes>
@@ -206,7 +206,8 @@
       <workItem from="1757694833696" duration="11000" />
       <workItem from="1757695721386" duration="749000" />
       <workItem from="1757702942841" duration="32000" />
-      <workItem from="1757735249561" duration="4543000" />
+      <workItem from="1757735249561" duration="5523000" />
+      <workItem from="1757742881713" duration="2180000" />
     </task>
     <servers />
   </component>

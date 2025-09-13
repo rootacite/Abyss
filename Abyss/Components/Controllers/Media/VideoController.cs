@@ -84,16 +84,14 @@ public class VideoController(ILogger<VideoController> logger, ResourceService rs
         if(db.Any(x => x == null))
             return BadRequest();
         
-        var rb = db.Select(x => rs.Get(x!, token, Ip)).ToArray();
-        bool[] results = await Task.WhenAll(rb);
-        
-        if(results.Any(x => !x))
+        if(!await rs.GetAll(db!, token, Ip))
             return StatusCode(403, new { message = "403 Denied" });
         
         var rc = db.Select(x => System.IO.File.ReadAllTextAsync(x!)).ToArray();
         string[] rcs = await Task.WhenAll(rc);
+        var rjs = rcs.Select(JsonConvert.DeserializeObject<Video>).Select(x => x!).ToList();
         
-        return Ok(rcs);
+        return Ok(JsonConvert.SerializeObject(rjs));
     }
 
     [HttpGet("{klass}/{id}/cover")]

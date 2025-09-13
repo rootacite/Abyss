@@ -9,7 +9,8 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "MEDIA_ROOT" : "/storage",
-        "ALLOWED_PORTS" : "3000"
+        "ALLOWED_PORTS" : "3000",
+        "DEBUG_MODE": "Debug"
       }
     }
   }

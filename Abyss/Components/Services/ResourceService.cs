@@ -44,7 +44,7 @@ public class ResourceService
         {
             InsertRaRow(tasksPath, "root", "rw,r-,r-", true).Wait();
         }
-        
+
         var livePath = Helpers.SafePathCombine(_config.MediaRoot, "Live");
         if (livePath != null)
         {
@@ -58,6 +58,121 @@ public class ResourceService
         var b = Encoding.UTF8.GetBytes(path);
         var r = XxHash128.Hash(b, 0x11451419);
         return Convert.ToBase64String(r ?? []);
+    }
+
+    public async Task<bool> ValidAll(string[] paths, string token, OperationType type, string ip)
+    {
+        if (paths == null || paths.Length == 0)
+        {
+            _logger.LogError("ValidAll called with empty path set");
+            return false;
+        }
+
+        var mediaRootFull = Path.GetFullPath(_config.MediaRoot);
+
+        // 1. basic path checks & normalize to relative
+        var relPaths = new List<string>(paths.Length);
+        foreach (var p in paths)
+        {
+            if (p == null || !p.StartsWith(mediaRootFull, StringComparison.OrdinalIgnoreCase))
+            {
+                _logger.LogError($"Path outside media root or null: {p}");
+                return false;
+            }
+
+            relPaths.Add(Path.GetRelativePath(_config.MediaRoot, Path.GetFullPath(p)));
+        }
+
+        // 2. validate token and user once
+        string? username = _user.Validate(token, ip);
+        if (username == null)
+        {
+            _logger.LogError($"Invalid token: {token}");
+            return false;
+        }
+
+        User? user = await _user.QueryUser(username);
+        if (user == null || user.Name != username)
+        {
+            _logger.LogError($"Verification failed: {token}");
+            return false;
+        }
+
+        // 3. build uid -> required ops map (avoid duplicate Uid calculations)
+        var uidToOps = new Dictionary<string, HashSet<OperationType>>(StringComparer.OrdinalIgnoreCase);
+        foreach (var rel in relPaths)
+        {
+            var parts = rel
+                .Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar },
+                    StringSplitOptions.RemoveEmptyEntries)
+                .Where(s => !string.IsNullOrEmpty(s))
+                .ToArray();
+
+            // parents (each prefix) require Read
+            for (int i = 0; i < parts.Length - 1; i++)
+            {
+                var subPath = Path.Combine(parts.Take(i + 1).ToArray());
+                var uidDir = Uid(subPath);
+                if (!uidToOps.TryGetValue(uidDir, out var ops))
+                {
+                    ops = new HashSet<OperationType>();
+                    uidToOps[uidDir] = ops;
+                }
+
+                ops.Add(OperationType.Read);
+            }
+
+            // resource itself requires requested 'type'
+            var resourcePath = (parts.Length == 0) ? string.Empty : Path.Combine(parts);
+            var uidRes = Uid(resourcePath);
+            if (!uidToOps.TryGetValue(uidRes, out var resOps))
+            {
+                resOps = new HashSet<OperationType>();
+                uidToOps[uidRes] = resOps;
+            }
+
+            resOps.Add(type);
+        }
+
+        // 4. batch query DB for all UIDs
+        var uidsNeeded = uidToOps.Keys.ToList();
+        var rasList = await _database.Table<ResourceAttribute>()
+            .Where(r => uidsNeeded.Contains(r.Uid))
+            .ToListAsync();
+
+        var raDict = rasList.ToDictionary(r => r.Uid, StringComparer.OrdinalIgnoreCase);
+
+        // 5. check each uid once per required operation (cache results per uid+op)
+        var permCache = new Dictionary<(string uid, OperationType op), bool>(); // avoid repeated CheckPermission
+
+        foreach (var kv in uidToOps)
+        {
+            var uid = kv.Key;
+            if (!raDict.TryGetValue(uid, out var ra) || ra == null)
+            {
+                // find an example path string for logging would require reverse map; keep uid for clarity
+                _logger.LogError($"Permission check failed (missing resource attribute): User: {username}, Uid: {uid}");
+                return false;
+            }
+
+            foreach (var op in kv.Value)
+            {
+                var key = (uid, op);
+                if (!permCache.TryGetValue(key, out var ok))
+                {
+                    ok = await CheckPermission(user, ra, op);
+                    permCache[key] = ok;
+                }
+
+                if (!ok)
+                {
+                    _logger.LogError($"Permission check failed: User: {username}, Uid: {uid}, Type: {op}");
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     public async Task<bool> Valid(string path, string token, OperationType type, string ip)
@@ -175,6 +290,11 @@ public class ResourceService
         return await Valid(path, token, OperationType.Read, ip);
     }
 
+    public async Task<bool> GetAll(string[] path, string token, string ip)
+    {
+        return await ValidAll(path, token, OperationType.Read, ip);
+    }
+
     public async Task<bool> Update(string path, string token, string ip)
     {
         return await Valid(path, token, OperationType.Write, ip);
@@ -267,13 +387,14 @@ public class ResourceService
     {
         throw new NotImplementedException();
     }
-    
+
     public async Task<bool> Exclude(string path, string token, string ip)
     {
         var requester = _user.Validate(token, ip);
         if (requester != "root")
         {
-            _logger.LogWarning($"Permission denied: Non-root user '{requester ?? "unknown"}' attempted to exclude resource '{path}'.");
+            _logger.LogWarning(
+                $"Permission denied: Non-root user '{requester ?? "unknown"}' attempted to exclude resource '{path}'.");
             return false;
         }
 
