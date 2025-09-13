@@ -419,18 +419,21 @@ namespace Abyss.Components.Tools
             }
 
             var payloadLen = unchecked((uint)(ciphertext.Length + tag.Length));
-            var header = new byte[4];
-            BinaryPrimitives.WriteUInt32BigEndian(header, payloadLen);
 
-            await base.WriteAsync(header, 0, header.Length, cancellationToken).ConfigureAwait(false);
+            var packet = new byte[4 + payloadLen];
+            BinaryPrimitives.WriteUInt32BigEndian(packet.AsSpan(0, 4), payloadLen);
+
             if (ciphertext.Length > 0)
-                await base.WriteAsync(ciphertext, 0, ciphertext.Length, cancellationToken).ConfigureAwait(false);
-            await base.WriteAsync(tag, 0, tag.Length, cancellationToken).ConfigureAwait(false);
+                ciphertext.CopyTo(packet.AsSpan(4));
+            tag.CopyTo(packet.AsSpan(4 + ciphertext.Length));
+
+            await base.WriteAsync(packet, 0, packet.Length, cancellationToken).ConfigureAwait(false);
             await base.FlushAsync(cancellationToken).ConfigureAwait(false);
 
             Array.Clear(nonce, 0, nonce.Length);
             Array.Clear(tag, 0, tag.Length);
             Array.Clear(ciphertext, 0, ciphertext.Length);
+            Array.Clear(packet, 0, packet.Length);
         }
 
         protected override void Dispose(bool disposing)
