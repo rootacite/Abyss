@@ -1,4 +1,4 @@
-_<div align="center">
+<div align="center">
 
 # Abyss (Server for Aether)
 
@@ -6,11 +6,10 @@ _<div align="center">
 
 🚀This is the server of the multimedia application Aether, which can also be extended to other purposes🚀
 
+<img src="abyss_clip.png" width="25%" alt="Logo">
+
 </div>
 
-<br/>
-<br/>
-<br/>
 
 ---
 
