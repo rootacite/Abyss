@@ -4,13 +4,57 @@ _<div align="center">
 
 [![Plugin Version](https://img.shields.io/badge/Alpha-v0.1-red.svg?style=for-the-badge&color=76bad9)](https://github.com/rootacite/Abyss)
 
-_🚀This is the server of the multimedia application Aether, which can also be extended to other purposes🚀_
+🚀This is the server of the multimedia application Aether, which can also be extended to other purposes🚀
 
 </div>
 
 <br/>
 <br/>
 <br/>
+
+---
+
+## Description
+
+**Abyss** is a modern, self-hosted media server and secure proxy platform built with **.NET 9**. It is designed to provide a highly secure, extensible, and efficient solution for managing and streaming media content (images, videos, live streams) while enforcing fine-grained access control and cryptographic authentication.
+
+### 🎯 Key Features
+
+- **Media Management**: Organize and serve images, videos, and live streams with structured directory support.
+- **User Authentication**: Challenge-response authentication using **Ed25519** signatures. No private keys are ever transmitted.
+- **Role-Based Access Control (RBAC)**: Hierarchical user privileges with configurable permissions for resources.
+- **Secure Proxy**: Built-in HTTP/S proxy with end-to-end encrypted tunneling using **X25519** key exchange and **ChaCha20-Poly1305** encryption.
+- **Resource-Level Permissions**: Fine-grained control over files and directories using a SQLite-based attribute system.
+- **Task System**: Support for background tasks such as media uploads and processing with chunk-based integrity validation.
+- **RESTful API**: Fully documented API endpoints for media access, user management, and task control.
+
+### 🛠️ Technology Stack
+
+- **Backend**: ASP.NET Core 9, MVC, Dependency Injection
+- **Database**: SQLite with async ORM support
+- **Cryptography**: NSec.Cryptography (Ed25519, X25519), ChaCha20Poly1305
+- **Media Handling**: Range requests, MIME type detection, chunked uploads
+- **Security**: Rate limiting, IP binding, token expiration, secure headers
+
+### 🔐 Security Highlights
+
+- Zero-trust architecture: All requests require valid tokens bound to IP addresses.
+- No plaintext private key transmission.
+- All media and metadata access is validated against a permission database.
+- Secure tunneling with forward secrecy via ephemeral key exchange.
+
+### 📦 Use Cases
+
+- Personal media library with access control
+- Secure internal video streaming platform
+- Proxy server with authenticated tunneling
+- Task-driven media processing pipeline
+
+### 🌱 Extensibility
+
+Abyss is designed with modularity in mind. Its service-based architecture allows easy integration of new media types, authentication providers, or storage backends.
+
+---
 
 ## Development environment
 
@@ -326,4 +370,4 @@ These endpoints provide access to static image resources. A valid token is requi
 - [ ] Add P/D method to all controllers to achieve dynamic modification of media items
 - [x] Implement identity management module
 - [ ] Add a description of the media library directory structure in the READMD document
-- [x] Add API interface instructions in the READMD document_
+- [x] Add API interface instructions in the READMD document
