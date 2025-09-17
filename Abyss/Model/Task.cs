@@ -9,7 +9,7 @@ public enum TaskType
 public class Task
 {
     public uint Id;
-    public string Owner = "";
+    public int Owner;
     public string Class = "";
     public string Name = "";
     public TaskType Type;

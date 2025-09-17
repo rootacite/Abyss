@@ -11,7 +11,7 @@ public class LiveController(ILogger<LiveController> logger, ResourceService rs, 
     public readonly string LiveFolder = Path.Combine(config.MediaRoot, "Live");
 
     [HttpPost("{id}")]
-    public async Task<IActionResult> AddLive(string id, string token, string owner)
+    public async Task<IActionResult> AddLive(string id, string token, int owner)
     {
         var d = Helpers.SafePathCombine(LiveFolder, [id]);
         if (d == null) return StatusCode(403, new { message = "403 Denied" });

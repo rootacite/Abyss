@@ -73,8 +73,6 @@ public static class Helpers
         {
             return PathType.AccessDenied;
         }
-        
-        return PathType.NotFound;
     }
 }
 

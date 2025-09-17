@@ -38,8 +38,6 @@ public class Program
             };
         });
 
-        builder.Services.BuildServiceProvider().GetRequiredService<UserService>();
-
         var app = builder.Build();
 
         // app.UseHttpsRedirection();

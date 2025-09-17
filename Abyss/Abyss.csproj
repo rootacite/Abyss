@@ -13,6 +13,10 @@
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="NSec.Cryptography" Version="25.4.0" />
         <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+        <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.11" />
+        <PackageReference Include="SQLitePCLRaw.core" Version="3.0.2" />
+        <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.11" />
+        <PackageReference Include="SQLitePCLRaw.provider.e_sqlite3" Version="3.0.2" />
         <PackageReference Include="Standart.Hash.xxHash" Version="4.0.5" />
         <PackageReference Include="System.IO.Hashing" Version="10.0.0-preview.7.25380.108" />
     </ItemGroup>

@@ -4,7 +4,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Abyss.Components.Static;
 using Abyss.Model;
-using Microsoft.Extensions.Caching.Memory;
 using SQLite;
 using System.IO.Hashing;
 
@@ -21,19 +20,15 @@ public class ResourceService
 {
     private readonly ILogger<ResourceService> _logger;
     private readonly ConfigureService _config;
-    private readonly IMemoryCache _cache;
     private readonly UserService _user;
     private readonly SQLiteAsyncConnection _database;
 
-    private static readonly Regex PermissionRegex =
-        new(@"^([r-][w-]),([r-][w-]),([r-][w-])$", RegexOptions.Compiled);
+    private static readonly Regex PermissionRegex = new("^([r-][w-]),([r-][w-]),([r-][w-])$", RegexOptions.Compiled);
 
-    public ResourceService(ILogger<ResourceService> logger, ConfigureService config, IMemoryCache cache,
-        UserService user)
+    public ResourceService(ILogger<ResourceService> logger, ConfigureService config, UserService user)
     {
         _logger = logger;
         _config = config;
-        _cache = cache;
         _user = user;
 
         _database = new SQLiteAsyncConnection(config.RaDatabase, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
@@ -42,13 +37,13 @@ public class ResourceService
         var tasksPath = Helpers.SafePathCombine(_config.MediaRoot, "Tasks");
         if (tasksPath != null)
         {
-            InsertRaRow(tasksPath, "root", "rw,r-,r-", true).Wait();
+            InsertRaRow(tasksPath, 1, "rw,r-,r-", true).Wait();
         }
 
         var livePath = Helpers.SafePathCombine(_config.MediaRoot, "Live");
         if (livePath != null)
         {
-            InsertRaRow(livePath, "root", "rw,r-,r-", true).Wait();
+            InsertRaRow(livePath, 1, "rw,r-,r-", true).Wait();
         }
     }
 
@@ -57,12 +52,12 @@ public class ResourceService
     {
         var b = Encoding.UTF8.GetBytes(path);
         var r = XxHash128.Hash(b, 0x11451419);
-        return Convert.ToBase64String(r ?? []);
+        return Convert.ToBase64String(r);
     }
 
-    public async Task<bool> ValidAll(string[] paths, string token, OperationType type, string ip)
+    private async Task<bool> ValidAll(string[] paths, string token, OperationType type, string ip)
     {
-        if (paths == null || paths.Length == 0)
+        if (paths.Length == 0)
         {
             _logger.LogError("ValidAll called with empty path set");
             return false;
@@ -74,7 +69,7 @@ public class ResourceService
         var relPaths = new List<string>(paths.Length);
         foreach (var p in paths)
         {
-            if (p == null || !p.StartsWith(mediaRootFull, StringComparison.OrdinalIgnoreCase))
+            if (!p.StartsWith(mediaRootFull, StringComparison.OrdinalIgnoreCase))
             {
                 _logger.LogError($"Path outside media root or null: {p}");
                 return false;
@@ -84,22 +79,24 @@ public class ResourceService
         }
 
         // 2. validate token and user once
-        string? username = _user.Validate(token, ip);
-        if (username == null)
+        int uuid = _user.Validate(token, ip);
+        if (uuid == -1)
         {
             _logger.LogError($"Invalid token: {token}");
             return false;
         }
 
-        User? user = await _user.QueryUser(username);
-        if (user == null || user.Name != username)
+        User? user = await _user.QueryUser(uuid);
+        if (user == null || user.Uuid != uuid)
         {
             _logger.LogError($"Verification failed: {token}");
-            return false;
+            return false; 
         }
 
         // 3. build uid -> required ops map (avoid duplicate Uid calculations)
         var uidToOps = new Dictionary<string, HashSet<OperationType>>(StringComparer.OrdinalIgnoreCase);
+        var uidToExampleRelPath =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); // for better logging
         foreach (var rel in relPaths)
         {
             var parts = rel
@@ -117,6 +114,7 @@ public class ResourceService
                 {
                     ops = new HashSet<OperationType>();
                     uidToOps[uidDir] = ops;
+                    uidToExampleRelPath[uidDir] = subPath;
                 }
 
                 ops.Add(OperationType.Read);
@@ -129,16 +127,40 @@ public class ResourceService
             {
                 resOps = new HashSet<OperationType>();
                 uidToOps[uidRes] = resOps;
+                uidToExampleRelPath[uidRes] = resourcePath;
             }
 
             resOps.Add(type);
         }
 
-        // 4. batch query DB for all UIDs
+        // 4. batch query DB for all UIDs using parameterized IN (...) and chunking to respect SQLite param limits
         var uidsNeeded = uidToOps.Keys.ToList();
-        var rasList = await _database.Table<ResourceAttribute>()
-            .Where(r => uidsNeeded.Contains(r.Uid))
-            .ToListAsync();
+        var rasList = new List<ResourceAttribute>();
+
+        const int sqliteMaxVariableNumber = 900; // keep below default 999 for safety
+        if (uidsNeeded.Count > 0)
+        {
+            if (uidsNeeded.Count <= sqliteMaxVariableNumber)
+            {
+                var placeholders = string.Join(",", uidsNeeded.Select(_ => "?"));
+                var queryArgs = uidsNeeded.Cast<object>().ToArray();
+                var sql = $"SELECT * FROM ResourceAttributes WHERE Uid IN ({placeholders})";
+                var chunkResult = await _database.QueryAsync<ResourceAttribute>(sql, queryArgs);
+                rasList.AddRange(chunkResult);
+            }
+            else
+            {
+                for (int i = 0; i < uidsNeeded.Count; i += sqliteMaxVariableNumber)
+                {
+                    var chunk = uidsNeeded.Skip(i).Take(sqliteMaxVariableNumber).ToList();
+                    var placeholders = string.Join(",", chunk.Select(_ => "?"));
+                    var queryArgs = chunk.Cast<object>().ToArray();
+                    var sql = $"SELECT * FROM ResourceAttributes WHERE Uid IN ({placeholders})";
+                    var chunkResult = await _database.QueryAsync<ResourceAttribute>(sql, queryArgs);
+                    rasList.AddRange(chunkResult);
+                }
+            }
+        }
 
         var raDict = rasList.ToDictionary(r => r.Uid, StringComparer.OrdinalIgnoreCase);
 
@@ -148,10 +170,11 @@ public class ResourceService
         foreach (var kv in uidToOps)
         {
             var uid = kv.Key;
-            if (!raDict.TryGetValue(uid, out var ra) || ra == null)
+            if (!raDict.TryGetValue(uid, out var ra))
             {
-                // find an example path string for logging would require reverse map; keep uid for clarity
-                _logger.LogError($"Permission check failed (missing resource attribute): User: {username}, Uid: {uid}");
+                var examplePath = uidToExampleRelPath.GetValueOrDefault(uid, uid);
+                _logger.LogError(
+                    $"Permission check failed (missing resource attribute): User: {uuid}, Resource: {examplePath}, Uid: {uid}");
                 return false;
             }
 
@@ -166,7 +189,9 @@ public class ResourceService
 
                 if (!ok)
                 {
-                    _logger.LogError($"Permission check failed: User: {username}, Uid: {uid}, Type: {op}");
+                    var examplePath = uidToExampleRelPath.TryGetValue(uid, out var p) ? p : uid;
+                    _logger.LogError(
+                        $"Permission check failed: User: {uuid}, Resource: {examplePath}, Uid: {uid}, Type: {op}");
                     return false;
                 }
             }
@@ -174,6 +199,7 @@ public class ResourceService
 
         return true;
     }
+
 
     public async Task<bool> Valid(string path, string token, OperationType type, string ip)
     {
@@ -183,16 +209,16 @@ public class ResourceService
 
         path = Path.GetRelativePath(_config.MediaRoot, path);
 
-        string? username = _user.Validate(token, ip);
-        if (username == null)
+        int uuid = _user.Validate(token, ip);
+        if (uuid == -1)
         {
             // No permission granted for invalid tokens
             _logger.LogError($"Invalid token: {token}");
             return false;
         }
 
-        User? user = await _user.QueryUser(username);
-        if (user == null || user.Name != username)
+        User? user = await _user.QueryUser(uuid);
+        if (user == null || user.Uuid != uuid)
         {
             _logger.LogError($"Verification failed: {token}");
             return false; // Two-factor authentication
@@ -205,34 +231,38 @@ public class ResourceService
         {
             var subPath = Path.Combine(parts.Take(i + 1).ToArray());
             var uidDir = Uid(subPath);
-            var raDir = await _database.Table<ResourceAttribute>().Where(r => r.Uid == uidDir)
+            var raDir = await _database
+                .Table<ResourceAttribute>()
+                .Where(r => r.Uid == uidDir)
                 .FirstOrDefaultAsync();
             if (raDir == null)
             {
-                _logger.LogError($"Permission denied: {username} has no read access to parent directory {subPath}");
+                _logger.LogError($"Permission denied: {uuid} has no read access to parent directory {subPath}");
                 return false;
             }
 
             if (!await CheckPermission(user, raDir, OperationType.Read))
             {
-                _logger.LogError($"Permission denied: {username} has no read access to parent directory {subPath}");
+                _logger.LogError($"Permission denied: {uuid} has no read access to parent directory {subPath}");
                 return false;
             }
         }
 
         var uid = Uid(path);
-        ResourceAttribute? ra = await _database.Table<ResourceAttribute>().Where(r => r.Uid == uid)
+        ResourceAttribute? ra = await _database
+            .Table<ResourceAttribute>()
+            .Where(r => r.Uid == uid)
             .FirstOrDefaultAsync();
         if (ra == null)
         {
-            _logger.LogError($"Permission check failed: User: {username}, Resource: {path}, Type: {type.ToString()} ");
+            _logger.LogError($"Permission check failed: User: {uuid}, Resource: {path}, Type: {type.ToString()} ");
             return false;
         }
 
         var l = await CheckPermission(user, ra, type);
         if (!l)
         {
-            _logger.LogError($"Permission check failed: User: {username}, Resource: {path}, Type: {type.ToString()} ");
+            _logger.LogError($"Permission check failed: User: {uuid}, Resource: {path}, Type: {type.ToString()} ");
         }
 
         return l;
@@ -250,7 +280,7 @@ public class ResourceService
         var owner = await _user.QueryUser(ra.Owner);
         if (owner == null) return false;
 
-        bool isOwner = ra.Owner == user.Name;
+        bool isOwner = ra.Owner == user.Uuid;
         bool isPeer = !isOwner && user.Privilege == owner.Privilege;
         bool isOther = !isOwner && !isPeer;
 
@@ -267,7 +297,7 @@ public class ResourceService
             case OperationType.Write:
                 return currentPerm.Contains('w') || (user.Privilege > owner.Privilege);
             case OperationType.Security:
-                return (isOwner && currentPerm.Contains('w')) || user.Name == "root";
+                return (isOwner && currentPerm.Contains('w')) || user.Uuid == 1;
             default:
                 return false;
         }
@@ -300,17 +330,25 @@ public class ResourceService
         return await Valid(path, token, OperationType.Write, ip);
     }
 
-    public async Task<bool> Initialize(string path, string token, string username, string ip)
+    public async Task<bool> Initialize(string path, string token, string owner, string ip)
+    {
+        var u = await _user.QueryUser(owner);
+        if (u == null || u.Uuid == -1) return false;
+        
+        return await Initialize(path, token, u.Uuid, ip);
+    }
+
+    public async Task<bool> Initialize(string path, string token, int owner, string ip)
     {
         // TODO: Use a more elegant Debug mode
         if (_config.DebugMode == "Debug")
             goto debug;
         // 1. Authorization: Verify the operation is performed by 'root'
         var requester = _user.Validate(token, ip);
-        if (requester != "root")
+        if (requester != 1)
         {
             _logger.LogWarning(
-                $"Permission denied: Non-root user '{requester ?? "unknown"}' attempted to initialize resources.");
+                $"Permission denied: Non-root user '{requester}' attempted to initialize resources.");
             return false;
         }
 
@@ -322,10 +360,10 @@ public class ResourceService
             return false;
         }
 
-        var ownerUser = await _user.QueryUser(username);
+        var ownerUser = await _user.QueryUser(owner);
         if (ownerUser == null)
         {
-            _logger.LogError($"Initialization failed: Owner user '{username}' does not exist.");
+            _logger.LogError($"Initialization failed: Owner user '{owner}' does not exist.");
             return false;
         }
 
@@ -349,8 +387,7 @@ public class ResourceService
                     newResources.Add(new ResourceAttribute
                     {
                         Uid = uid,
-                        Name = currentPath,
-                        Owner = username,
+                        Owner = owner,
                         Permission = "rw,--,--"
                     });
                 }
@@ -361,7 +398,7 @@ public class ResourceService
             {
                 await _database.InsertAllAsync(newResources);
                 _logger.LogInformation(
-                    $"Successfully initialized {newResources.Count} new resources under '{path}' for user '{username}'.");
+                    $"Successfully initialized {newResources.Count} new resources under '{path}' for user '{owner}'.");
             }
             else
             {
@@ -391,10 +428,9 @@ public class ResourceService
     public async Task<bool> Exclude(string path, string token, string ip)
     {
         var requester = _user.Validate(token, ip);
-        if (requester != "root")
+        if (requester != 1)
         {
-            _logger.LogWarning(
-                $"Permission denied: Non-root user '{requester ?? "unknown"}' attempted to exclude resource '{path}'.");
+            _logger.LogWarning($"Permission denied: Non-root user '{requester}' attempted to exclude resource '{path}'.");
             return false;
         }
 
@@ -429,13 +465,13 @@ public class ResourceService
         }
     }
 
-    public async Task<bool> Include(string path, string token, string ip, string owner, string permission)
+    public async Task<bool> Include(string path, string token, string ip, int owner, string permission)
     {
         var requester = _user.Validate(token, ip);
-        if (requester != "root")
+        if (requester != 1)
         {
             _logger.LogWarning(
-                $"Permission denied: Non-root user '{requester ?? "unknown"}' attempted to include resource '{path}'.");
+                $"Permission denied: Non-root user '{requester}' attempted to include resource '{path}'.");
             return false;
         }
 
@@ -467,7 +503,6 @@ public class ResourceService
             var newResource = new ResourceAttribute
             {
                 Uid = uid,
-                Name = relPath,
                 Owner = owner,
                 Permission = permission
             };
@@ -553,9 +588,8 @@ public class ResourceService
             return false;
         }
     }
-
-
-    public async Task<bool> Chown(string path, string token, string owner, string ip)
+    
+    public async Task<bool> Chown(string path, string token, int owner, string ip)
     {
         if (!await Valid(path, token, OperationType.Security, ip))
             return false;
@@ -601,7 +635,7 @@ public class ResourceService
         }
     }
 
-    private async Task<bool> InsertRaRow(string fullPath, string owner, string permission, bool update = false)
+    private async Task<bool> InsertRaRow(string fullPath, int owner, string permission, bool update = false)
     {
         if (!PermissionRegex.IsMatch(permission))
         {
@@ -615,7 +649,6 @@ public class ResourceService
             return await _database.InsertOrReplaceAsync(new ResourceAttribute()
             {
                 Uid = Uid(path),
-                Name = path,
                 Owner = owner,
                 Permission = permission,
             }) == 1;
@@ -624,7 +657,6 @@ public class ResourceService
             return await _database.InsertAsync(new ResourceAttribute()
             {
                 Uid = Uid(path),
-                Name = path,
                 Owner = owner,
                 Permission = permission,
             }) == 1;

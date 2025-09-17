@@ -1,9 +1,17 @@
+using SQLite;
+
 namespace Abyss.Model;
 
+[Table("ResourceAttributes")]
 public class ResourceAttribute
 {
-    public string Uid { get; set; } = "@";
-    public string Name { get; set; } = "@";
-    public string Owner { get; set; } = "@";
+    [PrimaryKey, AutoIncrement]
+    public int Id { get; set; }
+    
+    [Unique, NotNull]
+    public string Uid { get; init; } = "@";
+    [NotNull]
+    public int Owner { get; set; }
+    [NotNull]
     public string Permission { get; set; } = "--,--,--";
 }

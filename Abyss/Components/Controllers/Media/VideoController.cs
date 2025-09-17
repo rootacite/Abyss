@@ -60,7 +60,7 @@ public class VideoController(ILogger<VideoController> logger, ResourceService rs
             .Select(x => JsonConvert.DeserializeObject<Video>(x)).ToArray();
 
         
-        return Ok(sv.Zip(r, (x, y) => (x, y)).NaturalSort(x => x.x.name).Select(x => x.y).ToArray());
+        return Ok(sv.Zip(r, (x, y) => (x, y)).NaturalSort(x => x.x!.name).Select(x => x.y).ToArray());
     }
     
     [HttpGet("{klass}/{id}")]

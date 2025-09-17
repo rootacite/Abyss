@@ -11,7 +11,19 @@
   <component name="ChangeListManager">
     <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Abyss.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Abyss.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/TaskService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/TaskService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Static/Helpers.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Static/Helpers.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Model/ResourceAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/ResourceAttribute.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Model/Task.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Task.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Model/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/User.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Model/UserCreating.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/UserCreating.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -210,6 +222,11 @@
       <workItem from="1757782027930" duration="308000" />
       <workItem from="1757830765557" duration="1218000" />
       <workItem from="1757862781213" duration="341000" />
+      <workItem from="1757918235256" duration="1000" />
+      <workItem from="1758040123892" duration="21000" />
+      <workItem from="1758040188148" duration="1000" />
+      <workItem from="1758049713959" duration="86000" />
+      <workItem from="1758084310862" duration="14054000" />
     </task>
     <servers />
   </component>

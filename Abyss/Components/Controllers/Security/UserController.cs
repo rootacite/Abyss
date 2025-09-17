@@ -42,7 +42,7 @@ public class UserController(UserService user, ILogger<UserController> logger) : 
     public IActionResult Validate(string token)
     {
         var u = _user.Validate(token, Ip);
-        if (u == null)
+        if (u == -1)
         {
             return StatusCode(401, new { message = "Invalid" });
         }
@@ -54,7 +54,7 @@ public class UserController(UserService user, ILogger<UserController> logger) : 
     public IActionResult Destroy(string token)
     {
         var u = _user.Validate(token, Ip);
-        if (u == null)
+        if (u == -1)
         {
             return StatusCode(401, new { message = "Invalid" });
         }
@@ -81,14 +81,14 @@ public class UserController(UserService user, ILogger<UserController> logger) : 
             return StatusCode(403, new { message = "Denied" });
         
         // Valid parent && Privilege
-        var ou = await _user.QueryUser(_user.Validate(r, Ip) ?? "");
-        if(creating.Parent != (_user.Validate(r, Ip) ?? "") || creating.Privilege > ou?.Privilege)
+        var ou = await _user.QueryUser(_user.Validate(r, Ip));
+        if(creating.Privilege > ou?.Privilege || ou == null)
             return StatusCode(403, new { message = "Denied" });
             
-        await _user.CreateUser(new User()
+        await _user.CreateUser(new User
         {
-            Name = creating.Name,
-            Parent = _user.Validate(r, Ip) ?? "",
+            Username = creating.Name,
+            ParentId = ou.Uuid,
             Privilege = creating.Privilege,
             PublicKey = creating.PublicKey,
         } );
@@ -101,7 +101,7 @@ public class UserController(UserService user, ILogger<UserController> logger) : 
     public async Task<IActionResult> Open(string user, [FromQuery] string token, [FromQuery] string? bindIp = null)
     {
         var caller = _user.Validate(token, Ip);
-        if (caller == null || caller != "root")
+        if (caller != 1)
         {
             return StatusCode(403, new { message = "Access forbidden" });
         }
@@ -114,7 +114,7 @@ public class UserController(UserService user, ILogger<UserController> logger) : 
 
         var ipToBind = string.IsNullOrWhiteSpace(bindIp) ? Ip : bindIp;
 
-        var t = _user.CreateToken(user, ipToBind, TimeSpan.FromHours(1));
+        var t = _user.CreateToken(target.Uuid, ipToBind, TimeSpan.FromHours(1));
 
         _logger.LogInformation("Root created 1h token for {User}, bound to {BindIp}, request from {ReqIp}", user, ipToBind, Ip);
         return Ok(new { token = t, user, boundIp = ipToBind });
