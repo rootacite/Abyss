@@ -10,19 +10,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Middleware/BadRequestExceptionMiddleware.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Abyss.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Abyss.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/TaskService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/TaskService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Static/Helpers.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Static/Helpers.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Model/ResourceAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/ResourceAttribute.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Model/Task.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Task.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Model/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/User.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Model/UserCreating.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/UserCreating.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -47,7 +38,14 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f09ccaeb94c34c2299acd3efee0facee1a400/81/137b58b4/Key.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/AbyssController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Middleware/BadRequestExceptionMiddleware.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///home/acite/embd/WebProjects/Abyss/Abyss/Components/Controllers/Security/UserController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///home/acite/embd/WebProjects/Abyss/Abyss/Components/Controllers/Security/UserController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///home/acite/embd/WebProjects/Abyss/Abyss/Components/Controllers/Security/UserController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///home/acite/embd/WebProjects/Abyss/Abyss/Components/Controllers/Security/UserController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///home/acite/embd/WebProjects/Abyss/Abyss/Components/Controllers/Security/UserController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///home/acite/embd/WebProjects/Abyss/Abyss/Components/Controllers/Security/UserController.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Task/TaskController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/AbyssService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/ConfigureService.cs" root0="FORCE_HIGHLIGHTING" />
@@ -226,7 +224,7 @@
       <workItem from="1758040123892" duration="21000" />
       <workItem from="1758040188148" duration="1000" />
       <workItem from="1758049713959" duration="86000" />
-      <workItem from="1758084310862" duration="14054000" />
+      <workItem from="1758084310862" duration="16767000" />
     </task>
     <servers />
   </component>

@@ -1,4 +1,5 @@
 using System.Threading.RateLimiting;
+using Abyss.Components.Controllers.Middleware;
 using Abyss.Components.Controllers.Task;
 using Abyss.Components.Services;
 using Microsoft.AspNetCore.RateLimiting;
@@ -41,6 +42,7 @@ public class Program
         var app = builder.Build();
 
         // app.UseHttpsRedirection();
+        app.UseMiddleware<BadRequestExceptionMiddleware>();
         app.UseAuthorization();
         app.MapControllers();
         

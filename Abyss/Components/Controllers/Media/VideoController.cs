@@ -1,4 +1,4 @@
-using System.Diagnostics;
+
 using Abyss.Components.Services;
 using Abyss.Components.Static;
 using Abyss.Components.Tools;
@@ -15,7 +15,6 @@ using Task = System.Threading.Tasks.Task;
 public class VideoController(ILogger<VideoController> logger, ResourceService rs, ConfigureService config) : BaseController
 {
     private ILogger<VideoController> _logger = logger;
-
     public readonly string VideoFolder = Path.Combine(config.MediaRoot, "Videos");
 
     [HttpPost("init")]
@@ -78,8 +77,6 @@ public class VideoController(ILogger<VideoController> logger, ResourceService rs
     [HttpPost("{klass}/bulkquery")]
     public async Task<IActionResult> QueryBulk([FromQuery] string token, [FromBody] string[] id, [FromRoute] string klass)
     {
-        List<string> result = new List<string>();
-        
         var db = id.Select(x => Helpers.SafePathCombine(VideoFolder, [klass, x, "summary.json"])).ToArray();
         if(db.Any(x => x == null))
             return BadRequest();
