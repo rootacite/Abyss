@@ -13,7 +13,7 @@ using Task = System.Threading.Tasks.Task;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ImageController(ILogger<ImageController> logger, ResourceService rs, ConfigureService config) : BaseController
+public class ImageController(ResourceService rs, ConfigureService config) : BaseController
 {
     public readonly string ImageFolder = Path.Combine(config.MediaRoot, "Images");
     

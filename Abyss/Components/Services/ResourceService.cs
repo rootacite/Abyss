@@ -55,6 +55,204 @@ public class ResourceService
         return Convert.ToBase64String(r);
     }
 
+    public async Task<Dictionary<string, bool>> ValidAny(string[] paths, string token, OperationType type, string ip)
+    {
+        var result = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+
+        if (paths.Length == 0)
+            return result; // empty input -> empty result
+
+        // Normalize media root
+        var mediaRootFull = Path.GetFullPath(_config.MediaRoot);
+
+        // Prepare normalized full paths and early-check outside-media-root
+        var fullPaths = new List<string>(paths.Length);
+        foreach (var p in paths)
+        {
+            try
+            {
+                var full = Path.GetFullPath(p);
+                // record normalized path as key
+                if (!full.StartsWith(mediaRootFull, StringComparison.OrdinalIgnoreCase))
+                {
+                    _logger.LogError($"Path outside media root or null: {p}");
+                    result[full] = false;
+                }
+                else
+                {
+                    fullPaths.Add(full);
+                    // initialize to false; will set true when all checks pass
+                    result[full] = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                // malformed path -> mark false and continue
+                _logger.LogError(ex, $"Invalid path encountered in ValidAny: {p}");
+                try
+                {
+                    result[Path.GetFullPath(p)] = false;
+                }
+                catch
+                {
+                    /* ignore */
+                }
+            }
+        }
+
+        if (fullPaths.Count == 0)
+            return result;
+
+        // Validate token and user once
+        int uuid = _user.Validate(token, ip);
+        if (uuid == -1)
+        {
+            _logger.LogError($"Invalid token: {token}");
+            // all previously-initialized keys remain false
+            return result;
+        }
+
+        User? user = await _user.QueryUser(uuid);
+        if (user == null || user.Uuid != uuid)
+        {
+            _logger.LogError($"Verification failed: {token}");
+            return result;
+        }
+
+        // Build mapping: for each input path -> list of required (uid, op)
+        // Also build uid -> set of ops needed overall for batching
+        var pathToReqs = new Dictionary<string, List<(string uid, OperationType op)>>(StringComparer.OrdinalIgnoreCase);
+        var uidToOps = new Dictionary<string, HashSet<OperationType>>(StringComparer.OrdinalIgnoreCase);
+        var uidToExampleRelPath = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var full in fullPaths)
+        {
+            try
+            {
+                // rel path relative to media root for Uid calculation
+                var rel = Path.GetRelativePath(_config.MediaRoot, full);
+
+                var parts = rel
+                    .Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar },
+                        StringSplitOptions.RemoveEmptyEntries)
+                    .Where(s => !string.IsNullOrEmpty(s))
+                    .ToArray();
+
+                var reqs = new List<(string uid, OperationType op)>();
+
+                // parents: each prefix requires Read
+                for (int i = 0; i < parts.Length - 1; i++)
+                {
+                    var subPath = Path.Combine(parts.Take(i + 1).ToArray());
+                    var uidDir = Uid(subPath);
+                    reqs.Add((uidDir, OperationType.Read));
+
+                    if (!uidToOps.TryGetValue(uidDir, out var ops))
+                    {
+                        ops = new HashSet<OperationType>();
+                        uidToOps[uidDir] = ops;
+                        uidToExampleRelPath[uidDir] = subPath;
+                    }
+
+                    ops.Add(OperationType.Read);
+                }
+
+                // resource itself requires requested 'type'
+                var resourcePath = (parts.Length == 0) ? string.Empty : Path.Combine(parts);
+                var uidRes = Uid(resourcePath);
+                reqs.Add((uidRes, type));
+
+                if (!uidToOps.TryGetValue(uidRes, out var resOps))
+                {
+                    resOps = new HashSet<OperationType>();
+                    uidToOps[uidRes] = resOps;
+                    uidToExampleRelPath[uidRes] = resourcePath;
+                }
+
+                resOps.Add(type);
+
+                pathToReqs[full] = reqs;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error building requirements for path '{full}' in ValidAny.");
+                // leave result[full] as false
+            }
+        }
+
+        // Batch query DB for all UIDs (chunked)
+        var uidsNeeded = uidToOps.Keys.ToList();
+        var rasList = new List<ResourceAttribute>();
+
+        const int sqliteMaxVariableNumber = 900;
+        if (uidsNeeded.Count > 0)
+        {
+            for (int i = 0; i < uidsNeeded.Count; i += sqliteMaxVariableNumber)
+            {
+                var chunk = uidsNeeded.Skip(i).Take(sqliteMaxVariableNumber).ToList();
+                var placeholders = string.Join(",", chunk.Select(_ => "?"));
+                var queryArgs = chunk.Cast<object>().ToArray();
+                var sql = $"SELECT * FROM ResourceAttributes WHERE Uid IN ({placeholders})";
+                var chunkResult = await _database.QueryAsync<ResourceAttribute>(sql, queryArgs);
+                rasList.AddRange(chunkResult);
+            }
+        }
+
+        var raDict = rasList.ToDictionary(r => r.Uid, StringComparer.OrdinalIgnoreCase);
+
+        // Check each uid+op once and cache results
+        var permCache = new Dictionary<(string uid, OperationType op), bool>();
+        foreach (var kv in uidToOps)
+        {
+            var uid = kv.Key;
+            var ops = kv.Value;
+
+            if (!raDict.TryGetValue(uid, out var ra))
+            {
+                // missing resource attribute -> all ops for this uid are false
+                foreach (var op in ops)
+                {
+                    permCache[(uid, op)] = false;
+                    var examplePath = uidToExampleRelPath.GetValueOrDefault(uid, uid);
+                    _logger.LogDebug($"ValidAny: missing ResourceAttribute for Uid={uid}, example='{examplePath}'");
+                }
+
+                continue;
+            }
+
+            foreach (var op in ops)
+            {
+                var key = (uid, op);
+                if (!permCache.TryGetValue(key, out var ok))
+                {
+                    ok = await CheckPermission(user, ra, op);
+                    permCache[key] = ok;
+                }
+            }
+        }
+
+        // Compose results per original path
+        foreach (var kv in pathToReqs)
+        {
+            var full = kv.Key;
+            var reqs = kv.Value;
+
+            bool allOk = true;
+            foreach (var (uid, op) in reqs)
+            {
+                if (!permCache.TryGetValue((uid, op), out var ok) || !ok)
+                {
+                    allOk = false;
+                    break;
+                }
+            }
+
+            result[full] = allOk;
+        }
+
+        return result;
+    }
+
     private async Task<bool> ValidAll(string[] paths, string token, OperationType type, string ip)
     {
         if (paths.Length == 0)
@@ -90,7 +288,7 @@ public class ResourceService
         if (user == null || user.Uuid != uuid)
         {
             _logger.LogError($"Verification failed: {token}");
-            return false; 
+            return false;
         }
 
         // 3. build uid -> required ops map (avoid duplicate Uid calculations)
@@ -311,8 +509,44 @@ public class ResourceService
         if (Helpers.GetPathType(path) != PathType.Directory)
             return null;
 
-        var files = Directory.EnumerateFileSystemEntries(path, "*", SearchOption.TopDirectoryOnly);
-        return files.Select(x => Path.GetRelativePath(path, x)).ToArray();
+        try
+        {
+            var entries = Directory.EnumerateFileSystemEntries(path, "*", SearchOption.TopDirectoryOnly).ToArray();
+
+            if (entries.Length == 0)
+                return Array.Empty<string>();
+
+            var validMap = await ValidAny(entries, token, OperationType.Read, ip);
+
+            var allowed = new List<string>(entries.Length);
+
+            foreach (var entry in entries)
+            {
+                try
+                {
+                    var full = Path.GetFullPath(entry);
+                    if (validMap.TryGetValue(full, out var ok) && ok)
+                    {
+                        allowed.Add(Path.GetRelativePath(path, entry));
+                    }
+                    else
+                    {
+                        _logger.LogDebug($"Query: access denied or not managed for '{entry}' (user token: {token}) - item skipped.");
+                    }
+                }
+                catch (Exception exEntry)
+                {
+                    _logger.LogError(exEntry, $"Error processing entry '{entry}' in Query.");
+                }
+            }
+
+            return allowed.ToArray();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error while listing directory '{path}' in Query.");
+            return null;
+        }
     }
 
     public async Task<bool> Get(string path, string token, string ip)
@@ -334,7 +568,7 @@ public class ResourceService
     {
         var u = await _user.QueryUser(owner);
         if (u == null || u.Uuid == -1) return false;
-        
+
         return await Initialize(path, token, u.Uuid, ip);
     }
 
@@ -415,22 +649,23 @@ public class ResourceService
         }
     }
 
-    public async Task<bool> Put(string path, string token, string ip)
-    {
-        throw new NotImplementedException();
-    }
+    // public async Task<bool> Put(string path, string token, string ip)
+    // {
+    //     throw new NotImplementedException();
+    // }
 
-    public async Task<bool> Delete(string path, string token, string ip)
-    {
-        throw new NotImplementedException();
-    }
+    // public async Task<bool> Delete(string path, string token, string ip)
+    // {
+    //     throw new NotImplementedException();
+    // }
 
     public async Task<bool> Exclude(string path, string token, string ip)
     {
         var requester = _user.Validate(token, ip);
         if (requester != 1)
         {
-            _logger.LogWarning($"Permission denied: Non-root user '{requester}' attempted to exclude resource '{path}'.");
+            _logger.LogWarning(
+                $"Permission denied: Non-root user '{requester}' attempted to exclude resource '{path}'.");
             return false;
         }
 
@@ -544,41 +779,104 @@ public class ResourceService
         }
     }
 
-    public async Task<bool> Chmod(string path, string token, string permission, string ip)
+    public async Task<bool> Chmod(string path, string token, string permission, string ip, bool recursive = false)
     {
-        if (!await Valid(path, token, OperationType.Security, ip))
-            return false;
-
-        // Validate the permission format using the existing regex
+        // Validate permission format first
         if (!PermissionRegex.IsMatch(permission))
         {
             _logger.LogError($"Invalid permission format: {permission}");
             return false;
         }
 
+        // Normalize path to full path (Valid / ValidAll expect absolute path starting with media root)
+        path = Path.GetFullPath(path);
+
+        // If recursive and path is directory, collect all descendants (iterative)
+        List<string> targets = new List<string>();
         try
         {
-            path = Path.GetRelativePath(_config.MediaRoot, path);
-            var uid = Uid(path);
-            var resource = await _database.Table<ResourceAttribute>().Where(r => r.Uid == uid).FirstOrDefaultAsync();
-
-            if (resource == null)
+            if (recursive && Directory.Exists(path))
             {
-                _logger.LogError($"Resource not found: {path}");
+                // include root directory itself
+                targets.Add(path);
+                // Enumerate all files and directories under path iteratively
+                foreach (var entry in Directory.EnumerateFileSystemEntries(path, "*", SearchOption.AllDirectories))
+                {
+                    targets.Add(entry);
+                }
+
+                // Permission check for all targets
+                if (!await ValidAll(targets.ToArray(), token, OperationType.Security, ip))
+                {
+                    _logger.LogWarning($"Permission denied for recursive chmod on '{path}'");
+                    return false;
+                }
+            }
+            else
+            {
+                // Non-recursive or target is a file: validate single path
+                if (!await Valid(path, token, OperationType.Security, ip))
+                {
+                    _logger.LogWarning($"Permission denied for chmod on '{path}'");
+                    return false;
+                }
+
+                targets.Add(path);
+            }
+
+            // Convert targets to relative paths and UIDs
+            var relUids = targets.Select(t => Path.GetRelativePath(_config.MediaRoot, t))
+                .Select(rel => Uid(rel))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (relUids.Count == 0)
+            {
+                _logger.LogWarning($"No targets resolved for chmod on '{path}'");
                 return false;
             }
 
-            resource.Permission = permission;
-            var rowsAffected = await _database.UpdateAsync(resource);
-
-            if (rowsAffected > 0)
+            // Batch query existing ResourceAttribute rows for these UIDs (chunk to respect SQLite param limit)
+            var rows = new List<ResourceAttribute>();
+            const int sqliteMaxVariableNumber = 900;
+            for (int i = 0; i < relUids.Count; i += sqliteMaxVariableNumber)
             {
-                _logger.LogInformation($"Successfully changed permissions for '{path}' to '{permission}'");
+                var chunk = relUids.Skip(i).Take(sqliteMaxVariableNumber).ToList();
+                var placeholders = string.Join(",", chunk.Select(_ => "?"));
+                var queryArgs = chunk.Cast<object>().ToArray();
+                var sql = $"SELECT * FROM ResourceAttributes WHERE Uid IN ({placeholders})";
+                var chunkResult = await _database.QueryAsync<ResourceAttribute>(sql, queryArgs);
+                rows.AddRange(chunkResult);
+            }
+
+            var rowDict = rows.ToDictionary(r => r.Uid, StringComparer.OrdinalIgnoreCase);
+
+            int updatedCount = 0;
+            foreach (var uid in relUids)
+            {
+                if (rowDict.TryGetValue(uid, out var ra))
+                {
+                    ra.Permission = permission;
+                    var res = await _database.UpdateAsync(ra);
+                    if (res > 0) updatedCount++;
+                    else _logger.LogError($"Failed to update permission row (UID={uid}) for chmod on '{path}'");
+                }
+                else
+                {
+                    // Resource not managed by DB — skip but log
+                    _logger.LogWarning($"Chmod skipped: resource not found in DB (Uid={uid}) for target '{path}'");
+                }
+            }
+
+            if (updatedCount > 0)
+            {
+                _logger.LogInformation(
+                    $"Chmod: updated permissions for {updatedCount} resource(s) (root='{path}', recursive={recursive})");
                 return true;
             }
             else
             {
-                _logger.LogError($"Failed to update permissions for: {path}");
+                _logger.LogWarning($"Chmod: no resources updated for '{path}' (recursive={recursive})");
                 return false;
             }
         }
@@ -588,13 +886,10 @@ public class ResourceService
             return false;
         }
     }
-    
-    public async Task<bool> Chown(string path, string token, int owner, string ip)
-    {
-        if (!await Valid(path, token, OperationType.Security, ip))
-            return false;
 
-        // Validate that the new owner exists
+    public async Task<bool> Chown(string path, string token, int owner, string ip, bool recursive = false)
+    {
+        // Validate new owner exists
         var newOwner = await _user.QueryUser(owner);
         if (newOwner == null)
         {
@@ -602,29 +897,90 @@ public class ResourceService
             return false;
         }
 
+        // Normalize
+        path = Path.GetFullPath(path);
+
+        // Permission checks and target collection
+        List<string> targets = new List<string>();
         try
         {
-            path = Path.GetRelativePath(_config.MediaRoot, path);
-            var uid = Uid(path);
-            var resource = await _database.Table<ResourceAttribute>().Where(r => r.Uid == uid).FirstOrDefaultAsync();
-
-            if (resource == null)
+            if (recursive && Directory.Exists(path))
             {
-                _logger.LogError($"Resource not found: {path}");
+                targets.Add(path);
+                foreach (var entry in Directory.EnumerateFileSystemEntries(path, "*", SearchOption.AllDirectories))
+                {
+                    targets.Add(entry);
+                }
+
+                if (!await ValidAll(targets.ToArray(), token, OperationType.Security, ip))
+                {
+                    _logger.LogWarning($"Permission denied for recursive chown on '{path}'");
+                    return false;
+                }
+            }
+            else
+            {
+                if (!await Valid(path, token, OperationType.Security, ip))
+                {
+                    _logger.LogWarning($"Permission denied for chown on '{path}'");
+                    return false;
+                }
+
+                targets.Add(path);
+            }
+
+            // Build UID list
+            var relUids = targets.Select(t => Path.GetRelativePath(_config.MediaRoot, t))
+                .Select(rel => Uid(rel))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (relUids.Count == 0)
+            {
+                _logger.LogWarning($"No targets resolved for chown on '{path}'");
                 return false;
             }
 
-            resource.Owner = owner;
-            var rowsAffected = await _database.UpdateAsync(resource);
-
-            if (rowsAffected > 0)
+            // Batch query DB
+            var rows = new List<ResourceAttribute>();
+            const int sqliteMaxVariableNumber = 900;
+            for (int i = 0; i < relUids.Count; i += sqliteMaxVariableNumber)
             {
-                _logger.LogInformation($"Successfully changed ownership of '{path}' to '{owner}'");
+                var chunk = relUids.Skip(i).Take(sqliteMaxVariableNumber).ToList();
+                var placeholders = string.Join(",", chunk.Select(_ => "?"));
+                var queryArgs = chunk.Cast<object>().ToArray();
+                var sql = $"SELECT * FROM ResourceAttributes WHERE Uid IN ({placeholders})";
+                var chunkResult = await _database.QueryAsync<ResourceAttribute>(sql, queryArgs);
+                rows.AddRange(chunkResult);
+            }
+
+            var rowDict = rows.ToDictionary(r => r.Uid, StringComparer.OrdinalIgnoreCase);
+
+            int updatedCount = 0;
+            foreach (var uid in relUids)
+            {
+                if (rowDict.TryGetValue(uid, out var ra))
+                {
+                    ra.Owner = owner;
+                    var res = await _database.UpdateAsync(ra);
+                    if (res > 0) updatedCount++;
+                    else _logger.LogError($"Failed to update owner row (UID={uid}) for chown on '{path}'");
+                }
+                else
+                {
+                    _logger.LogWarning($"Chown skipped: resource not found in DB (Uid={uid}) for target '{path}'");
+                }
+            }
+
+            if (updatedCount > 0)
+            {
+                _logger.LogInformation(
+                    $"Chown: changed owner for {updatedCount} resource(s) (root='{path}', recursive={recursive})");
                 return true;
             }
             else
             {
-                _logger.LogError($"Failed to change ownership for: {path}");
+                _logger.LogWarning($"Chown: no resources updated for '{path}' (recursive={recursive})");
                 return false;
             }
         }
@@ -634,6 +990,7 @@ public class ResourceService
             return false;
         }
     }
+
 
     private async Task<bool> InsertRaRow(string fullPath, int owner, string permission, bool update = false)
     {
@@ -660,6 +1017,34 @@ public class ResourceService
                 Owner = owner,
                 Permission = permission,
             }) == 1;
+        }
+    }
+    
+    public async Task<ResourceAttribute?> GetAttribute(string path)
+    {
+        try
+        {
+            // normalize to full path
+            var full = Path.GetFullPath(path);
+
+            // ensure it's under media root
+            var mediaRootFull = Path.GetFullPath(_config.MediaRoot);
+            if (!full.StartsWith(mediaRootFull, StringComparison.OrdinalIgnoreCase))
+                return null;
+
+            var rel = Path.GetRelativePath(_config.MediaRoot, full);
+            var uid = Uid(rel);
+
+            var ra = await _database.Table<ResourceAttribute>()
+                .Where(r => r.Uid == uid)
+                .FirstOrDefaultAsync();
+
+            return ra;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"GetAttribute failed for path '{path}'");
+            return null;
         }
     }
 }

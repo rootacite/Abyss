@@ -10,7 +10,7 @@ namespace Abyss.Components.Controllers.Task;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TaskController(ILogger<TaskController> logger, ConfigureService config, TaskService taskService) : Controller
+public class TaskController(ConfigureService config, TaskService taskService) : Controller
 {
     public readonly string TaskFolder = Path.Combine(config.MediaRoot, "Tasks");
     

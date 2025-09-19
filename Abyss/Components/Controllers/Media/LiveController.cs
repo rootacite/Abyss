@@ -6,7 +6,7 @@ namespace Abyss.Components.Controllers.Media;
 
 [ApiController]
 [Route("api/[controller]")]
-public class LiveController(ILogger<LiveController> logger, ResourceService rs, ConfigureService config): BaseController
+public class LiveController(ResourceService rs, ConfigureService config): BaseController
 {
     public readonly string LiveFolder = Path.Combine(config.MediaRoot, "Live");
 
