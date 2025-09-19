@@ -118,22 +118,34 @@ public class VideoController(ILogger<VideoController> logger, ResourceService rs
     public async Task<IActionResult> Subtitle(string klass, string id, string token)
     {
         var folder = Helpers.SafePathCombine(VideoFolder, new[] { klass, id });
-        if (folder == null) 
+        if (folder == null)
             return StatusCode(403, new { message = "403 Denied" });
 
         string? subtitlePath = null;
 
         try
         {
-            var preferred = Path.Combine(folder, "subtitle.ass");
-            if (System.IO.File.Exists(preferred))
+            var preferredVtt = Path.Combine(folder, "subtitle.vtt");
+            if (System.IO.File.Exists(preferredVtt))
             {
-                subtitlePath = preferred;
+                subtitlePath = preferredVtt;
             }
             else
             {
-                subtitlePath = Directory.EnumerateFiles(folder, "*.ass")
-                    .FirstOrDefault();
+                subtitlePath = Directory.EnumerateFiles(folder, "*.vtt").FirstOrDefault();
+
+                if (subtitlePath == null)
+                {
+                    var preferredAss = Path.Combine(folder, "subtitle.ass");
+                    if (System.IO.File.Exists(preferredAss))
+                    {
+                        subtitlePath = preferredAss;
+                    }
+                    else
+                    {
+                        subtitlePath = Directory.EnumerateFiles(folder, "*.ass").FirstOrDefault();
+                    }
+                }
             }
         }
         catch (DirectoryNotFoundException)
@@ -141,14 +153,22 @@ public class VideoController(ILogger<VideoController> logger, ResourceService rs
             return NotFound(new { message = "video folder not found" });
         }
 
-        if (subtitlePath == null) 
+        if (subtitlePath == null)
             return NotFound(new { message = "subtitle not found" });
 
         var r = await rs.Get(subtitlePath, token, Ip);
-        if (!r) 
+        if (!r)
             return StatusCode(403, new { message = "403 Denied" });
 
-        return PhysicalFile(subtitlePath, "text/x-ssa", enableRangeProcessing: false);
+        var ext = Path.GetExtension(subtitlePath).ToLowerInvariant();
+        var contentType = ext switch
+        {
+            ".vtt" => "text/vtt",
+            ".ass" => "text/x-ssa",
+            _ => "text/plain"
+        };
+
+        return PhysicalFile(subtitlePath, contentType, enableRangeProcessing: false);
     }
 
     [HttpGet("{klass}/{id}/av")]

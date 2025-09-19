@@ -11,14 +11,6 @@
   <component name="ChangeListManager">
     <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/ImageController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/ImageController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/RootController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/RootController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Task/TaskController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Task/TaskController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Toolkits/update-video.py" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Toolkits/update-video.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -230,7 +222,7 @@
       <workItem from="1758084310862" duration="17701000" />
       <workItem from="1758121232981" duration="69000" />
       <workItem from="1758279286341" duration="6796000" />
-      <workItem from="1758303096075" duration="2017000" />
+      <workItem from="1758303096075" duration="2560000" />
     </task>
     <servers />
   </component>
