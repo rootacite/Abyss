@@ -11,7 +11,7 @@ public class RootController(ILogger<RootController> logger, UserService userServ
     : BaseController
 {
     [HttpPost("chmod")]
-    public async Task<IActionResult> Chmod(string token, string path, string permission)
+    public async Task<IActionResult> Chmod(string token, string path, string permission, string? recursive)
     {
         logger.LogInformation("Chmod method called with path: {Path}, permission: {Permission}", path, permission);
         
@@ -21,13 +21,13 @@ public class RootController(ILogger<RootController> logger, UserService userServ
             return StatusCode(401, "Unauthorized");
         }
 
-        bool r = await resourceService.Chmod(path, token, permission, Ip, true);
+        bool r = await resourceService.Chmod(path, token, permission, Ip, recursive == "true");
         logger.LogInformation("Chmod operation completed with result: {Result}", r);
         return r ? Ok() : StatusCode(502);
     }
 
     [HttpPost("chown")]
-    public async Task<IActionResult> Chown(string token, string path, int owner)
+    public async Task<IActionResult> Chown(string token, string path, int owner, string? recursive)
     {
         logger.LogInformation("Chown method called with path: {Path}, owner: {Owner}", path, owner);
         
@@ -37,7 +37,7 @@ public class RootController(ILogger<RootController> logger, UserService userServ
             return StatusCode(401, "Unauthorized");
         }
 
-        bool r = await resourceService.Chown(path, token, owner, Ip, true);
+        bool r = await resourceService.Chown(path, token, owner, Ip, recursive == "true");
         logger.LogInformation("Chown operation completed with result: {Result}", r);
         return r ? Ok() : StatusCode(502);
     }
