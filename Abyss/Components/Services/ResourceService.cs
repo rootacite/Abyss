@@ -531,7 +531,8 @@ public class ResourceService
                     }
                     else
                     {
-                        _logger.LogDebug($"Query: access denied or not managed for '{entry}' (user token: {token}) - item skipped.");
+                        _logger.LogDebug(
+                            $"Query: access denied or not managed for '{entry}' (user token: {token}) - item skipped.");
                     }
                 }
                 catch (Exception exEntry)
@@ -788,33 +789,32 @@ public class ResourceService
             return false;
         }
 
-        // Normalize path to full path (Valid / ValidAll expect absolute path starting with media root)
+        // Normalize path to full path
         path = Path.GetFullPath(path);
 
-        // If recursive and path is directory, collect all descendants (iterative)
+        // Collect targets and permission checks
         List<string> targets = new List<string>();
         try
         {
             if (recursive && Directory.Exists(path))
             {
-                // include root directory itself
+                _logger.LogInformation($"Recursive directory '{path}'.");
                 targets.Add(path);
-                // Enumerate all files and directories under path iteratively
                 foreach (var entry in Directory.EnumerateFileSystemEntries(path, "*", SearchOption.AllDirectories))
                 {
                     targets.Add(entry);
                 }
 
-                // Permission check for all targets
                 if (!await ValidAll(targets.ToArray(), token, OperationType.Security, ip))
                 {
                     _logger.LogWarning($"Permission denied for recursive chmod on '{path}'");
                     return false;
                 }
+
+                _logger.LogInformation($"Successfully validated chmod on '{path}'.");
             }
             else
             {
-                // Non-recursive or target is a file: validate single path
                 if (!await Valid(path, token, OperationType.Security, ip))
                 {
                     _logger.LogWarning($"Permission denied for chmod on '{path}'");
@@ -824,8 +824,9 @@ public class ResourceService
                 targets.Add(path);
             }
 
-            // Convert targets to relative paths and UIDs
-            var relUids = targets.Select(t => Path.GetRelativePath(_config.MediaRoot, t))
+            // Build distinct UIDs
+            var relUids = targets
+                .Select(t => Path.GetRelativePath(_config.MediaRoot, t))
                 .Select(rel => Uid(rel))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
@@ -836,35 +837,28 @@ public class ResourceService
                 return false;
             }
 
-            // Batch query existing ResourceAttribute rows for these UIDs (chunk to respect SQLite param limit)
-            var rows = new List<ResourceAttribute>();
-            const int sqliteMaxVariableNumber = 900;
+            // Chunked bulk UPDATE using SQL "UPDATE ... WHERE Uid IN (...)"
+            int updatedCount = 0;
+            const int sqliteMaxVariableNumber = 900; // leave some headroom for other params
             for (int i = 0; i < relUids.Count; i += sqliteMaxVariableNumber)
             {
                 var chunk = relUids.Skip(i).Take(sqliteMaxVariableNumber).ToList();
                 var placeholders = string.Join(",", chunk.Select(_ => "?"));
-                var queryArgs = chunk.Cast<object>().ToArray();
-                var sql = $"SELECT * FROM ResourceAttributes WHERE Uid IN ({placeholders})";
-                var chunkResult = await _database.QueryAsync<ResourceAttribute>(sql, queryArgs);
-                rows.AddRange(chunkResult);
-            }
+                // First param is permission, rest are Uid values
+                var args = new List<object> { permission };
+                args.AddRange(chunk);
 
-            var rowDict = rows.ToDictionary(r => r.Uid, StringComparer.OrdinalIgnoreCase);
-
-            int updatedCount = 0;
-            foreach (var uid in relUids)
-            {
-                if (rowDict.TryGetValue(uid, out var ra))
+                var sql = $"UPDATE ResourceAttributes SET Permission = ? WHERE Uid IN ({placeholders})";
+                try
                 {
-                    ra.Permission = permission;
-                    var res = await _database.UpdateAsync(ra);
-                    if (res > 0) updatedCount++;
-                    else _logger.LogError($"Failed to update permission row (UID={uid}) for chmod on '{path}'");
+                    var rowsAffected = await _database.ExecuteAsync(sql, args.ToArray());
+                    updatedCount += rowsAffected;
+                    _logger.LogInformation($"Chmod chunk updated {rowsAffected} rows (chunk size {chunk.Count}).");
                 }
-                else
+                catch (Exception ex)
                 {
-                    // Resource not managed by DB — skip but log
-                    _logger.LogWarning($"Chmod skipped: resource not found in DB (Uid={uid}) for target '{path}'");
+                    _logger.LogError(ex, $"Error executing chmod update chunk for path '{path}'.");
+                    // continue with other chunks; do not abort whole operation on one chunk error
                 }
             }
 
@@ -929,8 +923,9 @@ public class ResourceService
                 targets.Add(path);
             }
 
-            // Build UID list
-            var relUids = targets.Select(t => Path.GetRelativePath(_config.MediaRoot, t))
+            // Build distinct UIDs
+            var relUids = targets
+                .Select(t => Path.GetRelativePath(_config.MediaRoot, t))
                 .Select(rel => Uid(rel))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
@@ -941,34 +936,27 @@ public class ResourceService
                 return false;
             }
 
-            // Batch query DB
-            var rows = new List<ResourceAttribute>();
+            // Chunked bulk UPDATE: SET Owner = ? WHERE Uid IN (...)
+            int updatedCount = 0;
             const int sqliteMaxVariableNumber = 900;
             for (int i = 0; i < relUids.Count; i += sqliteMaxVariableNumber)
             {
                 var chunk = relUids.Skip(i).Take(sqliteMaxVariableNumber).ToList();
                 var placeholders = string.Join(",", chunk.Select(_ => "?"));
-                var queryArgs = chunk.Cast<object>().ToArray();
-                var sql = $"SELECT * FROM ResourceAttributes WHERE Uid IN ({placeholders})";
-                var chunkResult = await _database.QueryAsync<ResourceAttribute>(sql, queryArgs);
-                rows.AddRange(chunkResult);
-            }
+                var args = new List<object> { owner };
+                args.AddRange(chunk);
 
-            var rowDict = rows.ToDictionary(r => r.Uid, StringComparer.OrdinalIgnoreCase);
-
-            int updatedCount = 0;
-            foreach (var uid in relUids)
-            {
-                if (rowDict.TryGetValue(uid, out var ra))
+                var sql = $"UPDATE ResourceAttributes SET Owner = ? WHERE Uid IN ({placeholders})";
+                try
                 {
-                    ra.Owner = owner;
-                    var res = await _database.UpdateAsync(ra);
-                    if (res > 0) updatedCount++;
-                    else _logger.LogError($"Failed to update owner row (UID={uid}) for chown on '{path}'");
+                    var rowsAffected = await _database.ExecuteAsync(sql, args.ToArray());
+                    updatedCount += rowsAffected;
+                    _logger.LogInformation($"Chown chunk updated {rowsAffected} rows (chunk size {chunk.Count}).");
                 }
-                else
+                catch (Exception ex)
                 {
-                    _logger.LogWarning($"Chown skipped: resource not found in DB (Uid={uid}) for target '{path}'");
+                    _logger.LogError(ex, $"Error executing chown update chunk for path '{path}'.");
+                    // continue with remaining chunks
                 }
             }
 
@@ -1019,7 +1007,7 @@ public class ResourceService
             }) == 1;
         }
     }
-    
+
     public async Task<ResourceAttribute?> GetAttribute(string path)
     {
         try

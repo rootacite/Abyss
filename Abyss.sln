@@ -2,8 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abyss", "Abyss\Abyss.csproj", "{3337C1CD-2419-4922-BC92-AF1A825DDF23}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbyssCli", "AbyssCli\AbyssCli.csproj", "{D7D668D4-61E7-4AA4-B615-A162FABAD333}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,9 +12,5 @@ Global
 		{3337C1CD-2419-4922-BC92-AF1A825DDF23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3337C1CD-2419-4922-BC92-AF1A825DDF23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3337C1CD-2419-4922-BC92-AF1A825DDF23}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D7D668D4-61E7-4AA4-B615-A162FABAD333}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D7D668D4-61E7-4AA4-B615-A162FABAD333}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D7D668D4-61E7-4AA4-B615-A162FABAD333}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D7D668D4-61E7-4AA4-B615-A162FABAD333}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

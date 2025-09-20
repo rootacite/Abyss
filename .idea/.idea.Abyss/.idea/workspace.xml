@@ -11,7 +11,8 @@
   <component name="ChangeListManager">
     <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/RootController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/RootController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss.sln" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -228,6 +229,10 @@
       <workItem from="1758307433345" duration="34000" />
       <workItem from="1758344749532" duration="238000" />
       <workItem from="1758345893755" duration="2662000" />
+      <workItem from="1758349313244" duration="24000" />
+      <workItem from="1758349710909" duration="16000" />
+      <workItem from="1758350096355" duration="452000" />
+      <workItem from="1758350848039" duration="820000" />
     </task>
     <servers />
   </component>
