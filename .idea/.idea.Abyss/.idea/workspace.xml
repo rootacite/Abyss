@@ -9,11 +9,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss.sln" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss.sln" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" afterDir="false" />
-    </list>
+    <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -232,7 +228,7 @@
       <workItem from="1758349313244" duration="24000" />
       <workItem from="1758349710909" duration="16000" />
       <workItem from="1758350096355" duration="452000" />
-      <workItem from="1758350848039" duration="820000" />
+      <workItem from="1758350848039" duration="946000" />
     </task>
     <servers />
   </component>

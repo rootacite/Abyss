@@ -109,6 +109,20 @@ public class RootController(ILogger<RootController> logger, UserService userServ
         }
     }
 
+    [HttpPost("init")]
+    public async Task<IActionResult> Init(string token, string path, int owner)
+    {
+        if (userService.Validate(token, Ip) != 1)
+        {
+            logger.LogInformation("Init authorization failed for token: {Token}", token);
+            return StatusCode(401, "Unauthorized");
+        }
+        
+        var r = await resourceService.Initialize(path, token, owner, Ip);
+        if (r) return Ok(r);
+        return StatusCode(403, new { message = "403 Denied" });
+    }
+
     private static string ConvertToLsPerms(string permRaw, bool isDirectory)
     {
         // expects format like "rw,r-,r-"
