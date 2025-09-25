@@ -47,12 +47,10 @@ public class ImageController(ResourceService rs, ConfigureService config) : Base
         
         return Ok(await System.IO.File.ReadAllTextAsync(d));
     }
-
+    
     [HttpPost("bulkquery")]
     public async Task<IActionResult> QueryBulk([FromQuery] string token, [FromBody] string[] id)
     {
-        List<string> result = new List<string>();
-
         var db = id.Select(x => Helpers.SafePathCombine(ImageFolder, [x, "summary.json"])).ToArray();
         if (db.Any(x => x == null))
             return BadRequest();

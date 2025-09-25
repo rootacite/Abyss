@@ -15,11 +15,13 @@ public class Program
         builder.Services.AddAuthorization();
         builder.Services.AddMemoryCache();
         builder.Services.AddControllers();
+        builder.Services.AddSingleton<ResourceDatabaseService>();
         builder.Services.AddSingleton<ConfigureService>();
         builder.Services.AddSingleton<UserService>();
         builder.Services.AddSingleton<ResourceService>();
         builder.Services.AddSingleton<TaskController>();
         builder.Services.AddSingleton<TaskService>();
+        builder.Services.AddSingleton<IndexService>();
         builder.Services.AddHostedService<AbyssService>();
         
         builder.Services.AddRateLimiter(options =>
@@ -38,7 +40,7 @@ public class Program
                 await context.HttpContext.Response.WriteAsync("Too many requests. Please try later.", token);
             };
         });
-
+        
         var app = builder.Build();
 
         // app.UseHttpsRedirection();

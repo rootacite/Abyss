@@ -8,4 +8,5 @@ public class ConfigureService
     public string Version { get; } = "Alpha v0.1";
     public string UserDatabase { get; set; } = "user.db";
     public string RaDatabase { get; set; } = "ra.db";
+    public string IndexDatabase { get; set; } = "index.db";
 }

@@ -1,11 +1,7 @@
 // ResourceService.cs
 
-using System.Text;
-using System.Text.RegularExpressions;
 using Abyss.Components.Static;
 using Abyss.Model;
-using SQLite;
-using System.IO.Hashing;
 
 namespace Abyss.Components.Services;
 
@@ -21,40 +17,17 @@ public class ResourceService
     private readonly ILogger<ResourceService> _logger;
     private readonly ConfigureService _config;
     private readonly UserService _user;
-    private readonly SQLiteAsyncConnection _database;
+    private readonly ResourceDatabaseService _db;
 
-    private static readonly Regex PermissionRegex = new("^([r-][w-]),([r-][w-]),([r-][w-])$", RegexOptions.Compiled);
-
-    public ResourceService(ILogger<ResourceService> logger, ConfigureService config, UserService user)
+    public ResourceService(ILogger<ResourceService> logger, ConfigureService config, UserService user, ResourceDatabaseService db)
     {
         _logger = logger;
         _config = config;
         _user = user;
-
-        _database = new SQLiteAsyncConnection(config.RaDatabase, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
-        _database.CreateTableAsync<ResourceAttribute>().Wait();
-
-        var tasksPath = Helpers.SafePathCombine(_config.MediaRoot, "Tasks");
-        if (tasksPath != null)
-        {
-            InsertRaRow(tasksPath, 1, "rw,r-,r-", true).Wait();
-        }
-
-        var livePath = Helpers.SafePathCombine(_config.MediaRoot, "Live");
-        if (livePath != null)
-        {
-            InsertRaRow(livePath, 1, "rw,r-,r-", true).Wait();
-        }
+        _db = db;
     }
 
     // Create UID only for resources, without considering advanced hash security such as adding salt
-    private static string Uid(string path)
-    {
-        var b = Encoding.UTF8.GetBytes(path);
-        var r = XxHash128.Hash(b, 0x11451419);
-        return Convert.ToBase64String(r);
-    }
-
     public async Task<Dictionary<string, bool>> ValidAny(string[] paths, string token, OperationType type, string ip)
     {
         var result = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
@@ -144,7 +117,7 @@ public class ResourceService
                 for (int i = 0; i < parts.Length - 1; i++)
                 {
                     var subPath = Path.Combine(parts.Take(i + 1).ToArray());
-                    var uidDir = Uid(subPath);
+                    var uidDir = ResourceDatabaseService.Uid(subPath);
                     reqs.Add((uidDir, OperationType.Read));
 
                     if (!uidToOps.TryGetValue(uidDir, out var ops))
@@ -159,7 +132,7 @@ public class ResourceService
 
                 // resource itself requires requested 'type'
                 var resourcePath = (parts.Length == 0) ? string.Empty : Path.Combine(parts);
-                var uidRes = Uid(resourcePath);
+                var uidRes = ResourceDatabaseService.Uid(resourcePath);
                 reqs.Add((uidRes, type));
 
                 if (!uidToOps.TryGetValue(uidRes, out var resOps))
@@ -180,22 +153,12 @@ public class ResourceService
             }
         }
 
-        // Batch query DB for all UIDs (chunked)
+        // Batch query DB for all UIDs (via DatabaseService)
         var uidsNeeded = uidToOps.Keys.ToList();
         var rasList = new List<ResourceAttribute>();
-
-        const int sqliteMaxVariableNumber = 900;
         if (uidsNeeded.Count > 0)
         {
-            for (int i = 0; i < uidsNeeded.Count; i += sqliteMaxVariableNumber)
-            {
-                var chunk = uidsNeeded.Skip(i).Take(sqliteMaxVariableNumber).ToList();
-                var placeholders = string.Join(",", chunk.Select(_ => "?"));
-                var queryArgs = chunk.Cast<object>().ToArray();
-                var sql = $"SELECT * FROM ResourceAttributes WHERE Uid IN ({placeholders})";
-                var chunkResult = await _database.QueryAsync<ResourceAttribute>(sql, queryArgs);
-                rasList.AddRange(chunkResult);
-            }
+            rasList = await _db.GetResourceAttributesByUidsAsync(uidsNeeded);
         }
 
         var raDict = rasList.ToDictionary(r => r.Uid, StringComparer.OrdinalIgnoreCase);
@@ -253,7 +216,7 @@ public class ResourceService
         return result;
     }
 
-    private async Task<bool> ValidAll(string[] paths, string token, OperationType type, string ip)
+     private async Task<bool> ValidAll(string[] paths, string token, OperationType type, string ip)
     {
         if (paths.Length == 0)
         {
@@ -307,7 +270,7 @@ public class ResourceService
             for (int i = 0; i < parts.Length - 1; i++)
             {
                 var subPath = Path.Combine(parts.Take(i + 1).ToArray());
-                var uidDir = Uid(subPath);
+                var uidDir = ResourceDatabaseService.Uid(subPath);
                 if (!uidToOps.TryGetValue(uidDir, out var ops))
                 {
                     ops = new HashSet<OperationType>();
@@ -320,7 +283,7 @@ public class ResourceService
 
             // resource itself requires requested 'type'
             var resourcePath = (parts.Length == 0) ? string.Empty : Path.Combine(parts);
-            var uidRes = Uid(resourcePath);
+            var uidRes = ResourceDatabaseService.Uid(resourcePath);
             if (!uidToOps.TryGetValue(uidRes, out var resOps))
             {
                 resOps = new HashSet<OperationType>();
@@ -331,33 +294,12 @@ public class ResourceService
             resOps.Add(type);
         }
 
-        // 4. batch query DB for all UIDs using parameterized IN (...) and chunking to respect SQLite param limits
+        // 4. batch query DB for all UIDs using DatabaseService
         var uidsNeeded = uidToOps.Keys.ToList();
         var rasList = new List<ResourceAttribute>();
-
-        const int sqliteMaxVariableNumber = 900; // keep below default 999 for safety
         if (uidsNeeded.Count > 0)
         {
-            if (uidsNeeded.Count <= sqliteMaxVariableNumber)
-            {
-                var placeholders = string.Join(",", uidsNeeded.Select(_ => "?"));
-                var queryArgs = uidsNeeded.Cast<object>().ToArray();
-                var sql = $"SELECT * FROM ResourceAttributes WHERE Uid IN ({placeholders})";
-                var chunkResult = await _database.QueryAsync<ResourceAttribute>(sql, queryArgs);
-                rasList.AddRange(chunkResult);
-            }
-            else
-            {
-                for (int i = 0; i < uidsNeeded.Count; i += sqliteMaxVariableNumber)
-                {
-                    var chunk = uidsNeeded.Skip(i).Take(sqliteMaxVariableNumber).ToList();
-                    var placeholders = string.Join(",", chunk.Select(_ => "?"));
-                    var queryArgs = chunk.Cast<object>().ToArray();
-                    var sql = $"SELECT * FROM ResourceAttributes WHERE Uid IN ({placeholders})";
-                    var chunkResult = await _database.QueryAsync<ResourceAttribute>(sql, queryArgs);
-                    rasList.AddRange(chunkResult);
-                }
-            }
+            rasList = await _db.GetResourceAttributesByUidsAsync(uidsNeeded);
         }
 
         var raDict = rasList.ToDictionary(r => r.Uid, StringComparer.OrdinalIgnoreCase);
@@ -397,9 +339,8 @@ public class ResourceService
 
         return true;
     }
-
-
-    public async Task<bool> Valid(string path, string token, OperationType type, string ip)
+    
+   public async Task<bool> Valid(string path, string token, OperationType type, string ip)
     {
         // Path is abs path here, due to Helpers.SafePathCombine
         if (!path.StartsWith(Path.GetFullPath(_config.MediaRoot), StringComparison.OrdinalIgnoreCase))
@@ -428,11 +369,8 @@ public class ResourceService
         for (int i = 0; i < parts.Length - 1; i++)
         {
             var subPath = Path.Combine(parts.Take(i + 1).ToArray());
-            var uidDir = Uid(subPath);
-            var raDir = await _database
-                .Table<ResourceAttribute>()
-                .Where(r => r.Uid == uidDir)
-                .FirstOrDefaultAsync();
+            var uidDir = ResourceDatabaseService.Uid(subPath);
+            var raDir = await _db.GetResourceAttributeByUidAsync(uidDir);
             if (raDir == null)
             {
                 _logger.LogError($"Permission denied: {uuid} has no read access to parent directory {subPath}");
@@ -446,11 +384,8 @@ public class ResourceService
             }
         }
 
-        var uid = Uid(path);
-        ResourceAttribute? ra = await _database
-            .Table<ResourceAttribute>()
-            .Where(r => r.Uid == uid)
-            .FirstOrDefaultAsync();
+        var uid = ResourceDatabaseService.Uid(path);
+        ResourceAttribute? ra = await _db.GetResourceAttributeByUidAsync(uid);
         if (ra == null)
         {
             _logger.LogError($"Permission check failed: User: {uuid}, Resource: {path}, Type: {type.ToString()} ");
@@ -470,7 +405,7 @@ public class ResourceService
     {
         if (user == null || ra == null) return false;
 
-        if (!PermissionRegex.IsMatch(ra.Permission)) return false;
+        if (!ResourceDatabaseService.PermissionRegex.IsMatch(ra.Permission)) return false;
 
         var perms = ra.Permission.Split(',');
         if (perms.Length != 3) return false;
@@ -612,9 +547,8 @@ public class ResourceService
             foreach (var p in allPaths)
             {
                 var currentPath = Path.GetRelativePath(_config.MediaRoot, p);
-                var uid = Uid(currentPath);
-                var existing = await _database.Table<ResourceAttribute>().Where(r => r.Uid == uid)
-                    .FirstOrDefaultAsync();
+                var uid = ResourceDatabaseService.Uid(currentPath);
+                var existing = await _db.GetResourceAttributeByUidAsync(uid);
 
                 // If it's not in the database, add it to our list for batch insertion
                 if (existing == null)
@@ -631,7 +565,7 @@ public class ResourceService
             // 5. Database Insertion: Add all new resources in a single, efficient transaction
             if (newResources.Any())
             {
-                await _database.InsertAllAsync(newResources);
+                await _db.InsertResourceAttributesAsync(newResources);
                 _logger.LogInformation(
                     $"Successfully initialized {newResources.Count} new resources under '{path}' for user '{owner}'.");
             }
@@ -650,16 +584,6 @@ public class ResourceService
         }
     }
 
-    // public async Task<bool> Put(string path, string token, string ip)
-    // {
-    //     throw new NotImplementedException();
-    // }
-
-    // public async Task<bool> Delete(string path, string token, string ip)
-    // {
-    //     throw new NotImplementedException();
-    // }
-
     public async Task<bool> Exclude(string path, string token, string ip)
     {
         var requester = _user.Validate(token, ip);
@@ -673,16 +597,16 @@ public class ResourceService
         try
         {
             var relPath = Path.GetRelativePath(_config.MediaRoot, path);
-            var uid = Uid(relPath);
+            var uid = ResourceDatabaseService.Uid(relPath);
 
-            var resource = await _database.Table<ResourceAttribute>().Where(r => r.Uid == uid).FirstOrDefaultAsync();
+            var resource = await _db.GetResourceAttributeByUidAsync(uid);
             if (resource == null)
             {
                 _logger.LogError($"Exclude failed: Resource '{relPath}' not found in database.");
                 return false;
             }
 
-            var deleted = await _database.DeleteAsync(resource);
+            var deleted = await _db.DeleteByUidAsync(uid);
             if (deleted > 0)
             {
                 _logger.LogInformation($"Successfully excluded resource '{relPath}' from management.");
@@ -711,7 +635,7 @@ public class ResourceService
             return false;
         }
 
-        if (!PermissionRegex.IsMatch(permission))
+        if (!ResourceDatabaseService.PermissionRegex.IsMatch(permission))
         {
             _logger.LogError($"Invalid permission format: {permission}");
             return false;
@@ -727,9 +651,9 @@ public class ResourceService
         try
         {
             var relPath = Path.GetRelativePath(_config.MediaRoot, path);
-            var uid = Uid(relPath);
+            var uid = ResourceDatabaseService.Uid(relPath);
 
-            var existing = await _database.Table<ResourceAttribute>().Where(r => r.Uid == uid).FirstOrDefaultAsync();
+            var existing = await _db.GetResourceAttributeByUidAsync(uid);
             if (existing != null)
             {
                 _logger.LogError($"Include failed: Resource '{relPath}' already exists in database.");
@@ -743,7 +667,7 @@ public class ResourceService
                 Permission = permission
             };
 
-            var inserted = await _database.InsertAsync(newResource);
+            var inserted = await _db.InsertResourceAttributeAsync(newResource);
             if (inserted > 0)
             {
                 _logger.LogInformation(
@@ -768,10 +692,9 @@ public class ResourceService
         try
         {
             var relPath = Path.GetRelativePath(_config.MediaRoot, path);
-            var uid = Uid(relPath);
+            var uid = ResourceDatabaseService.Uid(relPath);
 
-            var resource = await _database.Table<ResourceAttribute>().Where(r => r.Uid == uid).FirstOrDefaultAsync();
-            return resource != null;
+            return await _db.ExistsUidAsync(uid);
         }
         catch (Exception ex)
         {
@@ -783,7 +706,7 @@ public class ResourceService
     public async Task<bool> Chmod(string path, string token, string permission, string ip, bool recursive = false)
     {
         // Validate permission format first
-        if (!PermissionRegex.IsMatch(permission))
+        if (!ResourceDatabaseService.PermissionRegex.IsMatch(permission))
         {
             _logger.LogError($"Invalid permission format: {permission}");
             return false;
@@ -827,7 +750,7 @@ public class ResourceService
             // Build distinct UIDs
             var relUids = targets
                 .Select(t => Path.GetRelativePath(_config.MediaRoot, t))
-                .Select(rel => Uid(rel))
+                .Select(rel => ResourceDatabaseService.Uid(rel))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
@@ -837,30 +760,8 @@ public class ResourceService
                 return false;
             }
 
-            // Chunked bulk UPDATE using SQL "UPDATE ... WHERE Uid IN (...)"
-            int updatedCount = 0;
-            const int sqliteMaxVariableNumber = 900; // leave some headroom for other params
-            for (int i = 0; i < relUids.Count; i += sqliteMaxVariableNumber)
-            {
-                var chunk = relUids.Skip(i).Take(sqliteMaxVariableNumber).ToList();
-                var placeholders = string.Join(",", chunk.Select(_ => "?"));
-                // First param is permission, rest are Uid values
-                var args = new List<object> { permission };
-                args.AddRange(chunk);
-
-                var sql = $"UPDATE ResourceAttributes SET Permission = ? WHERE Uid IN ({placeholders})";
-                try
-                {
-                    var rowsAffected = await _database.ExecuteAsync(sql, args.ToArray());
-                    updatedCount += rowsAffected;
-                    _logger.LogInformation($"Chmod chunk updated {rowsAffected} rows (chunk size {chunk.Count}).");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, $"Error executing chmod update chunk for path '{path}'.");
-                    // continue with other chunks; do not abort whole operation on one chunk error
-                }
-            }
+            // Use DatabaseService to perform chunked updates
+            var updatedCount = await _db.UpdatePermissionsByUidsAsync(relUids, permission);
 
             if (updatedCount > 0)
             {
@@ -926,7 +827,7 @@ public class ResourceService
             // Build distinct UIDs
             var relUids = targets
                 .Select(t => Path.GetRelativePath(_config.MediaRoot, t))
-                .Select(rel => Uid(rel))
+                .Select(rel => ResourceDatabaseService.Uid(rel))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
@@ -936,29 +837,8 @@ public class ResourceService
                 return false;
             }
 
-            // Chunked bulk UPDATE: SET Owner = ? WHERE Uid IN (...)
-            int updatedCount = 0;
-            const int sqliteMaxVariableNumber = 900;
-            for (int i = 0; i < relUids.Count; i += sqliteMaxVariableNumber)
-            {
-                var chunk = relUids.Skip(i).Take(sqliteMaxVariableNumber).ToList();
-                var placeholders = string.Join(",", chunk.Select(_ => "?"));
-                var args = new List<object> { owner };
-                args.AddRange(chunk);
-
-                var sql = $"UPDATE ResourceAttributes SET Owner = ? WHERE Uid IN ({placeholders})";
-                try
-                {
-                    var rowsAffected = await _database.ExecuteAsync(sql, args.ToArray());
-                    updatedCount += rowsAffected;
-                    _logger.LogInformation($"Chown chunk updated {rowsAffected} rows (chunk size {chunk.Count}).");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, $"Error executing chown update chunk for path '{path}'.");
-                    // continue with remaining chunks
-                }
-            }
+            // Use DatabaseService to perform chunked owner updates
+            var updatedCount = await _db.UpdateOwnerByUidsAsync(relUids, owner);
 
             if (updatedCount > 0)
             {
@@ -979,35 +859,6 @@ public class ResourceService
         }
     }
 
-
-    private async Task<bool> InsertRaRow(string fullPath, int owner, string permission, bool update = false)
-    {
-        if (!PermissionRegex.IsMatch(permission))
-        {
-            _logger.LogError($"Invalid permission format: {permission}");
-            return false;
-        }
-
-        var path = Path.GetRelativePath(_config.MediaRoot, fullPath);
-
-        if (update)
-            return await _database.InsertOrReplaceAsync(new ResourceAttribute()
-            {
-                Uid = Uid(path),
-                Owner = owner,
-                Permission = permission,
-            }) == 1;
-        else
-        {
-            return await _database.InsertAsync(new ResourceAttribute()
-            {
-                Uid = Uid(path),
-                Owner = owner,
-                Permission = permission,
-            }) == 1;
-        }
-    }
-
     public async Task<ResourceAttribute?> GetAttribute(string path)
     {
         try
@@ -1021,11 +872,9 @@ public class ResourceService
                 return null;
 
             var rel = Path.GetRelativePath(_config.MediaRoot, full);
-            var uid = Uid(rel);
+            var uid = ResourceDatabaseService.Uid(rel);
 
-            var ra = await _database.Table<ResourceAttribute>()
-                .Where(r => r.Uid == uid)
-                .FirstOrDefaultAsync();
+            var ra = await _db.GetResourceAttributeByUidAsync(uid);
 
             return ra;
         }

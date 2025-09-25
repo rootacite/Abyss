@@ -9,7 +9,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="" />
+    <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -28,16 +30,13 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/457530be4752476295767457c3639889d1a000/af/aac0eaa5/ExceptionDispatchInfo.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/457530be4752476295767457c3639889d1a000/d0/3b166e9e/String.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5df2accb46d040ccbbbe8331bf4d24b61daa00/df/93debd37/ControllerBase.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/61fe11e9d86b4d2a9bd2b806929b7d381a400/e9/67f4a40e/SQLiteAsyncConnection.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7598e47d5cdf4107ba88f8220720fdc89000/a6/79d67871/xxHash128.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f09ccaeb94c34c2299acd3efee0facee1a400/81/137b58b4/Key.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/AbyssController.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///home/acite/embd/WebProjects/Abyss/Abyss/Components/Controllers/Media/LiveController.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///home/acite/embd/WebProjects/Abyss/Abyss/Components/Controllers/Media/LiveController.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Middleware/BadRequestExceptionMiddleware.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Security/RootController.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///home/acite/embd/WebProjects/Abyss/Abyss/Components/Controllers/Security/RootController.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///home/acite/embd/WebProjects/Abyss/Abyss/Components/Controllers/Security/RootController.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Task/TaskController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/AbyssService.cs" root0="FORCE_HIGHLIGHTING" />
@@ -60,7 +59,6 @@
     <setting file="file://$PROJECT_DIR$/Abyss/Model/User.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Model/UserCreating.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Model/Video.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/AbyssCli/Program.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file:///usr/lib/dotnet/sdk/9.0.109/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.Sdk.targets" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
@@ -229,6 +227,8 @@
       <workItem from="1758349710909" duration="16000" />
       <workItem from="1758350096355" duration="452000" />
       <workItem from="1758350848039" duration="946000" />
+      <workItem from="1758352441563" duration="281000" />
+      <workItem from="1758599755722" duration="14000" />
     </task>
     <servers />
   </component>

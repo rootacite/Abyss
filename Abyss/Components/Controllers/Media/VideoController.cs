@@ -42,6 +42,7 @@ public class VideoController(ILogger<VideoController> logger, ResourceService rs
     {
         var d = Helpers.SafePathCombine(VideoFolder, klass);
         if (d == null) return StatusCode(403, new { message = "403 Denied" });
+        
         var r = await rs.Query(d, token, Ip);
         if (r == null) return StatusCode(401, new { message = "Unauthorized" });
 
