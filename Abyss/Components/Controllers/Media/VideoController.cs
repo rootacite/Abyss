@@ -46,19 +46,7 @@ public class VideoController(ILogger<VideoController> logger, ResourceService rs
         var r = await rs.Query(d, token, Ip);
         if (r == null) return StatusCode(401, new { message = "Unauthorized" });
 
-        var rv = r.Select(x => { return Helpers.SafePathCombine(VideoFolder, [klass, x, "summary.json"]); }).ToArray();
-
-        for (int i = 0; i < rv.Length; i++)
-        {
-            if (rv[i] == null) continue;
-            rv[i] = await System.IO.File.ReadAllTextAsync(rv[i] ?? "");
-        }
-
-        var sv = rv.Where(x => x != null).Select(x => x ?? "")
-            .Select(x => JsonConvert.DeserializeObject<Video>(x)).ToArray();
-
-
-        return Ok(sv.Zip(r, (x, y) => (x, y)).NaturalSort(x => x.x!.name).Select(x => x.y).ToArray());
+        return Ok(r);
     }
 
     [HttpGet("{klass}/{id}")]

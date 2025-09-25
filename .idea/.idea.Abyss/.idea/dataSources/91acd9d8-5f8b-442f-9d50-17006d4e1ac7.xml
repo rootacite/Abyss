@@ -499,7 +499,7 @@
     </routine>
     <schema id="191" parent="1" name="main">
       <Current>1</Current>
-      <LastIntrospectionLocalTimestamp>2025-08-23.08:35:53</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2025-09-25.10:18:41</LastIntrospectionLocalTimestamp>
     </schema>
     <argument id="192" parent="16">
       <ArgumentDirection>R</ArgumentDirection>
@@ -1590,45 +1590,72 @@
     <argument id="554" parent="190">
       <Position>1</Position>
     </argument>
-    <table id="555" parent="191" name="User"/>
+    <table id="555" parent="191" name="Users"/>
     <table id="556" parent="191" name="sqlite_master">
       <System>1</System>
     </table>
-    <column id="557" parent="555" name="Name">
+    <table id="557" parent="191" name="sqlite_sequence">
+      <System>1</System>
+    </table>
+    <column id="558" parent="555" name="Uuid">
+      <AutoIncrement>1</AutoIncrement>
+      <NotNull>1</NotNull>
       <Position>1</Position>
-      <StoredType>varchar|0s</StoredType>
-    </column>
-    <column id="558" parent="555" name="Parent">
-      <Position>2</Position>
-      <StoredType>varchar|0s</StoredType>
-    </column>
-    <column id="559" parent="555" name="PublicKey">
-      <Position>3</Position>
-      <StoredType>varchar|0s</StoredType>
-    </column>
-    <column id="560" parent="555" name="Privilege">
-      <Position>4</Position>
       <StoredType>integer|0s</StoredType>
     </column>
-    <column id="561" parent="556" name="type">
+    <column id="559" parent="555" name="Username">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StoredType>varchar|0s</StoredType>
+    </column>
+    <column id="560" parent="555" name="ParentId">
+      <NotNull>1</NotNull>
+      <Position>3</Position>
+      <StoredType>integer|0s</StoredType>
+    </column>
+    <column id="561" parent="555" name="PublicKey">
+      <NotNull>1</NotNull>
+      <Position>4</Position>
+      <StoredType>varchar|0s</StoredType>
+    </column>
+    <column id="562" parent="555" name="Privilege">
+      <NotNull>1</NotNull>
+      <Position>5</Position>
+      <StoredType>integer|0s</StoredType>
+    </column>
+    <index id="563" parent="555" name="Users_Username">
+      <ColNames>Username</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <key id="564" parent="555">
+      <ColNames>Uuid</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="565" parent="556" name="type">
       <Position>1</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="562" parent="556" name="name">
+    <column id="566" parent="556" name="name">
       <Position>2</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="563" parent="556" name="tbl_name">
+    <column id="567" parent="556" name="tbl_name">
       <Position>3</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="564" parent="556" name="rootpage">
+    <column id="568" parent="556" name="rootpage">
       <Position>4</Position>
       <StoredType>INT|0s</StoredType>
     </column>
-    <column id="565" parent="556" name="sql">
+    <column id="569" parent="556" name="sql">
       <Position>5</Position>
       <StoredType>TEXT|0s</StoredType>
+    </column>
+    <column id="570" parent="557" name="name">
+      <Position>1</Position>
+    </column>
+    <column id="571" parent="557" name="seq">
+      <Position>2</Position>
     </column>
   </database-model>
 </dataSource>

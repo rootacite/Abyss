@@ -9,10 +9,10 @@ public class IndexService: IAsyncDisposable
     private bool _disposed;
 
 
-    private IndexService(string dbPath)
+    public IndexService(ConfigureService cs)
     {
-        if (string.IsNullOrWhiteSpace(dbPath)) throw new ArgumentNullException(nameof(dbPath));
-        _db = new SQLiteAsyncConnection(dbPath);
+        if (string.IsNullOrWhiteSpace(cs.IndexDatabase)) throw new ArgumentNullException(nameof(cs.IndexDatabase));
+        _db = new SQLiteAsyncConnection(cs.IndexDatabase);
 
         _db.CreateTableAsync<Index>().Wait();
         EnsureRootExistsAsync().Wait();

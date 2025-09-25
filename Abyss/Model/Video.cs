@@ -9,4 +9,5 @@ public class Video
     public bool star;
     public uint like;
     public string author;
+    public string? group;
 }
