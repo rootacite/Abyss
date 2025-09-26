@@ -130,10 +130,12 @@ def find_video_in_dir(base_path):
 
     return None
 
-def update_summary(base_path, name_input=None, author_input=None):
+def update_summary(base_path, name_input=None, author_input=None, group_input=None):
     """
     Updates the summary.json file for a given path.
-    name_input and author_input are optional, used for the '-a' mode.
+    name_input, author_input, group_input are optional, used for the '-a' mode.
+    If group_input is provided, the written summary.json will include the "group" key.
+    If summary.json already contains a "group" and group_input is None, existing group is preserved.
     """
     summary_path = base_path / "summary.json"
     gallery_path = base_path / "gallery"
@@ -154,17 +156,25 @@ def update_summary(base_path, name_input=None, author_input=None):
         "author": author_input if author_input is not None else "anonymous"
     }
 
+    existing_data = {}
     # Load existing summary if available
     if summary_path.exists():
         try:
             with open(summary_path, 'r', encoding='utf-8') as f:
                 existing_data = json.load(f)
-                # Update default with existing values
+                # Update default with existing values for known keys
                 for key in default_summary:
                     if key in existing_data:
                         default_summary[key] = existing_data[key]
         except json.JSONDecodeError:
             print("Warning: Invalid JSON in summary.json, using defaults")
+
+    # Handle group: preserve existing if no new group provided; otherwise set new group
+    if group_input is not None:
+        default_summary["group"] = group_input
+    else:
+        if isinstance(existing_data, dict) and "group" in existing_data:
+            default_summary["group"] = existing_data["group"]
 
     # Update duration from video file if found
     if video_path and video_path.exists():
@@ -206,7 +216,8 @@ def main():
         print("Usage: python script.py <command> [arguments]")
         print("Commands:")
         print("  -u <path>              Update the summary.json in the specified path.")
-        print("  -a <video_file> <path> Add a new video project in a new directory under the specified path. Optional -y to accept defaults.")
+        print("  -a <video_file> <path> Add a new video project in a new directory under the specified path.")
+        print("                         Optional flags for -a: -y (accept defaults anywhere), -g <group name> (set group in summary.json).")
         print("  -c <path> <time>       Create a cover image from the video in the specified path at a given time percentage (0.0-1.0).")
         sys.exit(1)
 
@@ -226,14 +237,33 @@ def main():
         update_summary(base_path)
 
     elif command == '-a':
-        # allow invocation with optional -y flag anywhere; expecting at least video and base path
-        params = [p for p in sys.argv[2:] if p != '-y']
-        if len(params) != 2:
-            print("Usage: python script.py -a <video_file> <path>  (optional -y to accept defaults)")
+        # Parse tokens allowing -y (global) and -g <group> anywhere; remaining two positionals must be video_file and base_path
+        tokens = sys.argv[2:]
+        positional = []
+        group_name = None
+
+        i = 0
+        while i < len(tokens):
+            t = tokens[i]
+            if t == '-y':
+                i += 1
+                continue
+            if t == '-g':
+                if i + 1 >= len(tokens):
+                    print("Usage: python script.py -a <video_file> <path>  (optional -y to accept defaults, optional -g <group name>)")
+                    sys.exit(1)
+                group_name = tokens[i + 1]
+                i += 2
+                continue
+            positional.append(t)
+            i += 1
+
+        if len(positional) != 2:
+            print("Usage: python script.py -a <video_file> <path>  (optional -y to accept defaults, optional -g <group name>)")
             sys.exit(1)
 
-        video_source_path = Path(params[0])
-        base_path = Path(params[1])
+        video_source_path = Path(positional[0])
+        base_path = Path(positional[1])
 
         if not video_source_path.exists() or not video_source_path.is_file():
             print(f"Error: Video file not found: {video_source_path}")
@@ -259,6 +289,23 @@ def main():
         shutil.copy(video_source_path, video_dest_path)
         print(f"Video copied to {video_dest_path}")
 
+        # === 新增：如果源视频同目录存在同名 .vtt 字幕，复制为 subtitle.vtt 到新项目目录 ===
+        subtitle_copied = False
+        candidate_vtt = video_source_path.with_suffix('.vtt')
+        candidate_vtt_upper = video_source_path.with_suffix('.VTT')
+        for candidate in (candidate_vtt, candidate_vtt_upper):
+            if candidate.exists() and candidate.is_file():
+                try:
+                    shutil.copy2(candidate, new_project_path / 'subtitle.vtt')
+                    print(f"Subtitle '{candidate.name}' copied to {new_project_path / 'subtitle.vtt'}")
+                    subtitle_copied = True
+                except Exception as e:
+                    print(f"Warning: failed to copy subtitle '{candidate}': {e}")
+                break
+        if not subtitle_copied:
+            print("No matching .vtt subtitle found next to source video; skipping subtitle copy.")
+        # === 新增结束 ===
+
         # Auto-generate thumbnails
         create_thumbnails(video_dest_path, gallery_path)
 
@@ -282,8 +329,8 @@ def main():
             if not video_author:
                 video_author = "Anonymous"
 
-        # Update the summary with user input or default values
-        update_summary(new_project_path, name_input=video_name, author_input=video_author)
+        # Update the summary with user input or default values, include group_name if provided
+        update_summary(new_project_path, name_input=video_name, author_input=video_author, group_input=group_name)
 
     elif command == '-c':
         if len(sys.argv) != 4:
