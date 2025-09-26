@@ -133,7 +133,7 @@ def find_video_in_dir(base_path):
 def update_summary(base_path, name_input=None, author_input=None, group_input=None):
     """
     Updates the summary.json file for a given path.
-    name_input, author_input, group_input are optional, used for the '-a' mode.
+    name_input, author_input, group_input are optional, used for the '-a' and merging modes.
     If group_input is provided, the written summary.json will include the "group" key.
     If summary.json already contains a "group" and group_input is None, existing group is preserved.
     """
@@ -211,6 +211,56 @@ def find_next_directory(base_path):
         next_num += 1
     return str(next_num)
 
+def merge_projects(src_path, dst_path, group_override=None):
+    """
+    Merge (copy) all video projects from src_path into dst_path, resolving ID conflicts by
+    allocating the next available integer directory names in dst_path.
+
+    If group_override is provided, it will be written into each merged project's summary.json
+    (overwriting any existing group value).
+    """
+    src = Path(src_path)
+    dst = Path(dst_path)
+
+    if not src.exists() or not src.is_dir():
+        print(f"Error: Source path not found or is not a directory: {src}")
+        return
+
+    dst.mkdir(parents=True, exist_ok=True)
+
+    merged_count = 0
+    skipped_count = 0
+
+    # Iterate in sorted order for predictability
+    for child in sorted(src.iterdir(), key=lambda p: p.name):
+        if not child.is_dir():
+            continue
+
+        # Heuristic: treat as a project if it contains a video or a summary.json
+        has_video = find_video_in_dir(child) is not None
+        has_summary = (child / 'summary.json').exists()
+        if not has_video and not has_summary:
+            print(f"Skipping '{child.name}': not a project (no video or summary.json).")
+            skipped_count += 1
+            continue
+
+        # Allocate next ID in dst
+        new_dir_name = find_next_directory(dst)
+        dst_project = dst / new_dir_name
+
+        try:
+            shutil.copytree(child, dst_project)
+            print(f"Copied project '{child.name}' -> '{dst_project.name}'")
+
+            # Rebuild/adjust summary in destination project and optionally override group
+            update_summary(dst_project, group_input=group_override)
+
+            merged_count += 1
+        except Exception as e:
+            print(f"Failed to copy '{child}': {e}")
+
+    print(f"Merge complete: {merged_count} projects merged, {skipped_count} skipped.")
+
 def main():
     if len(sys.argv) < 2:
         print("Usage: python script.py <command> [arguments]")
@@ -219,6 +269,7 @@ def main():
         print("  -a <video_file> <path> Add a new video project in a new directory under the specified path.")
         print("                         Optional flags for -a: -y (accept defaults anywhere), -g <group name> (set group in summary.json).")
         print("  -c <path> <time>       Create a cover image from the video in the specified path at a given time percentage (0.0-1.0).")
+        print("  -m <src> <dst>         Merge all projects from <src> into <dst>. Optional flag -g <group name> will override group's field in merged summaries.")
         sys.exit(1)
 
     command = sys.argv[1]
@@ -289,7 +340,6 @@ def main():
         shutil.copy(video_source_path, video_dest_path)
         print(f"Video copied to {video_dest_path}")
 
-        # === 新增：如果源视频同目录存在同名 .vtt 字幕，复制为 subtitle.vtt 到新项目目录 ===
         subtitle_copied = False
         candidate_vtt = video_source_path.with_suffix('.vtt')
         candidate_vtt_upper = video_source_path.with_suffix('.VTT')
@@ -304,7 +354,6 @@ def main():
                 break
         if not subtitle_copied:
             print("No matching .vtt subtitle found next to source video; skipping subtitle copy.")
-        # === 新增结束 ===
 
         # Auto-generate thumbnails
         create_thumbnails(video_dest_path, gallery_path)
@@ -359,8 +408,36 @@ def main():
 
         create_cover(video_path, cover_path, time_percent)
 
+    elif command == '-m':
+        # Parse tokens allowing optional -g <group> anywhere; remaining two positionals must be src and dst
+        tokens = sys.argv[2:]
+        positional = []
+        group_name = None
+
+        i = 0
+        while i < len(tokens):
+            t = tokens[i]
+            if t == '-g':
+                if i + 1 >= len(tokens):
+                    print("Usage: python script.py -m <src> <dst>  (optional -g <group name>)")
+                    sys.exit(1)
+                group_name = tokens[i + 1]
+                i += 2
+                continue
+            positional.append(t)
+            i += 1
+
+        if len(positional) != 2:
+            print("Usage: python script.py -m <src> <dst>  (optional -g <group name>)")
+            sys.exit(1)
+
+        src_path = Path(positional[0])
+        dst_path = Path(positional[1])
+
+        merge_projects(src_path, dst_path, group_override=group_name)
+
     else:
-        print("Invalid command. Use -u, -a, or -c.")
+        print("Invalid command. Use -u, -a, -c, or -m.")
         print("Usage: python script.py <command> [arguments]")
         sys.exit(1)
 
