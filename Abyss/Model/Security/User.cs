@@ -1,6 +1,6 @@
 using SQLite;
 
-namespace Abyss.Model;
+namespace Abyss.Model.Security;
 
 [Table("Users")]
 public class User

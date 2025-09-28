@@ -1,6 +1,7 @@
+using Abyss.Components.Services.Misc;
 using SQLite;
-using Index = Abyss.Model.Index;
-namespace Abyss.Components.Services;
+using Index = Abyss.Model.Media.Index;
+namespace Abyss.Components.Services.Media;
 
 public class IndexService: IAsyncDisposable
 {

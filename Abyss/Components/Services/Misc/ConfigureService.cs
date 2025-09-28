@@ -1,4 +1,4 @@
-namespace Abyss.Components.Services;
+namespace Abyss.Components.Services.Misc;
 
 public class ConfigureService
 {

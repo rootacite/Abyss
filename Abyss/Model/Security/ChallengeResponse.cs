@@ -1,4 +1,4 @@
-namespace Abyss.Model;
+namespace Abyss.Model.Security;
 
 public class ChallengeResponse
 {

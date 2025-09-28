@@ -1,10 +1,12 @@
+using Abyss.Components.Services.Misc;
+using Abyss.Components.Services.Security;
 using Abyss.Components.Static;
-using Abyss.Model;
+using Abyss.Model.Media;
 using Newtonsoft.Json;
 using SQLite;
-using Task = Abyss.Model.Task;
+using Task = Abyss.Model.Media.Task;
 
-namespace Abyss.Components.Services;
+namespace Abyss.Components.Services.Media;
 
 
 
@@ -24,7 +26,7 @@ public class TaskService(ILogger<TaskService> logger, ConfigureService config, R
         foreach (var i in r ?? [])
         {
             var p = Helpers.SafePathCombine(TaskFolder, [i, "task.json"]);
-            var c = JsonConvert.DeserializeObject<Model.Task>(await System.IO.File.ReadAllTextAsync(p ?? ""));
+            var c = JsonConvert.DeserializeObject<Task>(await System.IO.File.ReadAllTextAsync(p ?? ""));
             
             if(c?.Owner == u) s.Add(i);
         }
@@ -58,8 +60,6 @@ public class TaskService(ILogger<TaskService> logger, ConfigureService config, R
 
     private async Task<TaskCreationResponse?> CreateVideoTask(string token, string ip, TaskCreation creation)
     {
-        if(!await rs.Valid(VideoFolder, token, OperationType.Write, ip))
-            return null;
         var u = user.Validate(token, ip);
         if(u == -1)
             return null;

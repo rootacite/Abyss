@@ -1,12 +1,13 @@
-using System.Text.RegularExpressions;
+
 using System.Threading.RateLimiting;
 using Abyss.Components.Controllers.Middleware;
 using Abyss.Components.Controllers.Task;
-using Abyss.Components.Services;
-using Abyss.Misc;
-using Abyss.Model;
+
+using Abyss.Components.Services.Media;
+using Abyss.Components.Services.Misc;
+using Abyss.Components.Services.Security;
+
 using Microsoft.AspNetCore.RateLimiting;
-using Newtonsoft.Json;
 
 namespace Abyss;
 
@@ -26,6 +27,8 @@ public class Program
         builder.Services.AddSingleton<TaskController>();
         builder.Services.AddSingleton<TaskService>();
         builder.Services.AddSingleton<IndexService>();
+        builder.Services.AddSingleton<VideoService>();
+        builder.Services.AddSingleton<ComicService>();
         builder.Services.AddHostedService<AbyssService>();
         
         builder.Services.AddRateLimiter(options =>

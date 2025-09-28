@@ -1,5 +1,7 @@
 using System.Text;
 using Abyss.Components.Services;
+using Abyss.Components.Services.Media;
+using Abyss.Components.Services.Security;
 using Abyss.Components.Static;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,12 +20,12 @@ public class RootController(ILogger<RootController> logger, UserService userServ
         if (userService.Validate(token, Ip) != 1)
         {
             logger.LogInformation("Chmod authorization failed for token: {Token}", token);
-            return StatusCode(401, "Unauthorized");
+            return _401;
         }
 
         bool r = await resourceService.Chmod(path, token, permission, Ip, recursive == "true");
         logger.LogInformation("Chmod operation completed with result: {Result}", r);
-        return r ? Ok() : StatusCode(502);
+        return r ? Ok() : StatusCode(500);
     }
 
     [HttpPost("chown")]
@@ -34,7 +36,7 @@ public class RootController(ILogger<RootController> logger, UserService userServ
         if (userService.Validate(token, Ip) != 1)
         {
             logger.LogInformation("Chown authorization failed for token: {Token}", token);
-            return StatusCode(401, "Unauthorized");
+            return _401;
         }
 
         bool r = await resourceService.Chown(path, token, owner, Ip, recursive == "true");
@@ -50,13 +52,13 @@ public class RootController(ILogger<RootController> logger, UserService userServ
         if (userService.Validate(token, Ip) != 1)
         {
             logger.LogInformation("Ls authorization failed for token: {Token}", token);
-            return StatusCode(401, "Unauthorized");
+            return _401;
         }
 
         if (string.IsNullOrWhiteSpace(path))
         {
             logger.LogInformation("Ls method received empty path parameter");
-            return BadRequest("path is required");
+            return _400;
         }
 
         try
@@ -67,10 +69,10 @@ public class RootController(ILogger<RootController> logger, UserService userServ
             if (!Directory.Exists(fullPath))
             {
                 logger.LogInformation("Directory does not exist: {FullPath}", fullPath);
-                return BadRequest("Path does not exist or is not a directory");
+                return _400;
             }
 
-            var entries = Directory.EnumerateFileSystemEntries(fullPath, "*", SearchOption.TopDirectoryOnly);
+            var entries = Directory.EnumerateFileSystemEntries(fullPath, "*", SearchOption.TopDirectoryOnly).ToArray();
             logger.LogInformation("Found {Count} entries in directory", entries.Count());
 
             var sb = new StringBuilder();
@@ -115,12 +117,12 @@ public class RootController(ILogger<RootController> logger, UserService userServ
         if (userService.Validate(token, Ip) != 1)
         {
             logger.LogInformation("Init authorization failed for token: {Token}", token);
-            return StatusCode(401, "Unauthorized");
+            return _401;
         }
         
         var r = await resourceService.Initialize(path, token, owner, Ip);
         if (r) return Ok(r);
-        return StatusCode(403, new { message = "403 Denied" });
+        return _403;
     }
 
     private static string ConvertToLsPerms(string permRaw, bool isDirectory)
@@ -135,7 +137,7 @@ public class RootController(ILogger<RootController> logger, UserService userServ
             return (isDirectory ? 'd' : '-') + "---------";
         }
 
-        string makeTriplet(string token)
+        string MakeTriplet(string token)
         {
             if (token.Length < 2) token = "--";
             var r = token.Length > 0 && token[0] == 'r' ? 'r' : '-';
@@ -144,9 +146,9 @@ public class RootController(ILogger<RootController> logger, UserService userServ
             return $"{r}{w}{x}";
         }
 
-        var owner = makeTriplet(parts[0]);
-        var group = makeTriplet(parts[1]);
-        var other = makeTriplet(parts[2]);
+        var owner = MakeTriplet(parts[0]);
+        var group = MakeTriplet(parts[1]);
+        var other = MakeTriplet(parts[2]);
 
         return (isDirectory ? 'd' : '-') + owner + group + other;
     }

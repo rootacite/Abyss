@@ -2,8 +2,10 @@
 
 using System.Text.RegularExpressions;
 using Abyss.Components.Services;
+using Abyss.Components.Services.Security;
 using Abyss.Components.Static;
 using Abyss.Model;
+using Abyss.Model.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
@@ -19,7 +21,7 @@ public class UserController(UserService userService, ILogger<UserController> log
     {
         var c = await userService.Challenge(user);
         if (c == null)
-            return StatusCode(403, new { message = "Access forbidden" });
+            return _403;
 
         return Ok(c);
     }
@@ -29,7 +31,10 @@ public class UserController(UserService userService, ILogger<UserController> log
     {
         var r = await userService.Verify(user, response.Response, Ip);
         if (r == null)
-            return StatusCode(403, new { message = "Access forbidden" });
+            return _403;
+        
+        
+        
         return Ok(r);
     }
 
@@ -39,7 +44,7 @@ public class UserController(UserService userService, ILogger<UserController> log
         var u = userService.Validate(token, Ip);
         if (u == -1)
         {
-            return StatusCode(401, new { message = "Invalid" });
+            return _401;
         }
 
         return Ok(u);
@@ -51,7 +56,7 @@ public class UserController(UserService userService, ILogger<UserController> log
         var u = userService.Validate(token, Ip);
         if (u == -1)
         {
-            return StatusCode(401, new { message = "Invalid" });
+            return _401;
         }
 
         userService.Destroy(token);
@@ -64,21 +69,21 @@ public class UserController(UserService userService, ILogger<UserController> log
         // Valid token
         var r = await userService.Verify(user, creating.Response, Ip);
         if (r == null)
-            return StatusCode(403, new { message = "Denied" });
+            return _403;
 
         // User exists ?
         var cu = await userService.QueryUser(creating.Name);
         if (cu != null)
-            return StatusCode(403, new { message = "Denied" });
+            return _403;
 
         // Valid username string
         if (!IsAlphanumeric(creating.Name))
-            return StatusCode(403, new { message = "Denied" });
+            return _403;
 
         // Valid parent && Privilege
         var ou = await userService.QueryUser(userService.Validate(r, Ip));
         if (creating.Privilege > ou?.Privilege || ou == null)
-            return StatusCode(403, new { message = "Denied" });
+            return _403;
 
         await userService.CreateUser(new User
         {
@@ -98,13 +103,13 @@ public class UserController(UserService userService, ILogger<UserController> log
         var caller = userService.Validate(token, Ip);
         if (caller != 1)
         {
-            return StatusCode(403, new { message = "Access forbidden" });
+            return _403;
         }
 
         var target = await userService.QueryUser(user);
         if (target == null)
         {
-            return StatusCode(404, new { message = "User not found" });
+            return _403;
         }
 
         var ipToBind = string.IsNullOrWhiteSpace(bindIp) ? Ip : bindIp;

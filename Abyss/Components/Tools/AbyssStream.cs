@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using Abyss.Components.Services;
+using Abyss.Components.Services.Security;
 using Microsoft.AspNetCore.Authentication;
 using NSec.Cryptography;
 

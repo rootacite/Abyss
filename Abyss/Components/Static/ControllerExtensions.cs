@@ -5,6 +5,11 @@ namespace Abyss.Components.Static;
 
 public abstract class BaseController : Controller
 {
+    protected IActionResult _403 => StatusCode(403, new { message = "Access Denied" });
+    protected IActionResult _400 => StatusCode(400, new { message = "Bad Request" });
+    protected IActionResult _401 => StatusCode(404, new { message = "Unauthorized" });
+    protected IActionResult _404 => StatusCode(404, new { message = "Not Found" });
+    
     private string? _ip;
 
     protected string Ip

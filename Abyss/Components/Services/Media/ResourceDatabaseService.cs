@@ -1,11 +1,12 @@
 using System.IO.Hashing;
 using System.Text;
 using System.Text.RegularExpressions;
+using Abyss.Components.Services.Misc;
 using Abyss.Components.Static;
-using Abyss.Model;
+using Abyss.Model.Media;
 using SQLite;
 
-namespace Abyss.Components.Services;
+namespace Abyss.Components.Services.Media;
 
 public class ResourceDatabaseService
 {

@@ -1,218 +1,79 @@
-using Abyss.Components.Services;
+
+using Abyss.Components.Services.Media;
 using Abyss.Components.Static;
-using Abyss.Components.Tools;
-using Abyss.Model;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
 using Newtonsoft.Json;
 
 namespace Abyss.Components.Controllers.Media;
 
-using Task = System.Threading.Tasks.Task;
-
 [ApiController]
 [Route("api/[controller]")]
-public class VideoController(ILogger<VideoController> logger, ResourceService rs, ConfigureService config)
+public class VideoController(VideoService videoService)
     : BaseController
 {
-    private ILogger<VideoController> _logger = logger;
-    public readonly string VideoFolder = Path.Combine(config.MediaRoot, "Videos");
-
+    
     [HttpPost("init")]
     public async Task<IActionResult> InitAsync(string token, string owner)
     {
-        var r = await rs.Initialize(VideoFolder, token, owner, Ip);
-        if (r) return Ok(r);
-        return StatusCode(403, new { message = "403 Denied" });
+        if (await videoService.Init(token, owner, Ip))
+            return Ok("Initialized Successfully");
+        return _403;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetClass(string token)
     {
-        var r = (await rs.Query(VideoFolder, token, Ip))?.SortLikeWindows();
-
-        if (r == null)
-            return StatusCode(401, new { message = "Unauthorized" });
-
-        return Ok(r);
+        var r = await videoService.GetClasses(token, Ip);
+        return r != null ? Ok(r) : _403; 
     }
 
     [HttpGet("{klass}")]
     public async Task<IActionResult> QueryClass(string klass, string token)
     {
-        var d = Helpers.SafePathCombine(VideoFolder, klass);
-        if (d == null) return StatusCode(403, new { message = "403 Denied" });
-        
-        var r = await rs.Query(d, token, Ip);
-        if (r == null) return StatusCode(401, new { message = "Unauthorized" });
-
-        return Ok(r);
+        var r = await videoService.QueryClass(klass, token, Ip);
+        return r != null ? Ok(r) : _403; 
     }
 
     [HttpGet("{klass}/{id}")]
     public async Task<IActionResult> QueryVideo(string klass, string id, string token)
     {
-        var d = Helpers.SafePathCombine(VideoFolder, [klass, id, "summary.json"]);
-        if (d == null) return StatusCode(403, new { message = "403 Denied" });
-
-        var r = await rs.Get(d, token, Ip);
-        if (!r) return StatusCode(403, new { message = "403 Denied" });
-
-        return Ok(await System.IO.File.ReadAllTextAsync(d));
+        var r = await videoService.QueryVideo(klass, id, token, Ip);
+        return r != null ? Ok(r) : _403;
     }
 
     [HttpPost("{klass}/bulkquery")]
     public async Task<IActionResult> QueryBulk([FromQuery] string token, [FromBody] string[] id,
         [FromRoute] string klass)
     {
-        var db = id.Select(x => Helpers.SafePathCombine(VideoFolder, [klass, x, "summary.json"])).ToArray();
-        if (db.Any(x => x == null))
-            return BadRequest();
-
-        if (!await rs.GetAll(db!, token, Ip))
-            return StatusCode(403, new { message = "403 Denied" });
-
-        var rc = db.Select(x => System.IO.File.ReadAllTextAsync(x!)).ToArray();
-        string[] rcs = await Task.WhenAll(rc);
-        var rjs = rcs.Select(JsonConvert.DeserializeObject<Video>).Select(x => x!).ToList();
-
-        return Ok(JsonConvert.SerializeObject(rjs));
+        var r = await videoService.QueryBulk(klass, id, token, Ip);
+        return Ok(JsonConvert.SerializeObject(r));
     }
 
     [HttpGet("{klass}/{id}/cover")]
     public async Task<IActionResult> Cover(string klass, string id, string token)
     {
-        var d = Helpers.SafePathCombine(VideoFolder, [klass, id, "cover.jpg"]);
-        if (d == null) return StatusCode(403, new { message = "403 Denied" });
-
-        var r = await rs.Get(d, token, Ip);
-        if (!r) return StatusCode(403, new { message = "403 Denied" });
-
-        return PhysicalFile(d, "image/jpeg", enableRangeProcessing: true);
+        var r = await videoService.Cover(klass, id, token, Ip);
+        return r ?? _403;
     }
 
     [HttpGet("{klass}/{id}/gallery/{pic}")]
     public async Task<IActionResult> Gallery(string klass, string id, string pic, string token)
     {
-        var d = Helpers.SafePathCombine(VideoFolder, [klass, id, "gallery", pic]);
-        if (d == null) return StatusCode(403, new { message = "403 Denied" });
-
-        var r = await rs.Get(d, token, Ip);
-        if (!r) return StatusCode(403, new { message = "403 Denied" });
-
-        return PhysicalFile(d, "image/jpeg", enableRangeProcessing: true);
+        var r = await videoService.Gallery(klass, id, pic, token, Ip);
+        return r ?? _403;
     }
 
     [HttpGet("{klass}/{id}/subtitle")]
     public async Task<IActionResult> Subtitle(string klass, string id, string token)
     {
-        var folder = Helpers.SafePathCombine(VideoFolder, new[] { klass, id });
-        if (folder == null)
-            return StatusCode(403, new { message = "403 Denied" });
-
-        string? subtitlePath = null;
-
-        try
-        {
-            var preferredVtt = Path.Combine(folder, "subtitle.vtt");
-            if (System.IO.File.Exists(preferredVtt))
-            {
-                subtitlePath = preferredVtt;
-            }
-            else
-            {
-                subtitlePath = Directory.EnumerateFiles(folder, "*.vtt").FirstOrDefault();
-
-                if (subtitlePath == null)
-                {
-                    var preferredAss = Path.Combine(folder, "subtitle.ass");
-                    if (System.IO.File.Exists(preferredAss))
-                    {
-                        subtitlePath = preferredAss;
-                    }
-                    else
-                    {
-                        subtitlePath = Directory.EnumerateFiles(folder, "*.ass").FirstOrDefault();
-                    }
-                }
-            }
-        }
-        catch (DirectoryNotFoundException)
-        {
-            return NotFound(new { message = "video folder not found" });
-        }
-
-        if (subtitlePath == null)
-            return NotFound(new { message = "subtitle not found" });
-
-        var r = await rs.Get(subtitlePath, token, Ip);
-        if (!r)
-            return StatusCode(403, new { message = "403 Denied" });
-
-        var ext = Path.GetExtension(subtitlePath).ToLowerInvariant();
-        var contentType = ext switch
-        {
-            ".vtt" => "text/vtt",
-            ".ass" => "text/x-ssa",
-            _ => "text/plain"
-        };
-
-        return PhysicalFile(subtitlePath, contentType, enableRangeProcessing: false);
+        var r = await videoService.Subtitle(klass, id, token, Ip);
+        return r ?? _404;
     }
 
     [HttpGet("{klass}/{id}/av")]
     public async Task<IActionResult> Av(string klass, string id, string token)
     {
-        var folder = Helpers.SafePathCombine(VideoFolder, new[] { klass, id });
-        if (folder == null) return StatusCode(403, new { message = "403 Denied" });
-        
-        var allowedExt = new[] { ".mp4", ".mkv", ".webm", ".mov", ".ogg" };
-        
-        string? videoPath = null;
-        
-        foreach (var ext in allowedExt)
-        {
-            var p = Path.Combine(folder, "video" + ext);
-            if (System.IO.File.Exists(p))
-            {
-                videoPath = p;
-                break;
-            }
-        }
-        
-        if (videoPath == null)
-        {
-            try
-            {
-                videoPath = Directory.EnumerateFiles(folder)
-                    .FirstOrDefault(f => allowedExt.Contains(Path.GetExtension(f).ToLowerInvariant()));
-            }
-            catch (DirectoryNotFoundException)
-            {
-                return NotFound(new { message = "video folder not found" });
-            }
-        }
-
-        if (videoPath == null) return NotFound(new { message = "video not found" });
-        
-        var r = await rs.Get(videoPath, token, Ip);
-        if (!r) return StatusCode(403, new { message = "403 Denied" });
-        
-        var provider = new FileExtensionContentTypeProvider();
-        if (!provider.TryGetContentType(videoPath, out var contentType))
-        {
-            var ext = Path.GetExtension(videoPath).ToLowerInvariant();
-            contentType = ext switch
-            {
-                ".mkv" => "video/x-matroska",
-                ".mp4" => "video/mp4",
-                ".webm" => "video/webm",
-                ".mov" => "video/quicktime",
-                ".ogg" => "video/ogg",
-                _ => "application/octet-stream",
-            };
-        }
-        
-        return PhysicalFile(videoPath, contentType, enableRangeProcessing: true);
+        var r = await videoService.Av(klass, id, token, Ip);
+        return r ?? _403;
     }
 }

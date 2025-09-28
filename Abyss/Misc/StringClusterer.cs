@@ -112,7 +112,7 @@ public static Dictionary<string, List<T>> Cluster<T>(
         public bool EndsWithNumber { get; }
         public object Payload { get; }
 
-        public Item(string original, object payload = null)
+        public Item(string original, object? payload = null)
         {
             Original = original;
             Payload = payload ?? original;

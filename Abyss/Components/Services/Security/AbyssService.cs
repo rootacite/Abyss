@@ -1,9 +1,10 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Abyss.Components.Services.Misc;
 using Abyss.Components.Tools;
 
-namespace Abyss.Components.Services;
+namespace Abyss.Components.Services.Security;
 
 public class AbyssService(ILogger<AbyssService> logger, ConfigureService config, UserService user) : IHostedService, IDisposable
 {

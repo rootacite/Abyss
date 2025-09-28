@@ -1,6 +1,6 @@
 using SQLite;
 
-namespace Abyss.Model;
+namespace Abyss.Model.Media;
 
 [Table("Index")]
 public class Index

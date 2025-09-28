@@ -3,13 +3,14 @@
 
 using System.Security.Cryptography;
 using System.Text;
-using Abyss.Model;
+using Abyss.Components.Services.Misc;
+using Abyss.Model.Security;
 using Microsoft.Extensions.Caching.Memory;
 using NSec.Cryptography;
 using SQLite;
 using Task = System.Threading.Tasks.Task;
 
-namespace Abyss.Components.Services;
+namespace Abyss.Components.Services.Security;
 
 public class UserService
 {

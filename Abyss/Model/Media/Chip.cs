@@ -1,4 +1,4 @@
-namespace Abyss.Model;
+namespace Abyss.Model.Media;
 
 public enum ChipState
 {

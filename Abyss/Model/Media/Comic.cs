@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Abyss.Model;
+namespace Abyss.Model.Media;
 
 public class Comic
 {

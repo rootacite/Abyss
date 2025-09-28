@@ -1,9 +1,13 @@
 // ResourceService.cs
 
+using Abyss.Components.Services.Misc;
+using Abyss.Components.Services.Security;
 using Abyss.Components.Static;
-using Abyss.Model;
+using Abyss.Model.Media;
+using Abyss.Model.Security;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Abyss.Components.Services;
+namespace Abyss.Components.Services.Media;
 
 public enum OperationType
 {
@@ -28,7 +32,7 @@ public class ResourceService
     }
 
     // Create UID only for resources, without considering advanced hash security such as adding salt
-    public async Task<Dictionary<string, bool>> ValidAny(string[] paths, string token, OperationType type, string ip)
+    private async Task<Dictionary<string, bool>> ValidAny(string[] paths, string token, OperationType type, string ip)
     {
         var result = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
 
@@ -216,7 +220,7 @@ public class ResourceService
         return result;
     }
 
-     private async Task<bool> ValidAll(string[] paths, string token, OperationType type, string ip)
+    private async Task<bool> ValidAll(string[] paths, string token, OperationType type, string ip)
     {
         if (paths.Length == 0)
         {
@@ -340,7 +344,7 @@ public class ResourceService
         return true;
     }
     
-   public async Task<bool> Valid(string path, string token, OperationType type, string ip)
+    private async Task<bool> Valid(string path, string token, OperationType type, string ip)
     {
         // Path is abs path here, due to Helpers.SafePathCombine
         if (!path.StartsWith(Path.GetFullPath(_config.MediaRoot), StringComparison.OrdinalIgnoreCase))
@@ -485,19 +489,52 @@ public class ResourceService
         }
     }
 
-    public async Task<bool> Get(string path, string token, string ip)
+    public async Task<PhysicalFileResult?> Get(string path, string token, string ip, string contentType)
     {
-        return await Valid(path, token, OperationType.Read, ip);
+        var b = await Valid(path, token, OperationType.Read, ip);
+        if (b) return new PhysicalFileResult(path, contentType)
+            {
+                EnableRangeProcessing = true
+            };
+
+        return null;
     }
 
-    public async Task<bool> GetAll(string[] path, string token, string ip)
+    public async Task<string?> GetString(string path, string token, string ip)
     {
-        return await ValidAll(path, token, OperationType.Read, ip);
+        var b = await Valid(path, token, OperationType.Read, ip);
+        if (b)
+        {
+            return await File.ReadAllTextAsync(path);
+        }
+        return null;
     }
 
-    public async Task<bool> Update(string path, string token, string ip)
+    public async Task<Dictionary<string, string?>> GetAllString(string[] paths, string token, string ip)
     {
-        return await Valid(path, token, OperationType.Write, ip);
+        Dictionary<string, string?> result = new();
+        var validMap = await ValidAny(paths, token, OperationType.Read, ip);
+        foreach (var entry in validMap)
+        {
+            if (entry.Value)
+            {
+                result[entry.Key] = await File.ReadAllTextAsync(entry.Key);
+            }
+        }
+
+        return result;
+    }
+
+    public async Task<bool> UpdateString(string path, string token, string ip, string content)
+    {
+        var b = await Valid(path, token, OperationType.Write, ip);
+        if (b)
+        {
+            await File.WriteAllTextAsync(path, content);
+            return true;
+        }
+
+        return false;
     }
 
     public async Task<bool> Initialize(string path, string token, string owner, string ip)

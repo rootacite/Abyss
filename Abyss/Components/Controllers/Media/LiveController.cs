@@ -1,4 +1,6 @@
 using Abyss.Components.Services;
+using Abyss.Components.Services.Media;
+using Abyss.Components.Services.Misc;
 using Abyss.Components.Static;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,11 +16,11 @@ public class LiveController(ResourceService rs, ConfigureService config): BaseCo
     public async Task<IActionResult> AddLive(string id, string token, int owner)
     {
         var d = Helpers.SafePathCombine(LiveFolder, [id]);
-        if (d == null) return StatusCode(403, new { message = "403 Denied" });
+        if (d == null) return _403;
 
         bool r = await rs.Include(d, token, Ip, owner, "rw,--,--");
 
-        return r ? Ok("Success") : BadRequest();
+        return r ? Ok("Success") : _400;
     }
 
     [HttpDelete("{id}")]
@@ -26,31 +28,25 @@ public class LiveController(ResourceService rs, ConfigureService config): BaseCo
     {
         var d = Helpers.SafePathCombine(LiveFolder, [id]);
         if (d == null) 
-            return StatusCode(403, new { message = "403 Denied" });
+            return _403;
 
         bool r = await rs.Exclude(d, token, Ip);
 
-        return r ? Ok("Success") : BadRequest();
+        return r ? Ok("Success") : _400;
     }
 
     [HttpGet("{id}/{token}/{item}")]
     public async Task<IActionResult> GetLive(string id, string token, string item)
     {
         var d = Helpers.SafePathCombine(LiveFolder, [id, item]);
-        var f = Helpers.SafePathCombine(LiveFolder, [id]);
-        if (d == null || f == null) return BadRequest();
+        if (d == null) return _400;
 
         // TODO: (History)ffplay does not add the m3u8 query parameter in ts requests, so special treatment is given to ts here
         // TODO: (History)It should be pointed out that this implementation is not secure and should be modified in subsequent updates
         
         // TODO: It's still not very elegant, but it's a bit better to some extent
 
-        bool r = await rs.Valid(f, token, OperationType.Read, Ip);
-        if(!r) return StatusCode(403, new { message = "403 Denied" });
-        
-        if(System.IO.File.Exists(d))
-            return PhysicalFile(d, Helpers.GetContentType(d));
-        else 
-            return NotFound();
+        var r = await rs.Get(d, token, Ip, Helpers.GetContentType(d));
+        return r ?? _404;
     }
 }
