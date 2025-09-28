@@ -33,8 +33,7 @@ public class UserController(UserService userService, ILogger<UserController> log
         if (r == null)
             return _403;
         
-        
-        
+        Response.Cookies.Append("token", r);
         return Ok(r);
     }
 

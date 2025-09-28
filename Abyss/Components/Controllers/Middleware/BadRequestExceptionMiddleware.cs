@@ -12,7 +12,7 @@ public class BadRequestExceptionMiddleware(RequestDelegate next, ILogger<BadRequ
         {
             logger.LogError(ex.Message);
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
-            await context.Response.WriteAsync("Bad Request");
+            await context.Response.WriteAsync(ex.Message);
         }
     }
 }

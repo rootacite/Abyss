@@ -10,41 +10,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/Media/ComicService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/Media/VideoService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss.sln.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/AbyssController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/AbyssController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/ImageController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/ImageController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Middleware/BadRequestExceptionMiddleware.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Middleware/BadRequestExceptionMiddleware.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/RootController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/RootController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Task/TaskController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Task/TaskController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/AbyssService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Security/AbyssService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/ConfigureService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Misc/ConfigureService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/IndexService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Media/IndexService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/ResourceDatabaseService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Media/ResourceDatabaseService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/ResourceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Media/ResourceService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/TaskService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Media/TaskService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/UserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Security/UserService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Security/UserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Security/UserService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss/Components/Static/ControllerExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Static/ControllerExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Tools/AbyssStream.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Tools/AbyssStream.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Misc/StringClusterer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Misc/StringClusterer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Model/Bookmark.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Media/Bookmark.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Model/ChallengeResponse.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Security/ChallengeResponse.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Model/Chip.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Media/Chip.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Model/Comic.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Media/Comic.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Model/Comment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Media/Comment.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Model/Index.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Media/Index.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Model/ResourceAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Media/ResourceAttribute.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Model/Task.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Media/Task.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Model/TaskCreation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Media/TaskCreation.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Model/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Security/User.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Model/UserCreating.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Security/UserCreating.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Model/Video.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Media/Video.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,30 +92,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Launch Settings Profile.Abyss: http.executor": "Run",
-    ".NET Launch Settings Profile.Abyss: https.executor": "Debug",
-    ".NET Project.AbyssCli.executor": "Run",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Publish to folder.Publish Abyss to folder x86.executor": "Run",
-    "Publish to folder.Publish Abyss to folder.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "XThreadsFramesViewSplitterKey": "0.55813956",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/acite/embd/WebProjects/Abyss/README.md",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Launch Settings Profile.Abyss: http.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Launch Settings Profile.Abyss: https.executor&quot;: &quot;Debug&quot;,
+    &quot;.NET Project.AbyssCli.executor&quot;: &quot;Run&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Publish to folder.Publish Abyss to folder x86.executor&quot;: &quot;Run&quot;,
+    &quot;Publish to folder.Publish Abyss to folder.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.55813956&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/acite/embd/WebProjects/Abyss/README.md&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Publish to folder.Publish Abyss to folder">
     <configuration name="Publish Abyss to folder x86" type="DotNetFolderPublish" factoryName="Publish to folder">
       <riderPublish configuration="Release" platform="Any CPU" produce_single_file="true" ready_to_run="true" self_contained="true" target_folder="/opt/security/https/server" target_framework="net9.0" uuid_high="3690631506471504162" uuid_low="-4858628519588143325">
@@ -279,7 +254,8 @@
       <workItem from="1758815224532" duration="430000" />
       <workItem from="1758905391249" duration="128000" />
       <workItem from="1758906781361" duration="252000" />
-      <workItem from="1759036019712" duration="20077000" />
+      <workItem from="1759036019712" duration="20642000" />
+      <workItem from="1759072866075" duration="4869000" />
     </task>
     <servers />
   </component>

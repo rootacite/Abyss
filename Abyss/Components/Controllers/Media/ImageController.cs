@@ -13,44 +13,44 @@ public class ImageController(ComicService comicService) : BaseController
 {
     
     [HttpPost("init")]
-    public async Task<IActionResult> InitAsync(string token, string owner)
+    public async Task<IActionResult> InitAsync(string owner)
     {
-        var r = await comicService.InitAsync(token, owner, Ip);
+        var r = await comicService.InitAsync(Token, owner, Ip);
         return r ? Ok("Initialize Success") : _403;
     }
 
     [HttpGet]
-    public async Task<IActionResult> QueryCollections(string token)
+    public async Task<IActionResult> QueryCollections()
     {
-        var r = await comicService.QueryCollections(token, Ip);
+        var r = await comicService.QueryCollections(Token, Ip);
         return r != null ? Ok(r.NaturalSort(x => x)) : _403;
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> Query(string id, string token)
+    public async Task<IActionResult> Query(string id)
     {
-        var r =  await comicService.Query(id, token, Ip);
+        var r =  await comicService.Query(id, Token, Ip);
         return r != null ? Ok(r) : _403;
     }
     
     [HttpPost("bulkquery")]
-    public async Task<IActionResult> QueryBulk([FromQuery] string token, [FromBody] string[] id)
+    public async Task<IActionResult> QueryBulk([FromBody] string[] id)
     {
-        var r = await comicService.QueryBulk(token, id, Ip);
+        var r = await comicService.QueryBulk(Token, id, Ip);
         return Ok(JsonConvert.SerializeObject(r));
     }
 
     [HttpPost("{id}/bookmark")]
-    public async Task<IActionResult> Bookmark(string id, string token, [FromBody] Bookmark bookmark)
+    public async Task<IActionResult> Bookmark(string id, [FromBody] Bookmark bookmark)
     {
-        var r = await comicService.Bookmark(id, token, bookmark, Ip);
+        var r = await comicService.Bookmark(id, Token, bookmark, Ip);
         return r ? Ok("Success") : _403;
     }
     
     [HttpGet("{id}/{file}")]
-    public async Task<IActionResult> Get(string id, string file, string token)
+    public async Task<IActionResult> Get(string id, string file)
     {
-        var r = await comicService.Page(id, file, token, Ip);
+        var r = await comicService.Page(id, file, Token, Ip);
         return r ?? _403;
     }
 }

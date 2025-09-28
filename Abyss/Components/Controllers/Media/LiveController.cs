@@ -1,4 +1,4 @@
-using Abyss.Components.Services;
+
 using Abyss.Components.Services.Media;
 using Abyss.Components.Services.Misc;
 using Abyss.Components.Static;
@@ -13,30 +13,30 @@ public class LiveController(ResourceService rs, ConfigureService config): BaseCo
     public readonly string LiveFolder = Path.Combine(config.MediaRoot, "Live");
 
     [HttpPost("{id}")]
-    public async Task<IActionResult> AddLive(string id, string token, int owner)
+    public async Task<IActionResult> AddLive(string id, int owner)
     {
         var d = Helpers.SafePathCombine(LiveFolder, [id]);
         if (d == null) return _403;
 
-        bool r = await rs.Include(d, token, Ip, owner, "rw,--,--");
+        bool r = await rs.Include(d, Token, Ip, owner, "rw,--,--");
 
         return r ? Ok("Success") : _400;
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> RemoveLive(string id, string token)
+    public async Task<IActionResult> RemoveLive(string id)
     {
         var d = Helpers.SafePathCombine(LiveFolder, [id]);
         if (d == null) 
             return _403;
 
-        bool r = await rs.Exclude(d, token, Ip);
+        bool r = await rs.Exclude(d, Token, Ip);
 
         return r ? Ok("Success") : _400;
     }
 
-    [HttpGet("{id}/{token}/{item}")]
-    public async Task<IActionResult> GetLive(string id, string token, string item)
+    [HttpGet("{id}/{item}")]
+    public async Task<IActionResult> GetLive(string id, string item)
     {
         var d = Helpers.SafePathCombine(LiveFolder, [id, item]);
         if (d == null) return _400;
@@ -46,7 +46,7 @@ public class LiveController(ResourceService rs, ConfigureService config): BaseCo
         
         // TODO: It's still not very elegant, but it's a bit better to some extent
 
-        var r = await rs.Get(d, token, Ip, Helpers.GetContentType(d));
+        var r = await rs.Get(d, Token, Ip, Helpers.GetContentType(d));
         return r ?? _404;
     }
 }

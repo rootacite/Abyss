@@ -13,21 +13,21 @@ namespace Abyss.Components.Controllers.Task;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TaskController(ConfigureService config, TaskService taskService) : Controller
+public class TaskController(ConfigureService config, TaskService taskService) : BaseController
 {
     public readonly string TaskFolder = Path.Combine(config.MediaRoot, "Tasks");
     
     [HttpGet]
-    public async Task<IActionResult> Query(string token)
+    public async Task<IActionResult> Query()
     {
         // If the token is invalid, an empty list will be returned, which is part of the design
-        return Json(await taskService.Query(token, Ip));
+        return Json(await taskService.Query(Token, Ip));
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(string token, [FromBody] TaskCreation creation)
+    public async Task<IActionResult> Create([FromBody] TaskCreation creation)
     {
-        var r = await taskService.Create(token, Ip, creation);
+        var r = await taskService.Create(Token, Ip, creation);
         if(r == null)
         { 
             return BadRequest();
@@ -58,6 +58,4 @@ public class TaskController(ConfigureService config, TaskService taskService) : 
     {
         throw new NotImplementedException();
     }
-    
-    private string Ip => HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
 }

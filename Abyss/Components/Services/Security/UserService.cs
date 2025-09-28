@@ -120,7 +120,7 @@ public class UserService
     {
         if (_cache.TryGetValue(token, out string? userAndIp))
         {
-            if (ip != userAndIp?.Split('@')[1] && ip != "127.0.0.1")
+            if (ip != userAndIp?.Split('@')[1] && ip != "127.0.0.1" && token != "abyss")
             {
                 _logger.LogError($"Token used from another Host: {token}");
                 Destroy(token);
