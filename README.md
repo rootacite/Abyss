@@ -13,6 +13,13 @@
 
 ---
 
+## Target
+
+The ultimate goal of this software project is to enable anyone to easily build a smooth media library that they can fully manage and control,
+contribute to with trusted individuals, and securely access from any location without worrying about unauthorized use of their data by third parties.
+Undoubtedly, this is a distant goal, but in any case,
+I hope this project can make a modest contribution to the advancement of cybersecurity and the protection of user privacy.
+
 ## Description
 
 **Abyss** is a modern, self-hosted media server and secure proxy platform built with **.NET 9**. It is designed to provide a highly secure, extensible, and efficient solution for managing and streaming media content (images, videos, live streams) while enforcing fine-grained access control and cryptographic authentication.

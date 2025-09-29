@@ -11,15 +11,6 @@
   <component name="ChangeListManager">
     <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/ImageController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/ImageController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Media/VideoController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Middleware/BadRequestExceptionMiddleware.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Middleware/BadRequestExceptionMiddleware.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/RootController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/RootController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Task/TaskController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Task/TaskController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Security/UserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Security/UserService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Static/ControllerExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Static/ControllerExtensions.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -255,7 +246,8 @@
       <workItem from="1758905391249" duration="128000" />
       <workItem from="1758906781361" duration="252000" />
       <workItem from="1759036019712" duration="20642000" />
-      <workItem from="1759072866075" duration="4869000" />
+      <workItem from="1759072866075" duration="5798000" />
+      <workItem from="1759137056827" duration="1026000" />
     </task>
     <servers />
   </component>
