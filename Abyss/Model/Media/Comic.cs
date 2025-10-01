@@ -8,6 +8,8 @@ public class Comic
     public string ComicName { get; set; } = "";
     [JsonProperty("page_count")]
     public int PageCount { get; set; }
+    [JsonProperty("cover")]
+    public string? Cover { get; set; } = ""; 
     [JsonProperty("bookmarks")]
     public List<Bookmark> Bookmarks { get; set; } = new();
     [JsonProperty("author")]
