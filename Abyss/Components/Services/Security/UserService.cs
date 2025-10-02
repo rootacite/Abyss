@@ -3,6 +3,7 @@
 
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using Abyss.Components.Services.Misc;
 using Abyss.Model.Security;
 using Microsoft.Extensions.Caching.Memory;
@@ -17,7 +18,6 @@ public class UserService
     private readonly ILogger<UserService> _logger;
     private readonly IMemoryCache _cache;
     private readonly SQLiteAsyncConnection _database;
-    
     public UserService(ILogger<UserService> logger, ConfigureService config, IMemoryCache cache)
     {
         _logger = logger;
@@ -58,6 +58,62 @@ public class UserService
             
             Console.ReadKey();
         }
+    }
+
+    public async Task<string?> OpenUserAsync(string user, string token, string? bindIp, string ip)
+    {
+        var caller = Validate(token, ip);
+        if (caller != 1)
+        {
+            return null;
+        }
+
+        var target = await QueryUser(user);
+        if (target == null)
+        {
+            return null;
+        }
+
+        var ipToBind = string.IsNullOrWhiteSpace(bindIp) ? ip : bindIp;
+
+        var t = CreateToken(target.Uuid, ipToBind, TimeSpan.FromHours(1));
+
+        _logger.LogInformation("Root created 1h token for {User}, bound to {BindIp}, request from {ReqIp}", user,
+            ipToBind, ip);
+        return t;
+    }
+    
+    public async Task<bool> CreateUserAsync(string user, UserCreating creating, string ip)
+    {
+        // Valid token
+        var r = await Verify(user, creating.Response, ip);
+        if (r == null)
+            return false;
+
+        // User exists ?
+        var cu = await QueryUser(creating.Name);
+        if (cu != null)
+            return false;
+
+        // Valid username string
+        if (!IsAlphanumeric(creating.Name))
+            return false;
+
+        // Valid parent && Privilege
+        var ou = await QueryUser(Validate(r, ip));
+        if (creating.Privilege > ou?.Privilege || ou == null)
+            return false;
+
+        await CreateUser(new User
+        {
+            Username = creating.Name,
+            ParentId = ou.Uuid,
+            Privilege = creating.Privilege,
+            PublicKey = creating.PublicKey,
+        });
+
+        Destroy(r);
+        return true;
     }
     public async Task<string?> Challenge(string user)
     {
@@ -225,5 +281,13 @@ public class UserService
         _cache.Set(token, $"{uid}@{ip}", DateTimeOffset.Now.Add(lifetime));
         _logger.LogInformation($"Created token for {uid}@{ip}, valid {lifetime.TotalMinutes} minutes");
         return token;
+    }
+    
+    
+    public static bool IsAlphanumeric(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return false;
+        return Regex.IsMatch(input, @"^[a-zA-Z0-9]+$");
     }
 }
