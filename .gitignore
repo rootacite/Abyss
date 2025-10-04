@@ -58,3 +58,5 @@ nunit-*.xml
 
 appsettings.json
 appsettings.Development.json
+build/
+publish/

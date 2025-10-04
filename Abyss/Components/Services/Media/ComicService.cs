@@ -3,11 +3,10 @@ using Abyss.Components.Static;
 using Abyss.Model.Media;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Task = System.Threading.Tasks.Task;
 
 namespace Abyss.Components.Services.Media;
 
-public class ComicService(ILogger<ComicService> logger, ResourceService rs, ConfigureService config)
+public class ComicService(ResourceService rs, ConfigureService config)
 {
     public readonly string ImageFolder = Path.Combine(config.MediaRoot, "Images");
 

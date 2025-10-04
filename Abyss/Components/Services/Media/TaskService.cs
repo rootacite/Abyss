@@ -10,7 +10,7 @@ namespace Abyss.Components.Services.Media;
 
 
 
-public class TaskService(ILogger<TaskService> logger, ConfigureService config, ResourceService rs, UserService user)
+public class TaskService(ConfigureService config, ResourceService rs, UserService user)
 { 
     public readonly string TaskFolder = Path.Combine(config.MediaRoot, "Tasks");
     public readonly string VideoFolder = Path.Combine(config.MediaRoot, "Videos");
@@ -26,7 +26,7 @@ public class TaskService(ILogger<TaskService> logger, ConfigureService config, R
         foreach (var i in r ?? [])
         {
             var p = Helpers.SafePathCombine(TaskFolder, [i, "task.json"]);
-            var c = JsonConvert.DeserializeObject<Task>(await System.IO.File.ReadAllTextAsync(p ?? ""));
+            var c = JsonConvert.DeserializeObject<Task>(await File.ReadAllTextAsync(p ?? ""));
             
             if(c?.Owner == u) s.Add(i);
         }
@@ -50,7 +50,8 @@ public class TaskService(ILogger<TaskService> logger, ConfigureService config, R
         switch ((TaskType)creation.Type)
         {
             case TaskType.Image:
-                return await CreateImageTask(token, ip, creation);
+                throw new NotImplementedException();
+                // return await CreateImageTask(token, ip, creation);
             case TaskType.Video:
                 return await CreateVideoTask(token, ip, creation);
             default:
@@ -105,10 +106,10 @@ public class TaskService(ILogger<TaskService> logger, ConfigureService config, R
         return r;
     }
 
-    private async Task<TaskCreationResponse?> CreateImageTask(string token, string ip, TaskCreation creation)
-    {
-        throw new NotImplementedException();
-    }
+    // private async Task<TaskCreationResponse?> CreateImageTask(string token, string ip, TaskCreation creation)
+    // {
+    //     throw new NotImplementedException();
+    // }
     
     public static uint GenerateUniqueId(string parentDirectory)
     {

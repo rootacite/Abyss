@@ -14,7 +14,7 @@ namespace Abyss.Components.Controllers.Security;
 [ApiController]
 [Route("api/[controller]")]
 [EnableRateLimiting("Fixed")]
-public class UserController(UserService userService, ILogger<UserController> logger) : BaseController
+public class UserController(UserService userService) : BaseController
 {
     [HttpGet("{user}")]
     public async Task<IActionResult> Challenge(string user)

@@ -35,27 +35,26 @@ public class TaskController(ConfigureService config, TaskService taskService) : 
         return Ok(JsonConvert.SerializeObject(r, Formatting.Indented));
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetTask(string id)
-    {
-        throw new NotImplementedException();
-    }
-
-    [HttpPatch("{id}")]
-    public async Task<IActionResult> PutChip(string id)
-    {
-        throw new NotImplementedException();
-    }
-
-    [HttpPost("{id}")]
-    public async Task<IActionResult> VerifyChip(string id)
-    {
-        throw new NotImplementedException();
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteTask(string id)
-    {
-        throw new NotImplementedException();
-    }
+    // [HttpGet("{id}")]
+    // public async Task<IActionResult> GetTask(string id)
+    // {
+    //     throw new NotImplementedException();
+    // }
+    //
+    // [HttpPatch("{id}")]
+    // public async Task<IActionResult> PutChip(string id)
+    // {
+    //     throw new NotImplementedException();
+    // }
+    //
+    // [HttpPost("{id}")]
+    // public async Task<IActionResult> VerifyChip(string id)
+    // {
+    //     throw new NotImplementedException();
+    // }
+    // [HttpDelete("{id}")]
+    // public async Task<IActionResult> DeleteTask(string id)
+    // {
+    //     throw new NotImplementedException();
+    // }
 }

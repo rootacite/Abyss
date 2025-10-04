@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Abyss.Components.Services.Media;
 
-public class VideoService(ILogger<VideoService> logger, ResourceService rs, ConfigureService config)
+public class VideoService(ResourceService rs, ConfigureService config)
 {
     public readonly string VideoFolder = Path.Combine(config.MediaRoot, "Videos");
 

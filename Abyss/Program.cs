@@ -2,7 +2,9 @@
 using System.Threading.RateLimiting;
 using Abyss.Components.Controllers.Middleware;
 using Abyss.Components.Controllers.Task;
-
+using Abyss.Components.Services.Admin;
+using Abyss.Components.Services.Admin.Attributes;
+using Abyss.Components.Services.Admin.Modules;
 using Abyss.Components.Services.Media;
 using Abyss.Components.Services.Misc;
 using Abyss.Components.Services.Security;
@@ -30,6 +32,12 @@ public class Program
         builder.Services.AddSingleton<VideoService>();
         builder.Services.AddSingleton<ComicService>();
         builder.Services.AddHostedService<AbyssService>();
+        builder.Services.AddHostedService<CtlService>();
+
+        foreach (var t in Module.Modules)
+        {
+            builder.Services.AddTransient(t);
+        }
         
         builder.Services.AddRateLimiter(options =>
         {
