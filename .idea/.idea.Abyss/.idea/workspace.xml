@@ -11,29 +11,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Attributes/Module.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/CtlService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Interfaces/IModule.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/HelloModule.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/VersionModule.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Static/SocketExtensions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Model/Admin/Ctl.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/abyssctl/App/App.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/abyssctl/App/Modules/HelloOptions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/abyssctl/App/Modules/VersionOptions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/abyssctl/Model/Ctl.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/abyssctl/Static/SocketExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/abyssctl/App/Interfaces/IOptions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss.sln" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss.sln" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss.sln.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Abyss.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Abyss.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Task/TaskController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Task/TaskController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Media/ComicService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Media/ComicService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Media/TaskService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Media/TaskService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Media/VideoService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Media/VideoService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/abyssctl/App/App.cs" beforeDir="false" afterPath="$PROJECT_DIR$/abyssctl/App/App.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/abyssctl/App/Modules/HelloOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/abyssctl/App/Modules/HelloOptions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/abyssctl/App/Modules/VersionOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/abyssctl/App/Modules/VersionOptions.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,6 +42,8 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/61fe11e9d86b4d2a9bd2b806929b7d381a400/a1/62750ee4/AsyncTableQuery`1.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/61fe11e9d86b4d2a9bd2b806929b7d381a400/e9/67f4a40e/SQLiteAsyncConnection.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7598e47d5cdf4107ba88f8220720fdc89000/a6/79d67871/xxHash128.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c453ace1e4574cfe83f15ca8c8f735bf37000/04/dce32804/ParserResultExtensions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c453ace1e4574cfe83f15ca8c8f735bf37000/b6/fcf31dfe/ParserExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f09ccaeb94c34c2299acd3efee0facee1a400/81/137b58b4/Key.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/AbyssController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Media/IndexController.cs" root0="FORCE_HIGHLIGHTING" />
@@ -101,6 +86,7 @@
     <setting file="file://$PROJECT_DIR$/Abyss/Model/Security/User.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Model/Security/UserCreating.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/abyssctl/App/App.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/abyssctl/App/Interfaces/IOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/abyssctl/App/Modules/HelloOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/abyssctl/App/Modules/VersionOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/abyssctl/Program.cs" root0="FORCE_HIGHLIGHTING" />
@@ -122,7 +108,7 @@
     ".NET Launch Settings Profile.Abyss: http.executor": "Debug",
     ".NET Launch Settings Profile.Abyss: https.executor": "Debug",
     ".NET Project.AbyssCli.executor": "Run",
-    ".NET Project.abyssctl.executor": "Run",
+    ".NET Project.abyssctl.executor": "Debug",
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "Publish to folder.Publish Abyss to folder x86.executor": "Run",
@@ -142,7 +128,7 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected=".NET Launch Settings Profile.Abyss: http">
+  <component name="RunManager" selected=".NET Project.abyssctl">
     <configuration name="Publish Abyss to folder" type="DotNetFolderPublish" factoryName="Publish to folder" singleton="false">
       <riderPublish configuration="Release" platform="Any CPU" produce_single_file="true" self_contained="true" target_folder="$PROJECT_DIR$/publish" target_framework="net9.0" uuid_high="3690631506471504162" uuid_low="-4858628519588143325">
         <runtimes>
@@ -153,7 +139,7 @@
     </configuration>
     <configuration name="abyssctl" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="$PROJECT_DIR$/build/net9.0/abyssctl" />
-      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="PROGRAM_PARAMETERS" value="hello" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/build/net9.0" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
@@ -288,7 +274,8 @@
       <workItem from="1759520741934" duration="642000" />
       <workItem from="1759551752441" duration="5836000" />
       <workItem from="1759561043616" duration="201000" />
-      <workItem from="1759591584659" duration="6926000" />
+      <workItem from="1759591584659" duration="8123000" />
+      <workItem from="1759634209525" duration="1338000" />
     </task>
     <servers />
   </component>

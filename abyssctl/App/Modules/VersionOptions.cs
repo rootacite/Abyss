@@ -1,11 +1,12 @@
+using abyssctl.App.Interfaces;
 using CommandLine;
 
 namespace abyssctl.App.Modules;
 
 [Verb("ver", HelpText = "Get server version")]
-public class VersionOptions
+public class VersionOptions: IOptions
 {
-    public static int Run(VersionOptions opts)
+    public async Task<int> Run()
     {
         Console.WriteLine("Version");
         return 0;

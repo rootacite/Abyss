@@ -1,6 +1,8 @@
 
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
+using abyssctl.App.Interfaces;
 using abyssctl.App.Modules;
 using abyssctl.Model;
 using abyssctl.Static;
@@ -39,10 +41,24 @@ public class App
     {
         return await Task.Run(() =>
         {
-            return Parser.Default.ParseArguments<HelloOptions, VersionOptions>(args)
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Type attributeType = typeof(VerbAttribute);
+            const string targetNamespace = "abyssctl.App.Modules";
+            
+            var moduleTypes = assembly.GetTypes()
+                .Where(t => t is { IsClass: true, IsAbstract: false, IsInterface: false })
+                .Where(t => t.Namespace == targetNamespace)
+                .Where(t => typeof(IOptions).IsAssignableFrom(t))
+                .Where(t => t.IsDefined(attributeType, inherit: true))
+                .ToArray();
+            
+            return Parser.Default.ParseArguments(args, moduleTypes)
                 .MapResult(
-                    (HelloOptions opt) => HelloOptions.Run(opt),
-                    (VersionOptions opt) => VersionOptions.Run(opt),
+                    (object obj) =>
+                    {
+                        var s = (obj as IOptions)?.Run().GetAwaiter().GetResult();
+                        return s!.Value;
+                    },
                     _ => 1);
         });
     }
