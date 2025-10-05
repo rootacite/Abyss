@@ -69,7 +69,7 @@ public class RootController(ILogger<RootController> logger, UserService userServ
             if (!Directory.Exists(fullPath))
             {
                 logger.LogInformation("Directory does not exist: {FullPath}", fullPath);
-                return _400;
+                return _404;
             }
 
             var entries = Directory.EnumerateFileSystemEntries(fullPath, "*", SearchOption.TopDirectoryOnly).ToArray();
@@ -125,7 +125,7 @@ public class RootController(ILogger<RootController> logger, UserService userServ
         return _403;
     }
 
-    private static string ConvertToLsPerms(string permRaw, bool isDirectory)
+    public static string ConvertToLsPerms(string permRaw, bool isDirectory)
     {
         // expects format like "rw,r-,r-"
         if (string.IsNullOrEmpty(permRaw))

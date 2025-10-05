@@ -11,27 +11,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/InitModule.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/UserAddModule.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/abyssctl/App/Attributes/ModuleAttribute.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/abyssctl/App/Modules/InitOptions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/abyssctl/App/Modules/UserAddOptions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/dataSources/bf32ff15-97d4-4301-bb5e-c1d57c7be5c0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/dataSources/bf32ff15-97d4-4301-bb5e-c1d57c7be5c0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/ChmodModule.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/IncludeModule.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/ListModule.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/abyssctl/App/Modules/ChmodOptions.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/abyssctl/App/Modules/IncludeOptions.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/abyssctl/App/Modules/ListOptions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss.sln.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Attributes/Module.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Attributes/ModuleAttribute.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Admin/CtlService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/CtlService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Media/ResourceDatabaseService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Media/ResourceDatabaseService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Media/ResourceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Media/ResourceService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Media/VideoService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Media/VideoService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Security/UserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Security/UserService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Model/Media/ResourceAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Media/ResourceAttribute.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Model/Security/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Security/User.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Properties/launchSettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abyssctl/App/App.cs" beforeDir="false" afterPath="$PROJECT_DIR$/abyssctl/App/App.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abyssctl/App/Modules/HelloOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/abyssctl/App/Modules/HelloOptions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abyssctl/App/Modules/VersionOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/abyssctl/App/Modules/VersionOptions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/RootController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/RootController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Toolkits/update-video.py" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Toolkits/update-video.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/abyssctl/App/Modules/UserAddOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/abyssctl/App/Modules/UserAddOptions.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,8 +59,11 @@
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Attributes/ModuleAttribute.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/CtlService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Interfaces/IModule.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/ChmodModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/HelloModule.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/IncludeModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/InitModule.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/ListModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/UserAddModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/VersionModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Media/ComicService.cs" root0="FORCE_HIGHLIGHTING" />
@@ -104,8 +96,11 @@
     <setting file="file://$PROJECT_DIR$/Abyss/Model/Security/UserCreating.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/abyssctl/App/App.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/abyssctl/App/Interfaces/IOptions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/abyssctl/App/Modules/ChmodOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/abyssctl/App/Modules/HelloOptions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/abyssctl/App/Modules/IncludeOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/abyssctl/App/Modules/InitOptions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/abyssctl/App/Modules/ListOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/abyssctl/App/Modules/UserAddOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/abyssctl/App/Modules/VersionOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/abyssctl/Program.cs" root0="FORCE_HIGHLIGHTING" />
@@ -124,7 +119,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    ".NET Launch Settings Profile.Abyss: http.executor": "Debug",
+    ".NET Launch Settings Profile.Abyss: http.executor": "Run",
     ".NET Launch Settings Profile.Abyss: https.executor": "Debug",
     ".NET Project.AbyssCli.executor": "Run",
     ".NET Project.abyssctl.executor": "Debug",
@@ -132,6 +127,8 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "Publish to folder.Publish Abyss to folder x86.executor": "Run",
     "Publish to folder.Publish Abyss to folder.executor": "Run",
+    "Publish to folder.p1.executor": "Run",
+    "Publish to folder.p2.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -148,8 +145,16 @@
   }
 }]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.Abyss: http">
-    <configuration name="Publish Abyss to folder" type="DotNetFolderPublish" factoryName="Publish to folder" singleton="false">
+    <configuration name="p1" type="DotNetFolderPublish" factoryName="Publish to folder" singleton="false">
       <riderPublish configuration="Release" platform="Any CPU" produce_single_file="true" self_contained="true" target_folder="$PROJECT_DIR$/publish" target_framework="net9.0" uuid_high="3690631506471504162" uuid_low="-4858628519588143325">
+        <runtimes>
+          <item value="linux-arm64" />
+        </runtimes>
+      </riderPublish>
+      <method v="2" />
+    </configuration>
+    <configuration name="p2" type="DotNetFolderPublish" factoryName="Publish to folder">
+      <riderPublish configuration="Release" platform="Any CPU" produce_single_file="true" self_contained="true" target_folder="$PROJECT_DIR$/publish" target_framework="net9.0" uuid_high="-657823440020091444" uuid_low="-8550226025966742844">
         <runtimes>
           <item value="linux-arm64" />
         </runtimes>
@@ -198,7 +203,8 @@
     <list>
       <item itemvalue=".NET Launch Settings Profile.Abyss: http" />
       <item itemvalue=".NET Project.abyssctl" />
-      <item itemvalue="Publish to folder.Publish Abyss to folder" />
+      <item itemvalue="Publish to folder.p1" />
+      <item itemvalue="Publish to folder.p2" />
     </list>
   </component>
   <component name="TaskManager">
@@ -295,7 +301,7 @@
       <workItem from="1759561043616" duration="201000" />
       <workItem from="1759591584659" duration="8123000" />
       <workItem from="1759634209525" duration="1767000" />
-      <workItem from="1759639928617" duration="9029000" />
+      <workItem from="1759639928617" duration="18716000" />
     </task>
     <servers />
   </component>

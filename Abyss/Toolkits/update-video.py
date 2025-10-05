@@ -340,6 +340,7 @@ def main():
         shutil.copy(video_source_path, video_dest_path)
         print(f"Video copied to {video_dest_path}")
 
+        # === 新增：如果源视频同目录存在同名 .vtt 字幕，复制为 subtitle.vtt 到新项目目录 ===
         subtitle_copied = False
         candidate_vtt = video_source_path.with_suffix('.vtt')
         candidate_vtt_upper = video_source_path.with_suffix('.VTT')
@@ -354,6 +355,7 @@ def main():
                 break
         if not subtitle_copied:
             print("No matching .vtt subtitle found next to source video; skipping subtitle copy.")
+        # === 新增结束 ===
 
         # Auto-generate thumbnails
         create_thumbnails(video_dest_path, gallery_path)

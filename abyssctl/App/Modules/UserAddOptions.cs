@@ -9,11 +9,12 @@ namespace abyssctl.App.Modules;
 [Verb("useradd", HelpText = "Add user")]
 public class UserAddOptions: IOptions
 {
-    [Option('u', "username", Required = true, HelpText = "Username for new user.")]
+    [Value(0, MetaName = "username", Required = true, HelpText = "Username for new user.")]
     public string Username { get; set; } = "";
     
-    [Option('p', "privilege", Required = true, HelpText = "User privilege.")]
+    [Value(1, MetaName = "privilege", Required = true, HelpText = "User privilege.")]
     public int Privilege { get; set; }
+    
     public async Task<int> Run()
     {
         var r = await App.CtlWriteRead<UserAddOptions>([Username, Privilege.ToString()]);
