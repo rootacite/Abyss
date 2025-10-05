@@ -6,14 +6,14 @@ using Abyss.Model.Admin;
 using Newtonsoft.Json;
 
 using System.Reflection;
+using Abyss.Components.Services.Admin.Attributes;
 using Abyss.Components.Services.Admin.Interfaces;
-using Module = Abyss.Components.Services.Admin.Attributes.Module;
 
 namespace Abyss.Components.Services.Admin;
 
 public class CtlService(ILogger<CtlService> logger, IServiceProvider serviceProvider) : IHostedService
 {
-    private readonly string _socketPath = "ctl.sock";
+    private static readonly string SocketPath = Path.Combine(Path.GetTempPath(), "abyss-ctl.sock");
 
     private Task? _executingTask;
     private CancellationTokenSource? _cts;
@@ -21,10 +21,10 @@ public class CtlService(ILogger<CtlService> logger, IServiceProvider serviceProv
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        var t = Module.Modules;
+        var t = ModuleAttribute.Modules;
         foreach (var module in t)
         {
-            var attr = module.GetCustomAttribute<Module>();
+            var attr = module.GetCustomAttribute<ModuleAttribute>();
             if (attr != null)
             {
                 _handlers[attr.Head] = module;
@@ -54,12 +54,12 @@ public class CtlService(ILogger<CtlService> logger, IServiceProvider serviceProv
 
     private async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        if (File.Exists(_socketPath))
+        if (File.Exists(SocketPath))
         {
-            File.Delete(_socketPath);
+            File.Delete(SocketPath);
         }
-
-        var endPoint = new UnixDomainSocketEndPoint(_socketPath);
+        
+        var endPoint = new UnixDomainSocketEndPoint(SocketPath);
 
         using var socket = new Socket(AddressFamily.Unix, SocketType.Stream, ProtocolType.Unspecified);
         socket.Bind(endPoint);
@@ -77,6 +77,8 @@ public class CtlService(ILogger<CtlService> logger, IServiceProvider serviceProv
                 break;
             }
         }
+        
+        File.Delete(SocketPath);
     }
 
     private async Task HandleClientAsync(Socket clientSocket, CancellationToken stoppingToken)

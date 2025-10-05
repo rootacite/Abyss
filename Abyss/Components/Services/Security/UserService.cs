@@ -25,39 +25,16 @@ public class UserService
         
         _database = new SQLiteAsyncConnection(config.UserDatabase, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
         _database.CreateTableAsync<User>().Wait();
-        var rootUser = _database.Table<User>().Where(x => x.Uuid == 1).FirstOrDefaultAsync().Result;
         
         if (config.DebugMode == "Debug")
             _cache.Set("abyss", $"1@127.0.0.1", DateTimeOffset.Now.AddHours(1));
             // Test token, can only be used locally. Will be destroyed in one hour.
-        
-        if (rootUser == null)
-        {
-            var key = GenerateKeyPair();
-            string privateKeyBase64 = Convert.ToBase64String(key.Export(KeyBlobFormat.RawPrivateKey));
-            string publicKeyBase64 = Convert.ToBase64String(key.Export(KeyBlobFormat.RawPublicKey));
-
-            var s = GenerateRandomAsciiString(8);
-            Console.WriteLine($"Enter the following string to create a root user: '{s}'");
-
-            if (Console.ReadLine() != s)
-            {
-                throw (new Exception("Invalid Input"));
-            }
             
-            Console.WriteLine($"Created root user. Please keep the key safe.");
-            Console.WriteLine("key: '" + privateKeyBase64 + "'");
-            _database.InsertAsync(new User()
-            {
-                Uuid = 1,
-                Username = "root",
-                ParentId = 1,
-                PublicKey = publicKeyBase64,
-                Privilege = 1145141919,
-            }).Wait();
-            
-            Console.ReadKey();
-        }
+    }
+
+    public async Task<bool> IsEmptyUser()
+    {
+        return await _database.Table<User>().CountAsync() == 0;
     }
 
     public async Task<string?> OpenUserAsync(string user, string token, string? bindIp, string ip)
@@ -76,7 +53,7 @@ public class UserService
 
         var ipToBind = string.IsNullOrWhiteSpace(bindIp) ? ip : bindIp;
 
-        var t = CreateToken(target.Uuid, ipToBind, TimeSpan.FromHours(1));
+        var t = CreateToken(target.Uuid!.Value, ipToBind, TimeSpan.FromHours(1));
 
         _logger.LogInformation("Root created 1h token for {User}, bound to {BindIp}, request from {ReqIp}", user,
             ipToBind, ip);
@@ -104,10 +81,10 @@ public class UserService
         if (creating.Privilege > ou?.Privilege || ou == null)
             return false;
 
-        await CreateUser(new User
+        await AddUserAsync(new User
         {
             Username = creating.Name,
-            ParentId = ou.Uuid,
+            ParentId = ou.Uuid!.Value,
             Privilege = creating.Privilege,
             PublicKey = creating.PublicKey,
         });
@@ -122,7 +99,7 @@ public class UserService
         if (u == null) // Error: User not exists
             return null;
         
-        if (_cache.TryGetValue(u.Uuid, out _)) // The previous challenge has not yet expired
+        if (_cache.TryGetValue(u.Uuid!.Value, out _)) // The previous challenge has not yet expired
             _cache.Remove(u.Uuid);
 
         var c = Convert.ToBase64String(Encoding.UTF8.GetBytes(GenerateRandomAsciiString(32)));
@@ -140,7 +117,7 @@ public class UserService
             return null;
         }
         
-        if (_cache.TryGetValue(u.Uuid, out string? challenge))
+        if (_cache.TryGetValue(u.Uuid!.Value, out string? challenge))
         {
             bool isVerified = VerifySignature(
                 PublicKey.Import(
@@ -208,13 +185,13 @@ public class UserService
         return u;
     }
 
-    public async Task CreateUser(User user)
+    public async Task AddUserAsync(User user)
     {
         await _database.InsertAsync(user);
         _logger.LogInformation($"Created user: {user.Username}, Uid: {user.Uuid}, Parent: {user.ParentId}, Privilege: {user.Privilege}");
     }
     
-    static Key GenerateKeyPair()
+    public static Key GenerateKeyPair()
     {
         var algorithm = SignatureAlgorithm.Ed25519;
         var creationParameters = new KeyCreationParameters
@@ -282,7 +259,6 @@ public class UserService
         _logger.LogInformation($"Created token for {uid}@{ip}, valid {lifetime.TotalMinutes} minutes");
         return token;
     }
-    
     
     public static bool IsAlphanumeric(string input)
     {

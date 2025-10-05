@@ -11,9 +11,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/abyssctl/App/Interfaces/IOptions.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/InitModule.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/UserAddModule.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/abyssctl/App/Attributes/ModuleAttribute.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/abyssctl/App/Modules/InitOptions.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/abyssctl/App/Modules/UserAddOptions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/dataSources/bf32ff15-97d4-4301-bb5e-c1d57c7be5c0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/dataSources/bf32ff15-97d4-4301-bb5e-c1d57c7be5c0.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Abyss.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss.sln.DotSettings.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Attributes/Module.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Attributes/ModuleAttribute.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Admin/CtlService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/CtlService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Media/ResourceDatabaseService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Media/ResourceDatabaseService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Media/ResourceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Media/ResourceService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Media/VideoService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Media/VideoService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Security/UserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Security/UserService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Model/Media/ResourceAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Media/ResourceAttribute.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Model/Security/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Security/User.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Properties/launchSettings.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/abyssctl/App/App.cs" beforeDir="false" afterPath="$PROJECT_DIR$/abyssctl/App/App.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/abyssctl/App/Modules/HelloOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/abyssctl/App/Modules/HelloOptions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/abyssctl/App/Modules/VersionOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/abyssctl/App/Modules/VersionOptions.cs" afterDir="false" />
@@ -31,6 +46,7 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/011a191356a243438f987de3ec3d6c6230800/04/8419ff35/ServiceProvider.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/18f2eb258dcf45748fa1903c530f5f07d1a000/f2/f5e8fb60/Array.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/457530be4752476295767457c3639889d1a000/25/817def70/ConfiguredValueTaskAwaitable`1.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/457530be4752476295767457c3639889d1a000/4c/4b962087/Monitor.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/457530be4752476295767457c3639889d1a000/af/aac0eaa5/ExceptionDispatchInfo.cs" root0="FORCE_HIGHLIGHTING" />
@@ -49,13 +65,14 @@
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Media/IndexController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Middleware/BadRequestExceptionMiddleware.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Security/RootController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Task/TaskController.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Attributes/Module.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Attributes/ModuleAttribute.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/CtlService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Interfaces/IModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/HelloModule.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/InitModule.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/UserAddModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/VersionModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Media/ComicService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Media/IndexService.cs" root0="FORCE_HIGHLIGHTING" />
@@ -88,12 +105,14 @@
     <setting file="file://$PROJECT_DIR$/abyssctl/App/App.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/abyssctl/App/Interfaces/IOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/abyssctl/App/Modules/HelloOptions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/abyssctl/App/Modules/InitOptions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/abyssctl/App/Modules/UserAddOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/abyssctl/App/Modules/VersionOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/abyssctl/Program.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="SWEA" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
@@ -128,7 +147,7 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected=".NET Project.abyssctl">
+  <component name="RunManager" selected=".NET Launch Settings Profile.Abyss: http">
     <configuration name="Publish Abyss to folder" type="DotNetFolderPublish" factoryName="Publish to folder" singleton="false">
       <riderPublish configuration="Release" platform="Any CPU" produce_single_file="true" self_contained="true" target_folder="$PROJECT_DIR$/publish" target_framework="net9.0" uuid_high="3690631506471504162" uuid_low="-4858628519588143325">
         <runtimes>
@@ -275,7 +294,8 @@
       <workItem from="1759551752441" duration="5836000" />
       <workItem from="1759561043616" duration="201000" />
       <workItem from="1759591584659" duration="8123000" />
-      <workItem from="1759634209525" duration="1338000" />
+      <workItem from="1759634209525" duration="1767000" />
+      <workItem from="1759639928617" duration="9029000" />
     </task>
     <servers />
   </component>

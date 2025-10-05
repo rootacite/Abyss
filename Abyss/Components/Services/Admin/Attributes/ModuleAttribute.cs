@@ -4,7 +4,7 @@ using Abyss.Components.Services.Admin.Interfaces;
 namespace Abyss.Components.Services.Admin.Attributes;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-public class Module(int head) : Attribute
+public class ModuleAttribute(int head) : Attribute
 {
     public int Head { get; } = head;
 
@@ -13,7 +13,7 @@ public class Module(int head) : Attribute
         get
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            Type attributeType = typeof(Module);
+            Type attributeType = typeof(ModuleAttribute);
             const string targetNamespace = "Abyss.Components.Services.Admin.Modules";
             
             var moduleTypes = assembly.GetTypes()

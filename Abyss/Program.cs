@@ -34,7 +34,7 @@ public class Program
         builder.Services.AddHostedService<AbyssService>();
         builder.Services.AddHostedService<CtlService>();
 
-        foreach (var t in Module.Modules)
+        foreach (var t in ModuleAttribute.Modules)
         {
             builder.Services.AddTransient(t);
         }

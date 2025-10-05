@@ -6,7 +6,7 @@ namespace Abyss.Model.Security;
 public class User
 { 
     [PrimaryKey, AutoIncrement]
-    public int Uuid { get; set; }
+    public int? Uuid { get; set; }
     [Unique, NotNull]
     public string Username { get; set; } = "";
     [NotNull]

@@ -22,22 +22,9 @@ public class ResourceDatabaseService
         
         ResourceDatabase = new SQLiteAsyncConnection(config.RaDatabase, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
         ResourceDatabase.CreateTableAsync<ResourceAttribute>().Wait();
-        
-        
-        var tasksPath = Helpers.SafePathCombine(_config.MediaRoot, "Tasks");
-        if (tasksPath != null)
-        {
-            InsertRaRow(tasksPath, 1, "rw,r-,r-", true).Wait();
-        }
-
-        var livePath = Helpers.SafePathCombine(_config.MediaRoot, "Live");
-        if (livePath != null)
-        {
-            InsertRaRow(livePath, 1, "rw,r-,r-", true).Wait();
-        }
     }
     
-    private async Task<bool> InsertRaRow(string fullPath, int owner, string permission, bool update = false)
+    public async Task<bool> InsertRaRow(string fullPath, int owner, string permission, bool update = false)
     {
         if (!PermissionRegex.IsMatch(permission))
         {
@@ -46,11 +33,12 @@ public class ResourceDatabaseService
         }
 
         var path = Path.GetRelativePath(_config.MediaRoot, fullPath);
+        var uid = Uid(path);
 
         if (update)
             return await ResourceDatabase.InsertOrReplaceAsync(new ResourceAttribute()
             {
-                Uid = Uid(path),
+                Uid = uid,
                 Owner = owner,
                 Permission = permission,
             }) == 1;
@@ -58,7 +46,7 @@ public class ResourceDatabaseService
         {
             return await ResourceDatabase.InsertAsync(new ResourceAttribute()
             {
-                Uid = Uid(path),
+                Uid = uid,
                 Owner = owner,
                 Permission = permission,
             }) == 1;

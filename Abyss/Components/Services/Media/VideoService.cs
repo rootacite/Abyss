@@ -11,7 +11,8 @@ public class VideoService(ResourceService rs, ConfigureService config)
 {
     public readonly string VideoFolder = Path.Combine(config.MediaRoot, "Videos");
 
-    public async Task<bool> Init(string token, string owner, string ip) => await rs.Initialize(VideoFolder, token, owner, ip);
+    public async Task<bool> Init(string token, string owner, string ip)
+        => await rs.Initialize(VideoFolder, token, owner, ip);
     
     public async Task<string[]?> GetClasses(string token, string ip) 
         => (await rs.Query(VideoFolder, token, ip))?.SortLikeWindows();

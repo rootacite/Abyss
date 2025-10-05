@@ -8,7 +8,7 @@
       "applicationUrl": "http://localhost:3000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "MEDIA_ROOT" : "/storage",
+        "MEDIA_ROOT" : "/opt/abyss",
         "ALLOWED_PORTS" : "3000",
         "DEBUG_MODE": "Debug"
       }

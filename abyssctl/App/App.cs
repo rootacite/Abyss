@@ -2,8 +2,8 @@
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
+using abyssctl.App.Attributes;
 using abyssctl.App.Interfaces;
-using abyssctl.App.Modules;
 using abyssctl.Model;
 using abyssctl.Static;
 using CommandLine;
@@ -13,16 +13,18 @@ namespace abyssctl.App;
 
 public class App
 {
-    private static readonly string SocketPath = "ctl.sock";
+    private static readonly string SocketPath = Path.Combine(Path.GetTempPath(), "abyss-ctl.sock");
     
-    public static async Task<Ctl> CtlWriteRead(Ctl ctl)
+    public static async Task<Ctl> CtlWriteRead<T>(string[] param)
     {
+        var attr = typeof(T).GetCustomAttribute<ModuleAttribute>()!;
+        
         var endPoint = new UnixDomainSocketEndPoint(SocketPath);
         using var socket = new Socket(AddressFamily.Unix, SocketType.Stream, ProtocolType.Unspecified);
         try
         {
             await socket.ConnectAsync(endPoint);
-            await socket.WriteBase64Async(Ctl.MakeBase64(ctl.Head, ctl.Params));
+            await socket.WriteBase64Async(Ctl.MakeBase64(attr.Head, param));
             var s = Encoding.UTF8.GetString(
                 Convert.FromBase64String(await socket.ReadBase64Async()));
             return JsonConvert.DeserializeObject<Ctl>(s)!;
@@ -41,18 +43,7 @@ public class App
     {
         return await Task.Run(() =>
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            Type attributeType = typeof(VerbAttribute);
-            const string targetNamespace = "abyssctl.App.Modules";
-            
-            var moduleTypes = assembly.GetTypes()
-                .Where(t => t is { IsClass: true, IsAbstract: false, IsInterface: false })
-                .Where(t => t.Namespace == targetNamespace)
-                .Where(t => typeof(IOptions).IsAssignableFrom(t))
-                .Where(t => t.IsDefined(attributeType, inherit: true))
-                .ToArray();
-            
-            return Parser.Default.ParseArguments(args, moduleTypes)
+            return Parser.Default.ParseArguments(args, ModuleAttribute.Modules)
                 .MapResult(
                     (object obj) =>
                     {

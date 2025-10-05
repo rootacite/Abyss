@@ -6,7 +6,7 @@ namespace Abyss.Model.Media;
 public class ResourceAttribute
 {
     [PrimaryKey, AutoIncrement]
-    public int Id { get; set; }
+    public int? Id { get; set; }
     
     [Unique, NotNull]
     public string Uid { get; init; } = "@";
