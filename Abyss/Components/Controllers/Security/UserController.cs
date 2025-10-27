@@ -16,6 +16,27 @@ namespace Abyss.Components.Controllers.Security;
 [EnableRateLimiting("Fixed")]
 public class UserController(UserService userService) : BaseController
 {
+    [HttpGet("{user}/announce")]
+    public async Task<IActionResult> GetAnnounce(int user)
+    {
+        var r = userService.GetAnnounce(user);
+        if (r is not null)
+            return Ok(r);
+        
+        return _404;
+    }
+    
+    [HttpPost("{user}/announce")]
+    public async Task<IActionResult> SetAnnounce(int user, [FromBody] string data)
+    {
+        var r = userService.SetAnnounce(user, data, Token, Ip);
+        if (r)
+        {
+            return Ok(r);
+        }
+        return _403;
+    }
+    
     [HttpGet("{user}")]
     public async Task<IActionResult> Challenge(string user)
     {

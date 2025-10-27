@@ -18,6 +18,8 @@ public class UserService
     private readonly ILogger<UserService> _logger;
     private readonly IMemoryCache _cache;
     private readonly SQLiteAsyncConnection _database;
+    private readonly Dictionary<int, string> _userAnnounces = new();
+    
     public UserService(ILogger<UserService> logger, ConfigureService config, IMemoryCache cache)
     {
         _logger = logger;
@@ -30,6 +32,28 @@ public class UserService
             _cache.Set("abyss", $"1@127.0.0.1", DateTimeOffset.Now.AddHours(1));
             // Test token, can only be used locally. Will be destroyed in one hour.
             
+    }
+
+    public string? GetAnnounce(int id)
+    {
+        return _userAnnounces.GetValueOrDefault(id);
+    }
+
+    public bool SetAnnounce(int id, string? value, string token, string ip)
+    {
+        if (Validate(token, ip) == -1)
+        {
+            return false;
+        }
+        
+        if (value == null)
+        {
+            _userAnnounces.Remove(id);
+            return true;
+        }
+        
+        _userAnnounces[id] = value;
+        return true;
     }
 
     public async Task<bool> IsEmptyUser()

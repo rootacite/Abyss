@@ -11,16 +11,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/ChmodModule.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/IncludeModule.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/ListModule.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/abyssctl/App/Modules/ChmodOptions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/abyssctl/App/Modules/IncludeOptions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/abyssctl/App/Modules/ListOptions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/RootController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/RootController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Toolkits/update-video.py" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Toolkits/update-video.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abyssctl/App/Modules/UserAddOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/abyssctl/App/Modules/UserAddOptions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Security/UserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Security/UserService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +47,7 @@
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Media/IndexController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Middleware/BadRequestExceptionMiddleware.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Security/UserController.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Task/TaskController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Attributes/ModuleAttribute.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/CtlService.cs" root0="FORCE_HIGHLIGHTING" />
@@ -63,7 +56,7 @@
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/HelloModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/IncludeModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/InitModule.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/ListModule.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/ListModule.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/UserAddModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/VersionModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Media/ComicService.cs" root0="FORCE_HIGHLIGHTING" />
@@ -107,7 +100,7 @@
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="SWEA" />
+    <option name="selectedTabId" value="Toolset" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
@@ -117,34 +110,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Launch Settings Profile.Abyss: http.executor": "Run",
-    ".NET Launch Settings Profile.Abyss: https.executor": "Debug",
-    ".NET Project.AbyssCli.executor": "Run",
-    ".NET Project.abyssctl.executor": "Debug",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Publish to folder.Publish Abyss to folder x86.executor": "Run",
-    "Publish to folder.Publish Abyss to folder.executor": "Run",
-    "Publish to folder.p1.executor": "Run",
-    "Publish to folder.p2.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "XThreadsFramesViewSplitterKey": "0.55813956",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/acite/AciteProjects/Abyss/README.md",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Launch Settings Profile.Abyss: http.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Launch Settings Profile.Abyss: https.executor&quot;: &quot;Debug&quot;,
+    &quot;.NET Project.AbyssCli.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Project.abyssctl.executor&quot;: &quot;Debug&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Publish to folder.Publish Abyss to folder x86.executor&quot;: &quot;Run&quot;,
+    &quot;Publish to folder.Publish Abyss to folder.executor&quot;: &quot;Run&quot;,
+    &quot;Publish to folder.p1.executor&quot;: &quot;Run&quot;,
+    &quot;Publish to folder.p2.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.55813956&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/acite/AciteProjects/Abyss/README.md&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
-  <component name="RunManager" selected=".NET Launch Settings Profile.Abyss: http">
+}</component>
+  <component name="RunManager" selected="Publish to folder.p2">
     <configuration name="p1" type="DotNetFolderPublish" factoryName="Publish to folder" singleton="false">
       <riderPublish configuration="Release" platform="Any CPU" produce_single_file="true" self_contained="true" target_folder="$PROJECT_DIR$/publish" target_framework="net9.0" uuid_high="3690631506471504162" uuid_low="-4858628519588143325">
         <runtimes>
@@ -301,7 +294,23 @@
       <workItem from="1759561043616" duration="201000" />
       <workItem from="1759591584659" duration="8123000" />
       <workItem from="1759634209525" duration="1767000" />
-      <workItem from="1759639928617" duration="18716000" />
+      <workItem from="1759639928617" duration="19620000" />
+      <workItem from="1759687378138" duration="189000" />
+      <workItem from="1759761027330" duration="124000" />
+      <workItem from="1759762428412" duration="103000" />
+      <workItem from="1759896589590" duration="691000" />
+      <workItem from="1760263567232" duration="4000" />
+      <workItem from="1760270818442" duration="477000" />
+      <workItem from="1760271408229" duration="10000" />
+      <workItem from="1760271525423" duration="10000" />
+      <workItem from="1760271788470" duration="14000" />
+      <workItem from="1760272429219" duration="621000" />
+      <workItem from="1760274170016" duration="1601000" />
+      <workItem from="1760275944851" duration="11000" />
+      <workItem from="1760304622217" duration="25000" />
+      <workItem from="1760629359988" duration="6000" />
+      <workItem from="1760630875664" duration="1000" />
+      <workItem from="1761538960257" duration="66000" />
     </task>
     <servers />
   </component>
