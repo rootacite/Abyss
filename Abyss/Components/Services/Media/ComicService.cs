@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Abyss.Components.Services.Misc;
 using Abyss.Components.Static;
 using Abyss.Model.Media;
@@ -14,7 +15,9 @@ public class ComicService(ResourceService rs, ConfigureService config)
         => await rs.Initialize(ImageFolder, token, owner, ip);
 
     public async Task<string[]?> QueryCollections(string token, string ip)
-        => await rs.Query(ImageFolder, token, ip);
+        => (await rs.Query(ImageFolder, token, ip))?
+            .Where(x => Regex.Match(x, @"^-?\d+$").Success)
+            .ToArray();
 
     public async Task<string?> Query(string id, string token, string ip)
     {
@@ -61,6 +64,16 @@ public class ComicService(ResourceService rs, ConfigureService config)
             return await rs.Get(d, token, ip, "image/jpeg");
         }
 
+        return null;
+    }
+
+    public async Task<PhysicalFileResult?> Achieve(string id, string token, string ip)
+    {
+        if (Helpers.SafePathCombine(ImageFolder, [".achieve", $"{id}.zip"]) is { } d)
+        {
+            return await rs.Get(d, token, ip, "application/zip");
+        }
+        
         return null;
     }
 }

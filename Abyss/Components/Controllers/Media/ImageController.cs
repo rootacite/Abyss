@@ -53,4 +53,11 @@ public class ImageController(ComicService comicService) : BaseController
         var r = await comicService.Page(id, file, Token, Ip);
         return r ?? _403;
     }
+    
+    [HttpGet("{id}/achieve")]
+    public async Task<IActionResult> Achieve(string id)
+    {
+        var r = await comicService.Achieve(id, Token, Ip);
+        return r ?? _404;
+    }
 }
