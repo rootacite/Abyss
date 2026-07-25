@@ -2,7 +2,7 @@ namespace Abyss.Components.Services.Misc;
 
 public class ConfigureService
 {
-    public string MediaRoot { get; set; } = Environment.GetEnvironmentVariable("MEDIA_ROOT") ?? "/opt";
+    public string MediaRoot { get; set; } = Environment.GetEnvironmentVariable("MEDIA_ROOT") ?? "/storage";
     public string DebugMode { get; set; } = Environment.GetEnvironmentVariable("DEBUG_MODE") ?? "Production";
     public string AllowedPorts { get; set; } = Environment.GetEnvironmentVariable("ALLOWED_PORTS") ?? "443"; // Split with ' '
     public string Version { get; } = "Alpha v0.1";

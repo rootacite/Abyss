@@ -5,11 +5,11 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,
-      "applicationUrl": "http://localhost:3000",
+      "applicationUrl": "http://0.0.0.0:80",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "MEDIA_ROOT" : "/opt/abyss",
-        "ALLOWED_PORTS" : "3000",
+        "MEDIA_ROOT" : "/storage",
+        "ALLOWED_PORTS" : "80",
         "DEBUG_MODE": "Debug"
       }
     }

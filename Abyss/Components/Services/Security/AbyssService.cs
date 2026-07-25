@@ -46,43 +46,82 @@ public class AbyssService(ILogger<AbyssService> logger, ConfigureService config,
                 await client.WriteAsync(buffer, 0, bytesRead, token);
             }
         });
-        
+
         await Task.WhenAny(tunnelUp, tunnelDown);
-        return;
     }
 
-    private async Task ClientHandlerAsync(TcpClient client, CancellationToken cancellationToken)
+private async Task ClientHandlerAsync(TcpClient client, CancellationToken cancellationToken)
     {
         try
         {
-            await using var stream = await client.GetAbyssStreamAsync(ct: cancellationToken, us: user);
-            var request = HttpHelper.Parse(await HttpReader.ReadHttpMessageAsync(stream, cancellationToken));
-            var port = 80;
-            var sp = request.RequestUri?.ToString().Split(':') ?? [];
-            if (sp.Length == 2)
-            {
-                port = int.Parse(sp[1]);
-            }
+            using var stream = await client.GetAbyssStreamAsync(ct: cancellationToken, us: user);
+
+            // 1. Keep the raw string to forward later for non-CONNECT methods
+            string rawRequest = await HttpReader.ReadHttpMessageAsync(stream, cancellationToken);
+            if (string.IsNullOrWhiteSpace(rawRequest)) return;
+
+            var request = HttpHelper.Parse(rawRequest);
+            string targetHost;
+            int targetPort;
+            string requestUri = request.RequestUri?.ToString() ?? "";
+
+            // 2. Correctly parse Host and Port based on HTTP Proxy standards
             if (request.Method == "CONNECT")
             {
-                TcpClient upClient = new TcpClient();
-                await upClient.ConnectAsync("127.0.0.1", port, cancellationToken);
-
-                if (!upClient.Connected)
+                // CONNECT uses the Authority form (e.g., example.com:443)
+                var parts = requestUri.Split(':');
+                targetHost = parts[0];
+                targetPort = parts.Length > 1 ? int.Parse(parts[1]) : 443; // 443 is default for HTTPS
+            }
+            else
+            {
+                // GET/POST usually use the Absolute form in proxy requests (e.g., http://example.com/path)
+                if (Uri.TryCreate(requestUri, UriKind.Absolute, out Uri? uri))
                 {
-                    var err1 = HttpHelper.BuildHttpResponse(
-                        504,
-                        "Gateway Timeout",
-                        new Dictionary<string, string>
-                        {
-                            ["Proxy-Agent"] = "Abyss/0.1",
-                            ["Content-Length"] = "0"
-                        });
-                    await stream.WriteAsync(Encoding.UTF8.GetBytes(err1), cancellationToken);
-                    throw new Exception("Gateway Timeout");
+                    targetHost = uri.Host;
+                    targetPort = uri.Port > 0 ? uri.Port : 80;
                 }
+                else
+                {
+                    // Fallback: Extract from Host header if RequestUri is just a path (e.g., /path)
+                    var hostMatch = System.Text.RegularExpressions.Regex.Match(rawRequest, @"(?im)^Host:\s*([^\r\n]+)");
+                    if (hostMatch.Success)
+                    {
+                        var parts = hostMatch.Groups[1].Value.Trim().Split(':');
+                        targetHost = parts[0];
+                        targetPort = parts.Length > 1 ? int.Parse(parts[1]) : 80;
+                    }
+                    else
+                    {
+                        throw new Exception("Unable to determine target host from request.");
+                    }
+                }
+            }
 
-                var upstream = upClient.GetStream();
+            // 3. Connect to the upstream server
+            using TcpClient upClient = new TcpClient();
+            await upClient.ConnectAsync(targetHost, targetPort, cancellationToken);
+
+            if (!upClient.Connected)
+            {
+                var err1 = HttpHelper.BuildHttpResponse(
+                    504,
+                    "Gateway Timeout",
+                    new Dictionary<string, string>
+                    {
+                        ["Proxy-Agent"] = "Abyss/0.1",
+                        ["Content-Length"] = "0"
+                    });
+                await stream.WriteAsync(Encoding.UTF8.GetBytes(err1), cancellationToken);
+                throw new Exception("Gateway Timeout");
+            }
+
+            var upstream = upClient.GetStream();
+
+            // 4. Handle proxy transmission methodology
+            if (request.Method == "CONNECT")
+            {
+                // For HTTPS (CONNECT), we must tell the client the tunnel is established
                 var response = HttpHelper.BuildHttpResponse(
                     200,
                     "Connection established",
@@ -92,48 +131,25 @@ public class AbyssService(ILogger<AbyssService> logger, ConfigureService config,
                         ["Connection"] = "keep-alive"
                     });
                 await stream.WriteAsync(Encoding.UTF8.GetBytes(response), cancellationToken);
-                // Connection established
-                
-                logger.LogInformation($"Tunnel for {client.Client.RemoteEndPoint} and upstream {upClient.Client.RemoteEndPoint} created");
-                await UpStreamTunnelAsync(stream, upstream, cancellationToken);
-                logger.LogInformation($"Tunnel for {client.Client.RemoteEndPoint} and upstream {upClient.Client.RemoteEndPoint} will be release");
-                
-                upstream.Close();
-                upClient.Close();
-                upClient.Dispose();
             }
             else
             {
-                string htmlContent = """
-                                     <html>
-                                         <head>
-                                             <title>405 Method Not Allowed</title>
-                                         </head>
-                                         <body>
-                                             <h1>Method Not Allowed</h1>
-                                             <p>The requested HTTP method is not supported by this proxy server.</p>
-                                         </body>
-                                     </html>
-                                     """;
-                byte[] responseBytes = Encoding.UTF8.GetBytes(htmlContent);
-                
-                var response = HttpHelper.BuildHttpResponse(
-                    405,
-                    "Method Not Allowed",
-                    new Dictionary<string, string>
-                    {
-                        ["Allow"] = "CONNECT",
-                        ["Content-Type"] = "text/html; charset=utf-8",
-                        ["Content-Length"] = responseBytes.Length.ToString() 
-                    }, htmlContent);
-                
-                await stream.WriteAsync(Encoding.UTF8.GetBytes(response), cancellationToken);
-                throw new Exception("Method Not Allowed");
+                // For HTTP (GET/POST), we must forward the initial HTTP request we already consumed
+                byte[] initialRequestBytes = Encoding.UTF8.GetBytes(rawRequest);
+                await upstream.WriteAsync(initialRequestBytes, 0, initialRequestBytes.Length, cancellationToken);
             }
+
+            // 5. Pipe the streams for subsequent data (HTTP Keep-Alive or HTTPS encrypted frames)
+            logger.LogInformation($"Tunnel for {client.Client.RemoteEndPoint} and upstream {targetHost}:{targetPort} created");
+            await UpStreamTunnelAsync(stream, upstream, cancellationToken);
+            logger.LogInformation($"Tunnel for {client.Client.RemoteEndPoint} and upstream {targetHost}:{targetPort} will be release");
+
+            // Note: Streams are closed safely when exiting 'using' block or disposed below
+            upstream.Close();
         }
         catch (Exception e)
         {
-            logger.LogError(e.Message);
+            logger.LogError($"[Proxy Error] {e.Message}");
         }
         finally
         {
@@ -145,6 +161,7 @@ public class AbyssService(ILogger<AbyssService> logger, ConfigureService config,
     private async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _listener.Start();
+        logger.LogInformation("Abyss listening on: {}", _listener.LocalEndpoint);
         while (!stoppingToken.IsCancellationRequested)
         {
             try
@@ -164,7 +181,7 @@ public class AbyssService(ILogger<AbyssService> logger, ConfigureService config,
         }
 
         _listener.Stop();
-        logger.LogInformation("TCP listener stopped");
+        logger.LogInformation("Abyss listener stopped");
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)

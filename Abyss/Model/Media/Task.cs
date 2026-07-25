@@ -1,16 +1,12 @@
 namespace Abyss.Model.Media;
 
-public enum TaskType
-{
-    Video = 1,
-    Image = 2,
-}
 
 public class Task
 {
-    public uint Id;
-    public int Owner;
-    public string Class = "";
-    public string Name = "";
-    public TaskType Type;
+    public uint Id { get; set; }
+    public int Owner { get; set; }
+    public string Class { get; set; }  = "";
+    public string Name { get; set; }  = "";
+    public string Author  { get; set; } = "";
+    public string Group  { get; set; } = "";
 }

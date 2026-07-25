@@ -1,26 +1,19 @@
 // Target: .NET 9
-// NuGet: NSec.Cryptography (for X25519)
-// Note: ChaCha20Poly1305 is used from System.Security.Cryptography (available in .NET 7+ / .NET 9)
+// NuGet: NSec.Cryptography (for X25519 and ChaCha20Poly1305)
 
 using System.Buffers;
 using System.Buffers.Binary;
 using System.Collections.Concurrent;
-using System.Data;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
-using Abyss.Components.Services;
 using Abyss.Components.Services.Security;
 using Microsoft.AspNetCore.Authentication;
 using NSec.Cryptography;
 
-using ChaCha20Poly1305 = System.Security.Cryptography.ChaCha20Poly1305;
-
 namespace Abyss.Components.Tools
 {
-    // TODO: (complete) Since C25519 has already been used for user authentication,
-    // TODO: (complete) why not use that public key to verify user identity when establishing a secure channel here?
     public sealed class AbyssStream : NetworkStream, IDisposable
     {
         private const int PublicKeyLength = 32;
@@ -30,7 +23,7 @@ namespace Abyss.Components.Tools
         private const int NonceLen = 12; // 4-byte salt + 8-byte counter
         private const int MaxPlaintextFrame = 64 * 1024; // 64 KiB per frame
 
-        private readonly ChaCha20Poly1305 _aead;
+        private readonly Key _aeadKey;
         private readonly byte[] _sendNonceSalt = new byte[NonceSaltLen];
         private readonly byte[] _recvNonceSalt = new byte[NonceSaltLen];
 
@@ -57,8 +50,8 @@ namespace Abyss.Components.Tools
             Array.Copy(sendSalt, 0, _sendNonceSalt, 0, NonceSaltLen);
             Array.Copy(recvSalt, 0, _recvNonceSalt, 0, NonceSaltLen);
 
-            // ChaCha20Poly1305 is in System.Security.Cryptography in .NET 9
-            _aead = new ChaCha20Poly1305(aeadKey);
+            // Import the raw symmetric key into NSec using the ChaCha20Poly1305 algorithm
+            _aeadKey = Key.Import(AeadAlgorithm.ChaCha20Poly1305, aeadKey, KeyBlobFormat.RawSymmetricKey);
         }
 
         /// <summary>
@@ -114,12 +107,12 @@ namespace Abyss.Components.Tools
                 var toSend = new ReadOnlyMemory<byte>(ch, sent, ch.Length - sent);
                 sent += await socket.SendAsync(toSend, SocketFlags.None, cancellationToken).ConfigureAwait(false);
             }
-            
+
             var rch = new byte[64];
             await ReadExactFromSocketAsync(socket, rch, 0, 64, cancellationToken).ConfigureAwait(false);
             bool rau = await us.VerifyAny(ch, rch);
             if (!rau) throw new AuthenticationFailureException("");
-            
+
             var ack = Encoding.UTF8.GetBytes(UserService.GenerateRandomAsciiString(16));
             sent = 0;
             while (sent < ack.Length)
@@ -154,26 +147,26 @@ namespace Abyss.Components.Tools
                 aeadKey = KeyDerivationAlgorithm.HkdfSha256.DeriveBytes(
                     shared,
                     salt: null,
-                    info: System.Text.Encoding.ASCII.GetBytes("Abyss-AEAD-Key"),
+                    info: Encoding.ASCII.GetBytes("Abyss-AEAD-Key"),
                     count: AeadKeyLen);
 
                 saltA = KeyDerivationAlgorithm.HkdfSha256.DeriveBytes(
                     shared,
                     salt: null,
-                    info: System.Text.Encoding.ASCII.GetBytes("Abyss-Nonce-Salt-A"),
+                    info: Encoding.ASCII.GetBytes("Abyss-Nonce-Salt-A"),
                     count: NonceSaltLen);
 
                 saltB = KeyDerivationAlgorithm.HkdfSha256.DeriveBytes(
                     shared,
                     salt: null,
-                    info: System.Text.Encoding.ASCII.GetBytes("Abyss-Nonce-Salt-B"),
+                    info: Encoding.ASCII.GetBytes("Abyss-Nonce-Salt-B"),
                     count: NonceSaltLen);
             }
 
-// localKey no longer needed
+            // localKey no longer needed
             localKey.Dispose();
 
-// Deterministic assignment by lexicographic comparison of raw public keys
+            // Deterministic assignment by lexicographic comparison of raw public keys
             byte[] sendSalt, recvSalt;
             int cmp = CompareByteArrayLexicographic(localPublic, remotePublic);
             if (cmp < 0)
@@ -265,16 +258,11 @@ namespace Abyss.Components.Tools
             if (payloadLen > MaxPlaintextFrame) throw new InvalidDataException("payload too big");
             if (payloadLen < AeadTagLen) throw new InvalidDataException("payload too small");
 
+            // NSec expects the ciphertext and MAC combined, which matches the payload format natively.
             var payload = new byte[payloadLen];
             await ReadExactFromBaseAsync(payload, 0, payloadLen, cancellationToken).ConfigureAwait(false);
 
-            var ciphertextLen = payloadLen - AeadTagLen;
-            var ciphertext = new byte[ciphertextLen];
-            var tag = new byte[AeadTagLen];
-            if (ciphertextLen > 0) Array.Copy(payload, 0, ciphertext, 0, ciphertextLen);
-            Array.Copy(payload, ciphertextLen, tag, 0, AeadTagLen);
-
-            // compute remote nonce using recv counter (no role bit)
+            // Compute remote nonce using recv counter (no role bit)
             ulong remoteCounterValue = _recvCounter;
             _recvCounter++;
 
@@ -282,25 +270,32 @@ namespace Abyss.Components.Tools
             Array.Copy(_recvNonceSalt, 0, nonce, 0, NonceSaltLen);
             BinaryPrimitives.WriteUInt64BigEndian(nonce.AsSpan(NonceSaltLen), remoteCounterValue);
 
-            var plaintext = new byte[ciphertextLen];
+            var plaintextLen = payloadLen - AeadTagLen;
+            var plaintext = new byte[plaintextLen];
+            bool isValid;
+
             try
             {
                 lock (_aeadLock)
                 {
-                    _aead.Decrypt(nonce, ciphertext, tag, plaintext);
+                    // NSec decrypts and authenticates the combined payload buffer
+                    isValid = AeadAlgorithm.ChaCha20Poly1305.Decrypt(_aeadKey, nonce, ReadOnlySpan<byte>.Empty, payload, plaintext);
+                }
+
+                if (!isValid)
+                {
+                    throw new CryptographicException("AEAD authentication failed; connection closed.");
                 }
             }
-            catch (CryptographicException)
+            catch (Exception)
             {
                 Dispose();
-                throw new CryptographicException("AEAD authentication failed; connection closed.");
+                throw;
             }
             finally
             {
                 Array.Clear(nonce, 0, nonce.Length);
                 Array.Clear(payload, 0, payload.Length);
-                Array.Clear(ciphertext, 0, ciphertext.Length);
-                Array.Clear(tag, 0, tag.Length);
             }
 
             return plaintext;
@@ -400,8 +395,7 @@ namespace Abyss.Components.Tools
         {
             ThrowIfDisposed();
 
-            var ciphertext = new byte[plaintext.Length];
-            var tag = new byte[AeadTagLen];
+            var payloadLen = plaintext.Length + AeadTagLen;
             var nonce = new byte[NonceLen];
             ulong counterValue;
 
@@ -414,26 +408,22 @@ namespace Abyss.Components.Tools
             Array.Copy(_sendNonceSalt, 0, nonce, 0, NonceSaltLen);
             BinaryPrimitives.WriteUInt64BigEndian(nonce.AsSpan(NonceSaltLen), counterValue);
 
+            // Optimisation: Allocate one combined buffer for the header, ciphertext, and tag.
+            // NSec writes the ciphertext and appends the 16-byte tag directly to the end of the payload output slice.
+            var packet = new byte[4 + payloadLen];
+            BinaryPrimitives.WriteUInt32BigEndian(packet.AsSpan(0, 4), (uint)payloadLen);
+
+            var payloadSpan = packet.AsSpan(4, payloadLen);
+
             lock (_aeadLock)
             {
-                _aead.Encrypt(nonce, plaintext.Span, ciphertext, tag);
+                AeadAlgorithm.ChaCha20Poly1305.Encrypt(_aeadKey, nonce, ReadOnlySpan<byte>.Empty, plaintext.Span, payloadSpan);
             }
-
-            var payloadLen = unchecked((uint)(ciphertext.Length + tag.Length));
-
-            var packet = new byte[4 + payloadLen];
-            BinaryPrimitives.WriteUInt32BigEndian(packet.AsSpan(0, 4), payloadLen);
-
-            if (ciphertext.Length > 0)
-                ciphertext.CopyTo(packet.AsSpan(4));
-            tag.CopyTo(packet.AsSpan(4 + ciphertext.Length));
 
             await base.WriteAsync(packet, 0, packet.Length, cancellationToken).ConfigureAwait(false);
             await base.FlushAsync(cancellationToken).ConfigureAwait(false);
 
             Array.Clear(nonce, 0, nonce.Length);
-            Array.Clear(tag, 0, tag.Length);
-            Array.Clear(ciphertext, 0, ciphertext.Length);
             Array.Clear(packet, 0, packet.Length);
         }
 
@@ -445,7 +435,7 @@ namespace Abyss.Components.Tools
                 {
                     lock (_aeadLock)
                     {
-                        _aead.Dispose();
+                        _aeadKey.Dispose();
                     }
 
                     while (_leftoverQueue.TryDequeue(out var seg)) Array.Clear(seg, 0, seg.Length);
@@ -461,7 +451,7 @@ namespace Abyss.Components.Tools
         {
             if (_disposed) throw new ObjectDisposedException(nameof(AbyssStream));
         }
-        
+
         public override void Write(ReadOnlySpan<byte> buffer)
         {
             var tmp = ArrayPool<byte>.Shared.Rent(buffer.Length);
@@ -501,7 +491,7 @@ namespace Abyss.Components.Tools
                 }
             }
         }
-        
+
         public override int Read(Span<byte> buffer)
         {
             var tmp = ArrayPool<byte>.Shared.Rent(buffer.Length);

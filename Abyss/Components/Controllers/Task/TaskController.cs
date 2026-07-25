@@ -23,17 +23,7 @@ public class TaskController(ConfigureService config, TaskService taskService) : 
         // If the token is invalid, an empty list will be returned, which is part of the design
         return Json(await taskService.Query(Token, Ip));
     }
-
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] TaskCreation creation)
-    {
-        var r = await taskService.Create(Token, Ip, creation);
-        if(r == null)
-        { 
-            return BadRequest();
-        }
-        return Ok(JsonConvert.SerializeObject(r, Formatting.Indented));
-    }
+    
 
     // [HttpGet("{id}")]
     // public async Task<IActionResult> GetTask(string id)

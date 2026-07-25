@@ -9,11 +9,36 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
+  <component name="CMakeProjectFlavorService">
+    <option name="flavorId" value="CMakePlainProjectFlavor" />
+  </component>
+  <component name="CMakeSettings">
+    <configurations />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="bf317275-3039-49bb-a475-725a800a0cce" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/VIdeoAddModule.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/abyssctl/App/Modules/VideoAddOptions.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/global.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/dataSources/91acd9d8-5f8b-442f-9d50-17006d4e1ac7.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/dataSources/91acd9d8-5f8b-442f-9d50-17006d4e1ac7.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/dataSources/bf32ff15-97d4-4301-bb5e-c1d57c7be5c0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/data_source_mapping.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/data_source_mapping.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/dictionaries/project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/dictionaries/project.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Abyss/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Media/ComicService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Media/ComicService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss.sln.DotSettings.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Abyss.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Abyss.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Controllers/Task/TaskController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Controllers/Task/TaskController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Media/TaskService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Media/TaskService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Misc/ConfigureService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Misc/ConfigureService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Services/Security/AbyssService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Services/Security/AbyssService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Components/Tools/AbyssStream.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Components/Tools/AbyssStream.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Model/Media/Task.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Media/Task.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Model/Media/TaskCreation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Model/Media/TaskCreation.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Abyss/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Abyss/Properties/launchSettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/abyssctl/abyssctl.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/abyssctl/abyssctl.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,22 +52,8 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/011a191356a243438f987de3ec3d6c6230800/04/8419ff35/ServiceProvider.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/18f2eb258dcf45748fa1903c530f5f07d1a000/f2/f5e8fb60/Array.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/457530be4752476295767457c3639889d1a000/25/817def70/ConfiguredValueTaskAwaitable`1.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/457530be4752476295767457c3639889d1a000/4c/4b962087/Monitor.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/457530be4752476295767457c3639889d1a000/af/aac0eaa5/ExceptionDispatchInfo.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/457530be4752476295767457c3639889d1a000/b5/9de8e4ee/Index.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/457530be4752476295767457c3639889d1a000/d0/3b166e9e/String.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/457530be4752476295767457c3639889d1a000/f3/fbf95091/SafeFileHandle.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5df2accb46d040ccbbbe8331bf4d24b61daa00/df/93debd37/ControllerBase.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/61241bc83d094fe6ac4acdfe094b2b7f1e000/d9/09284666/ServiceProviderServiceExtensions.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/61fe11e9d86b4d2a9bd2b806929b7d381a400/a1/62750ee4/AsyncTableQuery`1.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/61fe11e9d86b4d2a9bd2b806929b7d381a400/e9/67f4a40e/SQLiteAsyncConnection.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7598e47d5cdf4107ba88f8220720fdc89000/a6/79d67871/xxHash128.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c453ace1e4574cfe83f15ca8c8f735bf37000/04/dce32804/ParserResultExtensions.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c453ace1e4574cfe83f15ca8c8f735bf37000/b6/fcf31dfe/ParserExtensions.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f09ccaeb94c34c2299acd3efee0facee1a400/81/137b58b4/Key.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/607bbb2d17a84553ac58f2321de387feeda750/13/255354cd/ExceptionDispatchInfo.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f09ccaeb94c34c2299acd3efee0facee1a400/d9/6aa8ee42/ChaCha20Poly1305.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/AbyssController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Media/IndexController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Controllers/Media/LiveController.cs" root0="FORCE_HIGHLIGHTING" />
@@ -58,6 +69,7 @@
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/InitModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/ListModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/UserAddModule.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/VIdeoAddModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Admin/Modules/VersionModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Media/ComicService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Abyss/Components/Services/Media/IndexService.cs" root0="FORCE_HIGHLIGHTING" />
@@ -96,6 +108,7 @@
     <setting file="file://$PROJECT_DIR$/abyssctl/App/Modules/ListOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/abyssctl/App/Modules/UserAddOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/abyssctl/App/Modules/VersionOptions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/abyssctl/App/Modules/VideoAddOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/abyssctl/Program.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
@@ -110,36 +123,41 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.Abyss: http.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Launch Settings Profile.Abyss: https.executor&quot;: &quot;Debug&quot;,
-    &quot;.NET Project.AbyssCli.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Project.abyssctl.executor&quot;: &quot;Debug&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;Publish to folder.Publish Abyss to folder x86.executor&quot;: &quot;Run&quot;,
-    &quot;Publish to folder.Publish Abyss to folder.executor&quot;: &quot;Run&quot;,
-    &quot;Publish to folder.p1.executor&quot;: &quot;Run&quot;,
-    &quot;Publish to folder.p2.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.55813956&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/acite/AciteProjects/Abyss/README.md&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.Abyss: http.executor": "Debug",
+    ".NET Launch Settings Profile.Abyss: https.executor": "Debug",
+    ".NET Project.AbyssCli.executor": "Run",
+    ".NET Project.abyssctl.executor": "Debug",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Publish to folder.Publish Abyss to folder x86.executor": "Run",
+    "Publish to folder.Publish Abyss to folder.executor": "Run",
+    "Publish to folder.p1.executor": "Run",
+    "Publish to folder.p2.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "XThreadsFramesViewSplitterKey": "0.5310245",
+    "cidr.known.project.marker": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/home/acite/AciteProjects/Abyss/README.md",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "http.proxy",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Publish to folder.p1">
     <configuration name="p1" type="DotNetFolderPublish" factoryName="Publish to folder" singleton="false">
-      <riderPublish configuration="Release" platform="Any CPU" produce_single_file="true" self_contained="true" target_folder="$PROJECT_DIR$/publish" target_framework="net9.0" uuid_high="3690631506471504162" uuid_low="-4858628519588143325">
+      <riderPublish configuration="Release" platform="Any CPU" produce_single_file="true" self_contained="true" target_folder="$PROJECT_DIR$/publish" target_framework="net10.0" uuid_high="3690631506471504162" uuid_low="-4858628519588143325">
         <runtimes>
           <item value="linux-arm64" />
         </runtimes>
@@ -147,7 +165,7 @@
       <method v="2" />
     </configuration>
     <configuration name="p2" type="DotNetFolderPublish" factoryName="Publish to folder">
-      <riderPublish configuration="Release" platform="Any CPU" produce_single_file="true" self_contained="true" target_folder="$PROJECT_DIR$/publish" target_framework="net9.0" uuid_high="-657823440020091444" uuid_low="-8550226025966742844">
+      <riderPublish configuration="Release" platform="Any CPU" produce_single_file="true" self_contained="true" target_folder="$PROJECT_DIR$/publish" target_framework="net10.0" uuid_high="-657823440020091444" uuid_low="-8550226025966742844">
         <runtimes>
           <item value="linux-arm64" />
         </runtimes>
@@ -159,10 +177,8 @@
       <option name="PROGRAM_PARAMETERS" value="hello" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/build/net9.0" />
       <option name="PASS_PARENT_ENVS" value="1" />
-      <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="ENV_FILE_PATHS" value="" />
       <option name="REDIRECT_INPUT_PATH" value="" />
-      <option name="PTY_MODE" value="Auto" />
       <option name="MIXED_MODE_DEBUG" value="0" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
@@ -181,7 +197,6 @@
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/Abyss/Abyss.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net9.0" />
       <option name="LAUNCH_PROFILE_NAME" value="http" />
-      <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
       <option name="GENERATE_APPLICATIONHOST_CONFIG" value="1" />
@@ -189,6 +204,7 @@
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
       <option name="AUTO_ATTACH_CHILDREN" value="0" />
+      <option name="MIXED_MODE_DEBUG" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -318,7 +334,32 @@
       <workItem from="1761841595489" duration="267000" />
       <workItem from="1761988700826" duration="6000" />
       <workItem from="1762005816621" duration="2025000" />
-      <workItem from="1762010975464" duration="363000" />
+      <workItem from="1762010975464" duration="599000" />
+      <workItem from="1762011837581" duration="10000" />
+      <workItem from="1762155863768" duration="1341000" />
+      <workItem from="1762157526307" duration="1284000" />
+      <workItem from="1763400145299" duration="3000" />
+      <workItem from="1764335335006" duration="46000" />
+      <workItem from="1764335435555" duration="65000" />
+      <workItem from="1764336883120" duration="49000" />
+      <workItem from="1764489333857" duration="16000" />
+      <workItem from="1764489402634" duration="9000" />
+      <workItem from="1764495115326" duration="7000" />
+      <workItem from="1764580685201" duration="1000" />
+      <workItem from="1764827720762" duration="2308000" />
+      <workItem from="1764830474079" duration="92000" />
+      <workItem from="1773557410433" duration="29000" />
+      <workItem from="1773557715276" duration="132000" />
+      <workItem from="1773938019869" duration="3000" />
+      <workItem from="1774111431742" duration="2000" />
+      <workItem from="1784291600437" duration="332000" />
+      <workItem from="1784295937820" duration="279000" />
+      <workItem from="1784300922527" duration="4000" />
+      <workItem from="1784446723810" duration="1134000" />
+      <workItem from="1784448243231" duration="1298000" />
+      <workItem from="1784451389484" duration="61000" />
+      <workItem from="1784861015928" duration="362000" />
+      <workItem from="1784941221414" duration="4707000" />
     </task>
     <servers />
   </component>
@@ -370,5 +411,9 @@
         </breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
