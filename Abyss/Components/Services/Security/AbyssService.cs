@@ -10,7 +10,7 @@ public class AbyssService(ILogger<AbyssService> logger, ConfigureService config,
 {
     private Task? _executingTask;
     private CancellationTokenSource? _cts;
-    private readonly TcpListener _listener = new TcpListener(IPAddress.Any, 4096);
+    private readonly TcpListener _listener = new TcpListener(IPAddress.IPv6Any, 4096);
     public readonly int[] AllowedPorts = config.AllowedPorts.Split(' ').Select(int.Parse).ToArray();
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -61,7 +61,7 @@ private async Task ClientHandlerAsync(TcpClient client, CancellationToken cancel
             if (string.IsNullOrWhiteSpace(rawRequest)) return;
 
             var request = HttpHelper.Parse(rawRequest);
-            string targetHost;
+            string targetHost = "localhost";
             int targetPort;
             string requestUri = request.RequestUri?.ToString() ?? "";
 
@@ -70,7 +70,6 @@ private async Task ClientHandlerAsync(TcpClient client, CancellationToken cancel
             {
                 // CONNECT uses the Authority form (e.g., example.com:443)
                 var parts = requestUri.Split(':');
-                targetHost = parts[0];
                 targetPort = parts.Length > 1 ? int.Parse(parts[1]) : 443; // 443 is default for HTTPS
             }
             else
@@ -78,7 +77,6 @@ private async Task ClientHandlerAsync(TcpClient client, CancellationToken cancel
                 // GET/POST usually use the Absolute form in proxy requests (e.g., http://example.com/path)
                 if (Uri.TryCreate(requestUri, UriKind.Absolute, out Uri? uri))
                 {
-                    targetHost = uri.Host;
                     targetPort = uri.Port > 0 ? uri.Port : 80;
                 }
                 else
@@ -88,7 +86,6 @@ private async Task ClientHandlerAsync(TcpClient client, CancellationToken cancel
                     if (hostMatch.Success)
                     {
                         var parts = hostMatch.Groups[1].Value.Trim().Split(':');
-                        targetHost = parts[0];
                         targetPort = parts.Length > 1 ? int.Parse(parts[1]) : 80;
                     }
                     else

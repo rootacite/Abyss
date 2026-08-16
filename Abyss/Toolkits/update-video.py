@@ -6,6 +6,7 @@ import shutil
 from pathlib import Path
 
 ALLOWED_VIDEO_EXTS = [".mp4", ".mkv", ".webm", ".mov", ".ogg", ".ts", ".m2ts"]
+ALLOWED_IMAGE_EXTS = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".tiff"]
 
 def get_video_duration(video_path):
     """Get video duration in milliseconds using ffprobe"""
@@ -261,6 +262,26 @@ def merge_projects(src_path, dst_path, group_override=None):
 
     print(f"Merge complete: {merged_count} projects merged, {skipped_count} skipped.")
 
+def _copy_with_conflict_avoid(src: Path, dst: Path):
+    """
+    Copy src -> dst. If dst exists, append _1, _2... before extension.
+    Returns the final destination Path.
+    """
+    final = dst
+    if not final.exists():
+        shutil.copy2(src, final)
+        return final
+
+    stem = dst.stem
+    suffix = dst.suffix
+    i = 1
+    while True:
+        candidate = dst.with_name(f"{stem}_{i}{suffix}")
+        if not candidate.exists():
+            shutil.copy2(src, candidate)
+            return candidate
+        i += 1
+
 def main():
     if len(sys.argv) < 2:
         print("Usage: python script.py <command> [arguments]")
@@ -268,6 +289,7 @@ def main():
         print("  -u <path>              Update the summary.json in the specified path.")
         print("  -a <video_file> <path> Add a new video project in a new directory under the specified path.")
         print("                         Optional flags for -a: -y (accept defaults anywhere), -g <group name> (set group in summary.json).")
+        print("                         New option: -r (read from a source directory containing one video + images).")
         print("  -c <path> <time>       Create a cover image from the video in the specified path at a given time percentage (0.0-1.0).")
         print("  -m <src> <dst>         Merge all projects from <src> into <dst>. Optional flag -g <group name> will override group's field in merged summaries.")
         sys.exit(1)
@@ -288,10 +310,12 @@ def main():
         update_summary(base_path)
 
     elif command == '-a':
-        # Parse tokens allowing -y (global) and -g <group> anywhere; remaining two positionals must be video_file and base_path
+        # Parse tokens allowing -y (global), -g <group>, and -r (read-from-dir) anywhere;
+        # remaining two positionals must be either <video_file> <path> or <src_dir> <path> when -r present
         tokens = sys.argv[2:]
         positional = []
         group_name = None
+        read_from_dir = False
 
         i = 0
         while i < len(tokens):
@@ -301,87 +325,183 @@ def main():
                 continue
             if t == '-g':
                 if i + 1 >= len(tokens):
-                    print("Usage: python script.py -a <video_file> <path>  (optional -y to accept defaults, optional -g <group name>)")
+                    print("Usage: python script.py -a <video_file> <path>  (optional -y to accept defaults, optional -g <group name>, optional -r)")
                     sys.exit(1)
                 group_name = tokens[i + 1]
                 i += 2
+                continue
+            if t == '-r':
+                read_from_dir = True
+                i += 1
                 continue
             positional.append(t)
             i += 1
 
         if len(positional) != 2:
-            print("Usage: python script.py -a <video_file> <path>  (optional -y to accept defaults, optional -g <group name>)")
+            print("Usage: python script.py -a <video_file|src_dir> <path>  (optional -y to accept defaults, optional -g <group name>, optional -r)")
             sys.exit(1)
 
-        video_source_path = Path(positional[0])
-        base_path = Path(positional[1])
+        # When -r is present, treat first positional as source directory
+        if read_from_dir:
+            src_dir = Path(positional[0])
+            base_path = Path(positional[1])
 
-        if not video_source_path.exists() or not video_source_path.is_file():
-            print(f"Error: Video file not found: {video_source_path}")
-            sys.exit(1)
+            if not src_dir.exists() or not src_dir.is_dir():
+                print(f"Error: Source directory not found or is not a directory: {src_dir}")
+                sys.exit(1)
 
-        if not base_path.is_dir():
-            print(f"Error: Base path not found or is not a directory: {base_path}")
-            sys.exit(1)
+            if not base_path.is_dir():
+                print(f"Error: Base path not found or is not a directory: {base_path}")
+                sys.exit(1)
 
-        # Find a new directory name (e.g., "1", "2", "3")
-        new_dir_name = find_next_directory(base_path)
-        new_project_path = base_path / new_dir_name
+            # find video in src_dir
+            video_source_path = find_video_in_dir(src_dir)
+            if video_source_path is None:
+                print(f"Error: No video file found in source directory: {src_dir}")
+                sys.exit(1)
 
-        # Create the new project directory and the gallery subdirectory
-        new_project_path.mkdir(exist_ok=True)
-        gallery_path = new_project_path / "gallery"
-        gallery_path.mkdir(exist_ok=True)
-        print(f"New project directory created at {new_project_path}")
+            # gather image files in src_dir
+            image_files = []
+            for f in sorted(src_dir.iterdir(), key=lambda p: p.name):
+                if f.is_file() and f.suffix.lower() in ALLOWED_IMAGE_EXTS:
+                    image_files.append(f)
 
-        # Copy video file to the new directory, preserving extension in the target name
-        dest_video_name = "video" + video_source_path.suffix.lower()
-        video_dest_path = new_project_path / dest_video_name
-        shutil.copy(video_source_path, video_dest_path)
-        print(f"Video copied to {video_dest_path}")
+            # create new project dir
+            new_dir_name = find_next_directory(base_path)
+            new_project_path = base_path / new_dir_name
+            new_project_path.mkdir(exist_ok=True)
+            gallery_path = new_project_path / "gallery"
+            gallery_path.mkdir(exist_ok=True)
+            print(f"New project directory created at {new_project_path}")
 
-        # === 新增：如果源视频同目录存在同名 .vtt 字幕，复制为 subtitle.vtt 到新项目目录 ===
-        subtitle_copied = False
-        candidate_vtt = video_source_path.with_suffix('.vtt')
-        candidate_vtt_upper = video_source_path.with_suffix('.VTT')
-        for candidate in (candidate_vtt, candidate_vtt_upper):
-            if candidate.exists() and candidate.is_file():
-                try:
-                    shutil.copy2(candidate, new_project_path / 'subtitle.vtt')
-                    print(f"Subtitle '{candidate.name}' copied to {new_project_path / 'subtitle.vtt'}")
-                    subtitle_copied = True
-                except Exception as e:
-                    print(f"Warning: failed to copy subtitle '{candidate}': {e}")
-                break
-        if not subtitle_copied:
-            print("No matching .vtt subtitle found next to source video; skipping subtitle copy.")
-        # === 新增结束 ===
+            # copy video to new project
+            dest_video_name = "video" + video_source_path.suffix.lower()
+            video_dest_path = new_project_path / dest_video_name
+            shutil.copy2(video_source_path, video_dest_path)
+            print(f"Video copied to {video_dest_path}")
 
-        # Auto-generate thumbnails
-        create_thumbnails(video_dest_path, gallery_path)
+            # copy images into gallery (if any)
+            if image_files:
+                print(f"Copying {len(image_files)} image(s) to gallery...")
+                for img in image_files:
+                    final_dest = gallery_path / img.name
+                    copied = _copy_with_conflict_avoid(img, final_dest)
+                    print(f"  Copied {img.name} -> {copied.name}")
+            else:
+                # fallback: if no images present, auto-generate thumbnails into gallery
+                print("No images found in source directory; generating thumbnails from video.")
+                create_thumbnails(video_dest_path, gallery_path)
 
-        # Auto-generate cover at 50%
-        cover_path = new_project_path / "cover.jpg"
-        create_cover(video_dest_path, cover_path, 0.5)
+            # copy subtitle if next to source video
+            subtitle_copied = False
+            candidate_vtt = video_source_path.with_suffix('.vtt')
+            candidate_vtt_upper = video_source_path.with_suffix('.VTT')
+            for candidate in (candidate_vtt, candidate_vtt_upper):
+                if candidate.exists() and candidate.is_file():
+                    try:
+                        shutil.copy2(candidate, new_project_path / 'subtitle.vtt')
+                        print(f"Subtitle '{candidate.name}' copied to {new_project_path / 'subtitle.vtt'}")
+                        subtitle_copied = True
+                    except Exception as e:
+                        print(f"Warning: failed to copy subtitle '{candidate}': {e}")
+                    break
+            if not subtitle_copied:
+                print("No matching .vtt subtitle found next to source video; skipping subtitle copy.")
 
-        # Get user input for name and author, unless assume_yes is set
-        if assume_yes:
-            video_name = video_source_path.stem
-            video_author = "Anonymous"
-            print(f"Assume yes (-y): using defaults: name='{video_name}', author='{video_author}'")
-        else:
-            print("\nEnter the video name (press Enter to use the original filename):")
-            video_name = input(f"Video Name [{video_source_path.stem}]: ")
-            if not video_name:
-                video_name = video_source_path.stem
+            # Auto-generate cover at 50%
+            cover_path = new_project_path / "cover.jpg"
+            create_cover(video_dest_path, cover_path, 0.5)
 
-            print("\nEnter the author's name (press Enter to use 'Anonymous'):")
-            video_author = input("Author Name [Anonymous]: ")
-            if not video_author:
+            # Get user input for name and author, unless assume_yes is set
+            if assume_yes:
+                video_name = src_dir.name
                 video_author = "Anonymous"
+                print(f"Assume yes (-y): using defaults: name='{video_name}', author='{video_author}'")
+            else:
+                print("\nEnter the video name (press Enter to use the source directory name):")
+                video_name = input(f"Video Name [{src_dir.name}]: ")
+                if not video_name:
+                    video_name = src_dir.name
 
-        # Update the summary with user input or default values, include group_name if provided
-        update_summary(new_project_path, name_input=video_name, author_input=video_author, group_input=group_name)
+                print("\nEnter the author's name (press Enter to use 'Anonymous'):")
+                video_author = input("Author Name [Anonymous]: ")
+                if not video_author:
+                    video_author = "Anonymous"
+
+            # Update summary
+            update_summary(new_project_path, name_input=video_name, author_input=video_author, group_input=group_name)
+
+        else:
+            # Original behavior: first positional is video file, second is base path
+            video_source_path = Path(positional[0])
+            base_path = Path(positional[1])
+
+            if not video_source_path.exists() or not video_source_path.is_file():
+                print(f"Error: Video file not found: {video_source_path}")
+                sys.exit(1)
+
+            if not base_path.is_dir():
+                print(f"Error: Base path not found or is not a directory: {base_path}")
+                sys.exit(1)
+
+            # Find a new directory name (e.g., "1", "2", "3")
+            new_dir_name = find_next_directory(base_path)
+            new_project_path = base_path / new_dir_name
+
+            # Create the new project directory and the gallery subdirectory
+            new_project_path.mkdir(exist_ok=True)
+            gallery_path = new_project_path / "gallery"
+            gallery_path.mkdir(exist_ok=True)
+            print(f"New project directory created at {new_project_path}")
+
+            # Copy video file to the new directory, preserving extension in the target name
+            dest_video_name = "video" + video_source_path.suffix.lower()
+            video_dest_path = new_project_path / dest_video_name
+            shutil.copy2(video_source_path, video_dest_path)
+            print(f"Video copied to {video_dest_path}")
+
+            # === 新增：如果源视频同目录存在同名 .vtt 字幕，复制为 subtitle.vtt 到新项目目录 ===
+            subtitle_copied = False
+            candidate_vtt = video_source_path.with_suffix('.vtt')
+            candidate_vtt_upper = video_source_path.with_suffix('.VTT')
+            for candidate in (candidate_vtt, candidate_vtt_upper):
+                if candidate.exists() and candidate.is_file():
+                    try:
+                        shutil.copy2(candidate, new_project_path / 'subtitle.vtt')
+                        print(f"Subtitle '{candidate.name}' copied to {new_project_path / 'subtitle.vtt'}")
+                        subtitle_copied = True
+                    except Exception as e:
+                        print(f"Warning: failed to copy subtitle '{candidate}': {e}")
+                    break
+            if not subtitle_copied:
+                print("No matching .vtt subtitle found next to source video; skipping subtitle copy.")
+            # === 新增结束 ===
+
+            # Auto-generate thumbnails
+            create_thumbnails(video_dest_path, gallery_path)
+
+            # Auto-generate cover at 50%
+            cover_path = new_project_path / "cover.jpg"
+            create_cover(video_dest_path, cover_path, 0.5)
+
+            # Get user input for name and author, unless assume_yes is set
+            if assume_yes:
+                video_name = video_source_path.stem
+                video_author = "Anonymous"
+                print(f"Assume yes (-y): using defaults: name='{video_name}', author='{video_author}'")
+            else:
+                print("\nEnter the video name (press Enter to use the original filename):")
+                video_name = input(f"Video Name [{video_source_path.stem}]: ")
+                if not video_name:
+                    video_name = video_source_path.stem
+
+                print("\nEnter the author's name (press Enter to use 'Anonymous'):")
+                video_author = input("Author Name [Anonymous]: ")
+                if not video_author:
+                    video_author = "Anonymous"
+
+            # Update the summary with user input or default values, include group_name if provided
+            update_summary(new_project_path, name_input=video_name, author_input=video_author, group_input=group_name)
 
     elif command == '-c':
         if len(sys.argv) != 4:
@@ -445,3 +565,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
