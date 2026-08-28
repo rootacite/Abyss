@@ -244,6 +244,9 @@ def main():
             print("Error: No supported image files found in the directory.")
             sys.exit(1)
 
+        # Create a mapping from old filenames to new filenames
+        filename_mapping = {}
+        
         # Only rename files if we don't have an existing summary with a file list
         if existing_summary and "list" in existing_summary:
             new_filenames = existing_summary["list"]
@@ -268,7 +271,19 @@ def main():
                 else:
                     print(f"  '{old_filename}' is already correctly named. Skipping.")
 
+                filename_mapping[old_filename] = new_filename
                 new_filenames.append(new_filename)
+
+            # Update existing bookmarks to use new filenames
+            if existing_bookmarks:
+                print("\nUpdating existing bookmarks with new filenames...")
+                for bookmark in existing_bookmarks:
+                    old_page = bookmark["page"]
+                    if old_page in filename_mapping:
+                        new_page = filename_mapping[old_page]
+                        if old_page != new_page:
+                            print(f"  Bookmark '{bookmark['name']}': '{old_page}' -> '{new_page}'")
+                            bookmark["page"] = new_page
 
     except OSError as e:
         print(f"\nAn error occurred during file operations: {e}")
