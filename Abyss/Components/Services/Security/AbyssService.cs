@@ -10,8 +10,11 @@ public class AbyssService(ILogger<AbyssService> logger, ConfigureService config,
 {
     private Task? _executingTask;
     private CancellationTokenSource? _cts;
-    private readonly TcpListener _listener = new TcpListener(IPAddress.IPv6Any, 4096);
-    public readonly int[] AllowedPorts = config.AllowedPorts.Split(' ').Select(int.Parse).ToArray();
+    private readonly List<TcpListener> _listeners = new();
+    public readonly int[] AllowedPorts = ParsePorts(config.AllowedPorts);
+
+    private static int[] ParsePorts(string text) =>
+        text.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
@@ -155,29 +158,79 @@ private async Task ClientHandlerAsync(TcpClient client, CancellationToken cancel
         }
     }
 
-    private async Task ExecuteAsync(CancellationToken stoppingToken)
+    private async Task AcceptLoop(TcpListener listener, CancellationToken stoppingToken)
     {
-        _listener.Start();
-        logger.LogInformation("Abyss listening on: {}", _listener.LocalEndpoint);
         while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
-                var c = await _listener.AcceptTcpClientAsync(stoppingToken);
+                var c = await listener.AcceptTcpClientAsync(stoppingToken);
                 _ = Task.Run(() => ClientHandlerAsync(c, stoppingToken), stoppingToken);
             }
             catch (OperationCanceledException)
             {
                 break;
             }
+            catch (ObjectDisposedException)
+            {
+                break;
+            }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred in background service");
-                await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
+                try
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+    private async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        foreach (var address in new[] { IPAddress.IPv6Any, IPAddress.Any })
+        {
+            try
+            {
+                var listener = new TcpListener(address, 4096);
+                if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    listener.Server.DualMode = false;
+                listener.Start();
+                _listeners.Add(listener);
+                logger.LogInformation("Abyss listening on: {Endpoint}", listener.LocalEndpoint);
+                _ = AcceptLoop(listener, stoppingToken);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Abyss listener failed for {Address}", address);
             }
         }
 
-        _listener.Stop();
+        if (_listeners.Count == 0)
+            logger.LogError("Abyss could not listen on IPv4 or IPv6");
+
+        try
+        {
+            await Task.Delay(Timeout.Infinite, stoppingToken);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+
+        foreach (var listener in _listeners)
+        {
+            try
+            {
+                listener.Stop();
+            }
+            catch (Exception)
+            {
+            }
+        }
         logger.LogInformation("Abyss listener stopped");
     }
 

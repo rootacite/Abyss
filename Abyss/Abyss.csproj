@@ -12,6 +12,8 @@
 
     <ItemGroup>
         <PackageReference Include="K4os.Hash.xxHash" Version="1.0.8" />
+        <PackageReference Include="MQTTnet" Version="4.3.7.1207" />
+        <PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.3.7.1207" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="NSec.Cryptography" Version="26.4.0" />
         <PackageReference Include="sqlite-net-pcl" Version="1.11.285" />

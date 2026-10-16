@@ -74,12 +74,18 @@ Abyss is designed with modularity in mind. Its service-based architecture allows
    ```bash
    git clone https://github.com/rootacite/Abyss
    ```
-2. Setup environment variables (Based on your actual situation)
+2. Configure `~/.abyss/abyss.conf`. The first launch creates this file when it is missing:
 
-   ```bash
-   export ASPNETCORE_URLS="https://0.0.0.0:443;http://0.0.0.0:80"
-   export MEDIA_ROOT="/opt"
    ```
+   media_root = /storage
+   debug_mode = Production
+   allowed_ports = 443
+   urls = http://0.0.0.0:80;http://[::]:80
+   discover =
+   public_url =
+   ```
+
+   `media_root` is the media library root. HTTP and HTTPS stay on loopback. The public listener is the Abyss tunnel on port 4096. `discover` is an `abyssc://broker:magic/` rendezvous; leave it empty to disable it. When `public_url` is empty and the machine has a global IPv6 address, discover offers `abyss://[that-address]:80/`, using the loopback HTTP port. Set `public_url` to override that offer.
 3. Run
 
    ```bash
@@ -88,7 +94,7 @@ Abyss is designed with modularity in mind. Its service-based architecture allows
    dotnet run
    ```
 4. Setup super user
-5. Setup Media Library. **MEDIA_ROOT** environment variable specifies the root directory of the media library.But at this point, no files have been included in the management, so you cannot access any files through the API interface.
+5. Setup Media Library. `media_root` in `~/.abyss/abyss.conf` specifies the root directory of the media library. But at this point, no files have been included in the management, so you cannot access any files through the API interface.
 
 ## API Quick Guide
 

@@ -10,6 +10,7 @@ using Abyss.Components.Services.Misc;
 using Abyss.Components.Services.Security;
 
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Configuration;
 
 namespace Abyss;
 
@@ -19,11 +20,22 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        var appConfig = new ConfigureService();
+        builder.Services.AddSingleton(appConfig);
+        // Kestrel:Endpoints in appsettings owns the HTTP/HTTPS binds (loopback).
+        // Setting urls as well makes Kestrel warn and ignore them.
+        if (!builder.Configuration.GetSection("Kestrel:Endpoints").GetChildren().Any())
+        {
+            builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["urls"] = ConfigureService.ExpandListenUrls(appConfig.Urls)
+            });
+        }
+
         builder.Services.AddAuthorization();
         builder.Services.AddMemoryCache();
         builder.Services.AddControllers();
         builder.Services.AddSingleton<ResourceDatabaseService>();
-        builder.Services.AddSingleton<ConfigureService>();
         builder.Services.AddSingleton<UserService>();
         builder.Services.AddSingleton<ResourceService>();
         builder.Services.AddSingleton<TaskController>();
@@ -32,6 +44,7 @@ public class Program
         builder.Services.AddSingleton<VideoService>();
         builder.Services.AddSingleton<ComicService>();
         builder.Services.AddHostedService<AbyssService>();
+        builder.Services.AddHostedService<AbyssDiscoverService>();
         builder.Services.AddHostedService<CtlService>();
 
         foreach (var t in ModuleAttribute.Modules)
